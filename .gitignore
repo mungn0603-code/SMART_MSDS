@@ -1,0 +1,25 @@
+# Secrets - 실제 키 값은 이 파일들 안에만 존재, git에 올리지 않음
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# 실행 로그/자동 백업 스냅샷 - 재실행 시 다시 생성됨, 기록은 archive/ 참고
+# (archive/ 안의 사본은 기록 목적이므로 예외 처리)
+*.log
+*.bak
+*.round*.bak
+!archive/**/*.log
+!archive/**/*.bak
+
+# RAG 빌드 산출물 - pipeline.py/retrieval.py 재실행하면 그대로 재생성됨(순수 CPU 재계산,
+# API 비용 없음). 8천개 넘는 청크 markdown + 임베딩/BM25 캐시를 git에 담을 이유 없음.
+# 재현 명령은 docs/HANDOFF.md 참고. reactivity_reference.db는 KOSHA API 호출 비용이
+# 들어간 데이터라 별개로 취급 - 여기서 제외 안 함.
+04_rag_agent/chunks/
+04_rag_agent/index/
+
+# 로컬 전용 IDE 설정 - 유저 전역 gitignore에도 있지만 이 저장소를 다른 환경에서
+# clone했을 때도 안전하게 프로젝트 자체 규칙으로 한 번 더 명시
+.claude/settings.local.json

@@ -1,0 +1,72 @@
+Acetals, Ketals, Hemiacetals, and Hemiketals: 61 chemicals
+Acids, Carboxylic: 206 chemicals
+Acids, Strong Non-oxidizing: 50 chemicals
+Acids, Strong Oxidizing: 51 chemicals
+Acids, Weak: 108 chemicals
+Acrylates and Acrylic Acids: 61 chemicals
+Acyl Halides, Sulfonyl Halides, and Chloroformates: 122 chemicals
+Alcohols and Polyols: 405 chemicals
+Aldehydes: 66 chemicals
+Alkynes, with Acetylenic Hydrogen: 12 chemicals
+Alkynes, with No Acetylenic Hydrogen: 8 chemicals
+Amides and Imides: 310 chemicals
+Amines, Aromatic: 276 chemicals
+Amines, Phosphines, and Pyridines: 698 chemicals
+Anhydrides: 35 chemicals
+Aryl Halides: 381 chemicals
+Azo, Diazo, Azido, Hydrazine, and Azide Compounds: 195 chemicals
+Bases, Strong: 62 chemicals
+Bases, Weak: 29 chemicals
+Carbamates: 59 chemicals
+Carbonate Salts: 13 chemicals
+Chlorosilanes: 37 chemicals
+Conjugated Dienes: 51 chemicals
+Cyanides, Inorganic: 35 chemicals
+Diazonium Salts: 7 chemicals
+Epoxides: 76 chemicals
+Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters: 534 chemicals
+Ethers: 391 chemicals
+Fluoride Salts, Soluble: 37 chemicals
+Fluorinated Organic Compounds: 129 chemicals
+Halogenated Organic Compounds: 432 chemicals
+Halogenating Agents: 60 chemicals
+Hydrocarbons, Aliphatic Saturated: 157 chemicals
+Hydrocarbons, Aliphatic Unsaturated: 468 chemicals
+Hydrocarbons, Aromatic: 260 chemicals
+Insufficient Information for Classification: 19 chemicals
+Isocyanates and Isothiocyanates: 63 chemicals
+Ketones: 186 chemicals
+Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes: 39 chemicals
+Metals, Alkali, Very Active: 14 chemicals
+Metals, Elemental and Powder, Active: 56 chemicals
+Metals, Less Reactive: 43 chemicals
+Nitrate and Nitrite Compounds, Inorganic: 62 chemicals
+Nitrides, Phosphides, Carbides, and Silicides: 20 chemicals
+Nitriles: 94 chemicals
+Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic: 397 chemicals
+Non-Redox-Active Inorganic Compounds: 92 chemicals
+Not Chemically Reactive: 21 chemicals
+Organometallics: 71 chemicals
+Oxidizing Agents, Strong: 174 chemicals
+Oxidizing Agents, Weak: 43 chemicals
+Oximes: 21 chemicals
+Peroxides, Organic: 113 chemicals
+Phenolic Salts: 29 chemicals
+Phenols and Cresols: 277 chemicals
+Polymerizable Compounds: 228 chemicals
+Quaternary Ammonium and Phosphonium Salts: 40 chemicals
+Reducing Agents, Strong: 57 chemicals
+Reducing Agents, Weak: 46 chemicals
+Salts, Acidic: 274 chemicals
+Salts, Basic: 262 chemicals
+Siloxanes: 18 chemicals
+Sulfides, Inorganic: 39 chemicals
+Sulfides, Organic: 190 chemicals
+Sulfite and Thiosulfate Salts: 20 chemicals
+Sulfonates, Phosphonates, and Thiophosphonates, Organic: 130 chemicals
+Thiocarbamate Esters and Salts/Dithiocarbamate Esters and Salts: 31 chemicals
+Water and Aqueous Solutions: 180 chemicals
+
+rows(chemical,group): 9231  distinct chemicals: 5094  rows with CAS: 6894
+
+완료: C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\cameo_chemical_groups.db
