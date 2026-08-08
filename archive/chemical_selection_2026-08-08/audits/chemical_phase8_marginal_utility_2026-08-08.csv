@@ -1,0 +1,427 @@
+﻿cas,chemical_name,true_cameo_groups,original_selection_status,phase6_status,review134_status,final_decision,dependency_class,dependency_reason
+103-75-3,ETHOXYDIHYDROPYRAN,1;28;34,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+60-00-4,EDTA,2;14,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+64-19-7,ACETIC ACID,2;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+100-21-0,TEREPHTHALIC ACID,2;35,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+104-01-8,4-METHOXYPHENYLACETIC ACID,2;28,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+107-94-8,3-CHLOROPROPIONIC ACID,2;31,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+107-97-1,SARCOSINE,2;12,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+109-52-4,PENTANOIC ACID,2,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+7647-01-0,HYDROCHLORIC ACID,3;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7705-08-0,FERRIC CHLORIDE,3;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+10025-91-9,ANTIMONY TRICHLORIDE,3;32;50,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10026-06-9,"STANNIC CHLORIDE, PENTAHYDRATE",3,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10026-11-6,ZIRCONIUM TETRACHLORIDE,3,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10026-13-8,PHOSPHORUS PENTACHLORIDE,3;32;50,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1271-19-8,TITANOCENE DICHLORIDE,3;35;49,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+7664-93-9,SULFURIC ACID,4,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7697-37-2,NITRIC ACID,4,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+42615-29-2,PHENYLSULPHONIC ACID,4,REVIEW,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+104-15-4,"TOLUENE SULFONIC ACID, LIQUID, WITH MORE THAN 5% FREE SULFURIC ACID",4,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+1120-71-4,PROPANE SULTONE,4;66,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1333-39-7,"PHENOLSULFONIC ACID, LIQUID",4,UNSUPPORTED,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7664-93-9로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+27176-87-0,DODECYLBENZENESULFONIC ACID,4,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.975(diagnostic) — 대체물질로 못 메움
+107-35-7,L-TAURINE,5;14,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+10265-92-6,METHAMIDOPHOS,5;27,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+124-38-9,CARBON DIOXIDE,5;48,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+105-16-8,"DIETHYLAMINOETHYLMETHACRYLATE, [LIQUID]",6;14;56,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-07-2,4-METHOXYBENZOYL CHLORIDE,7,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+103-80-0,PHENYLACETYL CHLORIDE,7,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+64-17-5,ETHANOL,5;8;24;56,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+105-11-3,P-QUINONE DIOXIME,8;14;34,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+105-59-9,METHYLDIETHANOLAMINE,8;14,REVIEW,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9(diagnostic) — 대체물질로 못 메움
+106-24-1,GERANIOL,8;34,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+100-51-6,BENZYL ALCOHOL,8,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10016-20-3,ALPHA-CYCLODEXTRIN,8,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+102-71-6,TRIETHANOLAMINE,8;14,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-73-2,"ACROLEIN DIMER, STABILIZED",9;28;34;56,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+101-39-3,ALPHA-METHYLCINNAMALDEHYDE,9;34;35,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+115-19-5,2-METHYL-2-HYDROXY-3-BUTYNE,8;10,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+101-27-9,BARBAN,11;16;20;31,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+57-13-6,UREA,12;19;43;60,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+101-20-2,TRICLOCARBAN,12;13;16,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-01-6,"P-NITROANILINE, [SOLID]",13;46,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-15-2,N-METHYL-4-NITROANILINE,13;46,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.85(diagnostic) — 대체물질로 못 메움
+100-22-1,"N,N,N&#39;,N&#39;-TETRAMETHYL-P-PHENYLENEDIAMINE",14,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+108-24-7,ACETIC ANHYDRIDE,15,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+106-31-0,BUTYRIC ANHYDRIDE,15,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+100-00-5,P-NITROCHLOROBENZENE,16;46,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+101-05-3,ANILAZINE,14;16,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-16-3,"4-NITROPHENYLHYDRAZINE, [WETTED WITH NOT LESS THAN 30% WATER BY MASS]",17;46;68,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1310-58-3,"POTASSIUM HYDROXIDE, SOLUTION",18;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+1310-73-2,SODIUM HYDROXIDE SOLUTION,18;39;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+12136-45-7,POTASSIUM MONOXIDE,18,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+100-57-2,PHENYLMERCURIC HYDROXIDE,18;49,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+11138-49-1,"SODIUM ALUMINATE, SOLUTION",18;68,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+12030-88-5,POTASSIUM SUPEROXIDE,18;50,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.8(diagnostic) — 대체물질로 못 메움
+12031-80-0,LITHIUM PEROXIDE,18;50,UNSUPPORTED,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 17014-71-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+1336-21-6,AMMONIUM HYDROXIDE,19;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+12124-99-1,"AMMONIUM HYDROSULFIDE, SOLUTION",18;19;63;68,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1305-62-0,CALCIUM HYDROXIDE,19,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1310-61-8,POTASSIUM HYDROSULFIDE,19;63,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1313-82-2,"SODIUM SULFIDE, ANHYDROUS",19;63;68,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+13983-17-0,WOLLASTONITE,19;61;62,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+143-33-9,SODIUM CYANIDE,19;24;68,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+7664-41-7,AMMONIA,19;68,KEEP_EMPIRICAL,,,KEEP_EMPIRICAL,A_unique_dependency,§10 전수조사(197종) 실측 1순위 반응 상대(물 등) 기본물질 보강
+101-21-3,ISOPROPYL-N-(3-CHLOROPHENYL)CARBAMATE,16;20,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+506-87-6,AMMONIUM CARBONATE,21;60,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+1066-33-7,AMMONIUM BICARBONATE,21;61,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1317-65-3,LIMESTONE,21,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+144-55-8,SODIUM BICARBONATE,21,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9286(diagnostic) — 대체물질로 못 메움
+15630-89-4,SODIUM PERCARBONATE,21;50;61,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+3486-35-9,ZINC CARBONATE,21,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+471-34-1,CALCIUM CARBONATE,21,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.8545(diagnostic) — 대체물질로 못 메움
+1558-25-4,TRICHLORO(CHLOROMETHYL)SILANE,22;31,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+110-16-7,MALEIC ACID,2;23;34,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+1335-31-5,MERCURIC OXYCYANIDE,24,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+101-90-6,DIGLYCIDYL RESORCINOL ETHER,26;28;35,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+105-79-3,ISOBUTYL CAPROATE,27,REVIEW,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.98(diagnostic) — 대체물질로 못 메움
+10031-87-5,2-ETHYLBUTYL ACETATE,27,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+102-16-9,BENZYL PHENYLACETATE,27,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+103-09-3,ETHYLHEXYL ACETATE,27,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.96(diagnostic) — 대체물질로 못 메움
+103-23-1,BIS(2-ETHYLHEXYL) ADIPATE,27,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1031-07-8,ENDOSULFAN SULFATE,27;31;34,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1031-47-6,TRIAMIPHOS,14;17;27,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+60-29-7,ETHYL ETHER,28,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+104-46-1,ANETHOLE,28;34,REVIEW,,,REVIEW,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+108-60-1,BIS(2-CHLORO-1-METHYLETHYL)ETHER,28;31,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+109-53-5,VINYL ISOBUTYL ETHER,28;34;56,REVIEW,,,REVIEW,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+109-59-1,ETHYLENE GLYCOL ISOPROPYL ETHER,8;28,REVIEW,,,REVIEW,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+101-80-4,"4,4&#39;-DIAMINODIPHENYL ETHER",13;28,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+103-50-4,DIBENZYL ETHER,28,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+12125-01-8,AMMONIUM FLUORIDE,29;60,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1333-83-1,"SODIUM BIFLUORIDE, SOLID",29;60;68,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+121-17-5,3-NITRO-4-CHLOROBENZOTRIFLUORIDE,16;30;46,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+107-04-0,1-CHLORO-2-BROMOETHANE,31,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+107-81-3,2-BROMOPENTANE,31,REVIEW,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9667(diagnostic) — 대체물질로 못 메움
+100-14-1,"BENZENE, 1-(CHLOROMETHYL)-4-NITRO-",31;46,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10222-01-2,"2,2-DIBROMO-3-NITRILOPROPIONAMIDE",12;31;45,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1024-57-3,HEPTACHLOR EPOXIDE,26;31;34,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10311-84-9,DIALIFOR,12;27;31,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+105-48-6,ISOPROPYL CHLOROACETATE,27;31,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10241-05-1,MOLYBDENUM PENTACHLORIDE,32,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+118-52-5,"1,3-DICHLORO-5,5-DIMETHYLHYDANTOIN",7;32;50,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+110-54-3,HEXANE,33,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+112-95-8,N-EICOSANE,33,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+12002-43-6,GILSONITE,33;35,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+123-01-3,DODECYLBENZENE,33;35,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.85(diagnostic) — 대체물질로 못 메움
+1333-86-4,CARBON BLACK,33;59,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1338-02-9,COPPER NAPHTHENATE,33;61,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.95(diagnostic) — 대체물질로 못 메움
+151-21-3,"DODECYL SULFATE, [SODIUM SALT]",33;61,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+105-87-3,GERANYL ACETATE,27;34,REVIEW,,,REVIEW,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+1025-15-6,TRIALLYL ISOCYANURATE,34;37,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+108-88-3,TOLUENE,35,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+115-86-6,TRIPHENYL PHOSPHATE,27;35,REVIEW,,,REVIEW,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+102-08-9,THIOCARBANILIDE,12;35;64,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+102-54-5,FERROCENE,35;49,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+104-72-3,N-DECYLBENZENE,35,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+104-88-1,4-CHLOROBENZALDEHYDE,9;16;35,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+114-49-8,SCOPOLAMINE HYDROBROMIDE,8;26;27;35;60,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+101-68-8,"DIPHENYLMETHANE-4,4&#39;-DIISOCYANATE",37,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+67-64-1,ACETONE,38,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+117-39-5,QUERCETIN,38;55,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+119-53-9,BENZOIN,8;35;38,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,자동 안전필터로 못 거른 물질을 사람이 검토해 대체
+102-01-2,ACETOACETANILIDE,12;13;38,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+106-51-4,BENZOQUINONE,38,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+107-70-0,4-METHOXY-4-METHYLPENTAN-2-ONE,28;38,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+110-13-4,"2,5-HEXANEDIONE",38,UNSUPPORTED,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 106-51-4로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+16940-66-2,SODIUM BOROHYDRIDE,18;39;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+102-67-0,TRIPROPYLALUMINUM,39,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+7440-09-7,POTASSIUM,40,REVIEW,RETAIN_COVERAGE,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7439-93-2,LITHIUM,40,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+7440-66-6,ZINC ASHES,41,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7439-95-4,MAGNESIUM,41,REVIEW,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9(diagnostic) — 대체물질로 못 메움
+7440-02-0,NICKEL,41,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-21-3,"SILICON POWDER, AMORPHOUS",41,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-25-7,TANTALUM (METAL AND OXIDE DUST),41,REVIEW,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9333(diagnostic) — 대체물질로 못 메움
+7429-90-5,"ALUMINUM POWDER, COATED",41,UNSUPPORTED,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7439-89-6,"IRON, [POWDERED]",41,UNSUPPORTED,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7440-50-8,COPPER,42,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+10112-91-1,MERCUROUS CHLORIDE,42;47,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10124-48-8,MERCURY AMMONIUM CHLORIDE,42;47,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10294-26-5,SILVER SULFATE,42;47,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9(diagnostic) — 대체물질로 못 메움
+1191-80-6,MERCURY OLEATE,34;42;51;61,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1304-82-1,BISMUTH TELLURIDE,42,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.98(diagnostic) — 대체물질로 못 메움
+10099-74-8,LEAD NITRATE,43,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7761-88-8,SILVER NITRATE,43,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+12057-74-8,MAGNESIUM PHOSPHIDE,44,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+104-85-8,P-TOLUNITRILE,45,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+105-56-6,ETHYL CYANOACETATE,27;45,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-02-7,4-NITROPHENOL,46;55,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10361-37-2,BARIUM CHLORIDE,47,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7447-40-7,POTASSIUM CHLORIDE,47,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+1002-89-7,AMMONIUM STEARATE,47,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10025-73-7,CHROMIC CHLORIDE,47,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9667(diagnostic) — 대체물질로 못 메움
+10101-63-0,LEAD IODIDE,47,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9333(diagnostic) — 대체물질로 못 메움
+10102-50-8,FERROUS ARSENATE,47,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+7727-37-9,NITROGEN,26;48;56,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+1271-28-9,NICKELOCENE,49,REVIEW,,,REVIEW,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+13007-92-6,CHROMIUM CARBONYL,49,REVIEW,,,REVIEW,D_not_observed,자동 안전필터로 못 거른 물질을 사람이 검토해 대체
+7722-64-7,POTASSIUM PERMANGANATE,50,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7722-84-1,HYDROGEN PEROXIDE,50;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+10034-81-8,MAGNESIUM PERCHLORATE,50,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.8(diagnostic) — 대체물질로 못 메움
+10034-82-9,SODIUM CHROMATE TETRAHYDRATE,50;61,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10101-50-5,SODIUM PERMANGANATE,50,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10118-76-0,CALCIUM PERMANGANATE,50,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.925(diagnostic) — 대체물질로 못 메움
+7782-44-7,OXYGEN,50,KEEP_EMPIRICAL,,,KEEP_EMPIRICAL,A_unique_dependency,§10 전수조사(197종) 실측 1순위 반응 상대(물 등) 기본물질 보강
+7553-56-2,IODINE,51,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+132259-10-0,"AIR, COMPRESSED",50;51,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,원 후보가 KOSHA 미등록이라 같은 그룹 내 다음 후보로 자동 대체
+10048-95-0,SODIUM ARSENATE HEPTAHYDRATE,51;61,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+10102-49-5,FERRIC ARSENATE,51;61,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9(diagnostic) — 대체물질로 못 메움
+1303-28-2,ARSENIC PENTOXIDE,5;15;51,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1312-03-4,"MERCURIC SUBSULFATE, [SOLID]",42;51;61,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+100-64-1,CYCLOHEXANONE OXIME,52,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+105-64-6,DIISOPROPYL PEROXYDICARBONATE,53,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+105-74-8,LAUROYL PEROXIDE,53,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+131-52-2,SODIUM PENTACHLOROPHENATE,16;54,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+101-18-8,3-HYDROXY-N-PHENYLANILINE,14;55,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10169-02-5,C.I. ACID RED 97,17;55;61;66,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+105-60-2,CAPROLACTAM,12;56,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+106-87-6,1-VINYL-3-CYCLOHEXENE DIOXIDE,26;56,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+112-02-7,HEXADECYLTRIMETHYLAMMONIUM CHLORIDE,47;57,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+1762-95-4,AMMONIUM THIOCYANATE,58;60;68,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+10039-54-0,HYDROXYLAMINE SULFATE,58;60,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10026-17-2,COBALT FLUORIDE,59;61,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+101-02-0,TRIPHENYL PHOSPHITE,59;66,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.95(diagnostic) — 대체물질로 못 메움
+1333-74-0,HYDROGEN,59,KEEP_EMPIRICAL,,,KEEP_EMPIRICAL,A_unique_dependency,§10 전수조사(197종) 실측 1순위 반응 상대(물 등) 기본물질 보강
+7758-98-7,CUPRIC SULFATE,60,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7786-81-4,NICKEL SULFATE,60,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+10031-13-7,LEAD(II) ARSENITE,61,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10102-20-2,SODIUM TELLURITE,59;61,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=1.0(diagnostic) — 대체물질로 못 메움
+1344-00-9,SODIUM ALUMINOSILICATE,61;62,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+1185-81-5,DIBUTYLTIN-BIS(LAURYL MERCAPTIDE),49;63,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+12035-72-2,NICKEL SUBSULFIDE,63,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+7220-79-3,METHYLENE BLUE TRIHYDRATE,14;35;57;64,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7772-98-7,SODIUM THIOSULFATE,65,KEEP_MANDATORY,,,KEEP,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+10192-30-0,"AMMONIUM BISULFITE, SOLID",60;65;68,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10196-04-0,AMMONIUM SULFITE,60;65,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10431-47-7,POTASSIUM SELENITE,65,UNSUPPORTED,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 13718-59-7로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+13718-59-7,BARIUM SELENITE,65,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+13774-25-9,MAGNESIUM BISULFITE SOLUTION,65;68,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+1071-83-6,GLYPHOSATE,2;14;66,UNSUPPORTED,,,KEEP_EMPIRICAL,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+111-54-6,"ETHYLENEBISDITHIOCARBAMIC ACID, SALTS AND ESTERS",5;67,UNSUPPORTED,,,REVIEW,D_not_observed,UNKNOWN(그룹 슬롯 자동 보충 — 물질 단위 개별 선정 근거 없음)
+10043-01-3,"ALUMINUM SULFATE, SOLID",60;68,UNSUPPORTED,RETAIN_RETRIEVAL,,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,426 자기청크 hit_rate@10=0.9(diagnostic) — 대체물질로 못 메움
+7732-18-5,WATER,68,KEEP_EMPIRICAL,,,KEEP_EMPIRICAL,A_unique_dependency,§10 전수조사(197종) 실측 1순위 반응 상대(물 등) 기본물질 보강
+7440-17-7,RUBIDIUM,40,REVIEW,RETAIN_COVERAGE,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7440-23-5,SODIUM,40,DUPLICATE,RETAIN_COVERAGE,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7440-46-2,CESIUM,40,DUPLICATE,RETAIN_COVERAGE,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7440-32-6,"TITANIUM POWDER, DRY",41;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=metal,water) 소속으로 무제한 편입"
+7440-36-0,ANTIMONY POWDER,41,REVIEW,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7440-39-3,BARIUM,41,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-41-7,"BERYLLIUM COMPOUND, N.O.S.",36;41,KEEP_COVERAGE,,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+7440-43-9,CADMIUM,41,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 7440-47-3로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7440-45-1,"CERIUM, SLABS, INGOTS OR RODS",41,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-47-3,CHROMIUM,41,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=metal) 소속으로 무제한 편입
+7440-48-4,COBALT,41,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7440-58-6,"HAFNIUM POWDER, DRY",41;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-32-6로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-62-2,VANADIUM (FUME OR DUST),41,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 7440-47-3로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7440-65-5,YTTRIUM,41,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7440-67-7,ZIRCONIUM POWDER WET,41;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7440-32-6로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7440-70-2,CALCIUM,41,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-74-6,INDIUM,41,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7782-49-2,SELENIUM POWDER,41,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 7440-47-3로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+8049-17-0,FERROSILICON,41,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7440-47-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+13494-80-9,TELLURIUM,42,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 7439-92-1로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+15385-58-7,MERCUROUS BROMIDE,42;47,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 10112-91-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+15829-53-5,MERCURY OXIDE,42;51,REVIEW,,,REVIEW,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=metal,oxidizer) 소속으로 무제한 편입"
+21908-53-2,"MERCURIC OXIDE, [SOLID]",42;51,DUPLICATE,,,REVIEW,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=metal,oxidizer) 소속으로 무제한 편입"
+7439-92-1,LEAD,42,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=metal) 소속으로 무제한 편입
+7439-96-5,MANGANESE,42,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7439-98-7,MOLYBDENUM,42,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7440-06-4,PLATINUM,42,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7440-16-6,RHODIUM (METAL FUME),42,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-22-4,SILVER,42,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7440-28-0,THALLIUM,42,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 7439-92-1로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)"
+7440-31-5,TIN,42,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7440-33-7,TUNGSTEN,42,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7439-92-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7440-38-2,ARSENIC,42,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 7439-92-1로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+7440-55-3,GALLIUM,42,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 7439-92-1로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+7487-94-7,MERCURIC CHLORIDE,42;60,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=metal) 소속으로 무제한 편입
+7647-10-1,PALLADIUM CHLORIDE,42;51;60,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=metal,oxidizer) 소속으로 무제한 편입"
+7774-29-0,MERCURY IODIDE,42;59,REVIEW,,,REVIEW,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=metal,reducer) 소속으로 무제한 편입"
+7783-33-7,"MERCURIC POTASSIUM IODIDE, [SOLID]",42;60,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 7487-94-7로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7783-35-9,MERCURIC SULFATE,42;60,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 7487-94-7로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+7783-36-0,MERCUROUS SULFATE,42;60,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 7487-94-7로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7789-47-1,MERCURIC BROMIDE,42;47,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 10112-91-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+10137-74-3,CALCIUM CHLORATE,50;61;68,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 7778-66-7로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+10326-21-3,MAGNESIUM CHLORATE,50,REVIEW,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+10361-95-2,ZINC CHLORATE,50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+11084-85-8,CHLORINATED TRISODIUM PHOSPHATE,50;61,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+1189-85-1,T-BUTYL CHROMATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+1304-29-6,BARIUM PEROXIDE,50;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+1305-79-9,CALCIUM PEROXIDE,50;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+1309-60-0,LEAD DIOXIDE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+1313-60-6,SODIUM PEROXIDE,18;50,REVIEW,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 17014-71-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+1314-18-7,STRONTIUM PEROXIDE,18;50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 17014-71-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+1314-22-3,ZINC PEROXIDE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+1314-62-1,VANADIUM PENTOXIDE,50;60,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 13446-10-1로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+1317-35-7,MANGANESE TETROXIDE,50;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+1333-82-0,"CHROMIUM TRIOXIDE, ANHYDROUS",15;50,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+13446-10-1,AMMONIUM PERMANGANATE,50;60,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+13450-97-0,STRONTIUM PERCHLORATE,50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+13477-10-6,"BARIUM HYPOCHLORITE, WITH MORE THAN 22% AVAILABLE CHLORINE",50;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)
+13477-36-6,CALCIUM PERCHLORATE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+13530-65-9,ZINC CHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 14018-95-2로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+13637-76-8,LEAD PERCHLORATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+13765-19-0,CALCIUM CHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 14018-95-2로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+13967-90-3,BARIUM BROMATE,50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+14018-95-2,ZINC DICHROMATE,50;61,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+14307-35-8,LITHIUM CHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+14452-57-4,MAGNESIUM PEROXIDE,50;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+14519-07-4,ZINC BROMATE,50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)"
+14519-17-6,MAGNESIUM BROMATE,50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+146-84-9,"SILVER PICRATE, WETTED WITH NOT LESS THAN 30% WATER",46;50;54;68,REVIEW,,,REVIEW,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer,water) 소속으로 무제한 편입"
+14977-61-8,CHROMIUM OXYCHLORIDE,32;50,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+15541-45-4,"BROMATES, INORGANIC, N.O.S.",50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+17014-71-0,POTASSIUM PEROXIDE,18;50,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+20816-12-0,OSMIUM TETROXIDE,50,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+2244-21-5,"POTASSIUM DICHLORO-S-TRIAZINETRIONE, DRY",7;32;50;60,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+23414-72-4,ZINC PERMANGANATE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+2782-57-2,"DICHLOROISOCYANURIC ACID, DRY",7;32;50,REVIEW,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 118-52-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+2893-78-9,SODIUM DICHLORO-S-TRIAZINETRIONE,7;32;50;60,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 2244-21-5로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+3811-04-9,POTASSIUM CHLORATE,50;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer,water) 소속으로 무제한 편입"
+507-40-4,TERT-BUTYL HYPOCHLORITE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+546-67-8,LEAD TETRAACETATE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+7446-08-4,SELENIUM DIOXIDE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7601-89-0,SODIUM PERCHLORATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7727-21-1,POTASSIUM PERSULFATE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7727-54-0,AMMONIUM PERSULFATE,50;60,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 13446-10-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7758-01-2,POTASSIUM BROMATE,50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7758-19-2,SODIUM CHLORITE,50;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7758-97-6,LEAD CHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7775-09-9,SODIUM CHLORATE,50;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 3811-04-9로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7775-11-3,SODIUM CHROMATE,50;61;68,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 7778-66-7로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+7775-27-1,SODIUM PERSULFATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7778-50-9,POTASSIUM BICHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 14018-95-2로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7778-54-3,CALCIUM HYPOCHLORITE,18;50;61;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer,water) 소속으로 무제한 편입"
+7778-66-7,POTASSIUM HYPOCHLORITE SOLUTION,50;61;68,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer,water) 소속으로 무제한 편입"
+7778-74-7,POTASSIUM PERCHLORATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7783-00-8,SELENIOUS ACID,5;50,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+7783-56-4,ANTIMONY TRIFLUORIDE,3;29;50,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+7783-66-6,IODINE PENTAFLUORIDE,32;50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 14977-61-8로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7787-36-2,BARIUM PERMANGANATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7789-00-6,POTASSIUM CHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 14018-95-2로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+7789-06-2,STRONTIUM CHROMATE,50;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 14018-95-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7789-09-5,AMMONIUM DICHROMATE,50;60,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13446-10-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7789-38-0,SODIUM BROMATE,50,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 20816-12-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7789-61-9,ANTIMONY TRIBROMIDE,3;32;50,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 10026-13-8로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)
+7789-69-7,PHOSPHORUS PENTABROMIDE,3;32;50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 10026-13-8로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7790-98-9,AMMONIUM PERCHLORATE,50;60,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13446-10-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7790-99-0,IODINE MONOCHLORIDE,32;50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 14977-61-8로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7791-10-8,STRONTIUM CHLORATE,50,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 20816-12-0로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+7791-21-1,CHLORINE MONOXIDE,32;50,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 14977-61-8로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+87-90-1,"TRICHLORO-S-TRIAZINETRIONE, DRY",7;32;50;60,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 2244-21-5로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+13410-01-0,SODIUM SELENATE,51;61,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+13718-26-8,SODIUM VANADATE,51;61,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+13769-43-2,POTASSIUM METAVANADATE,51;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+14019-91-1,CALCIUM SELENATE,51;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+15699-18-0,NICKEL AMMONIUM SULFATE,51;60,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7803-55-6로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+1643-20-5,DIMETHYLDODECYLAMINE-N-OXIDE,14;51,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+7631-89-2,SODIUM ARSENATE,51;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7778-39-4,"ARSENIC ACID, LIQUID",5;51;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer,water) 소속으로 무제한 편입"
+7778-44-1,CALCIUM ARSENATE,51;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7784-37-4,MERCURIC ARSENATE,51;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7784-44-3,AMMONIUM ARSENATE,51;60,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 7803-55-6로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+7787-41-9,BARIUM SELENATE,51;61,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 13718-26-8로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7790-59-2,POTASSIUM SELENATE,51;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 13718-26-8로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7803-55-6,AMMONIUM METAVANADATE,51;60,DUPLICATE,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=oxidizer) 소속으로 무제한 편입
+10049-05-5,CHROMOUS CHLORIDE,58,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+122-66-7,"1,2-DIPHENYLHYDRAZINE",14;17;35;58,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+21651-19-4,TIN(II) OXIDE,58,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 10049-05-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+540-72-7,SODIUM THIOCYANATE,58;61;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=reducer,water) 소속으로 무제한 편입"
+5470-11-1,HYDROXYLAMINE HYDROCHLORIDE,58;60,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 10039-54-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+592-85-8,MERCURY THIOCYANATE,58;61,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+592-87-0,LEAD THIOCYANATE,58;61,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+603-35-0,TRIPHENYL PHOSPHINE,14;58,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+6303-21-5,HYPOPHOSPHOROUS ACID,5;58,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+7704-34-9,"SULFUR, MOLTEN",58,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 10049-05-5로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)"
+7758-94-3,"FERROUS CHLORIDE, SOLID",58;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=reducer,water) 소속으로 무제한 편입"
+7772-99-8,"STANNOUS CHLORIDE, SOLID",58;60,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 10039-54-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7783-47-3,STANNOUS FLUORIDE,29;58;60,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+7789-60-8,PHOSPHORUS TRIBROMIDE,3;58,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+7803-65-8,AMMONIUM HYPOPHOSPHITE,58;60,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 10039-54-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+127-95-7,POTASSIUM HYDROGEN OXALATE,59;61,REVIEW,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 10026-17-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+1327-53-3,ARSENIC TRIOXIDE,59;60,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+140-08-9,TRIS(2-CHLOROETHYL)PHOSPHITE,31;59;66,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+15283-51-9,FERROUS FLUOROBORATE,59;68,REVIEW,,,REVIEW,D_not_observed,"실측 §10 위험관계 고빈도 그룹(위험관계=reducer,water) 소속으로 무제한 편입"
+1758-73-2,THIOUREA DIOXIDE,5;12;59,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+301-13-3,TRIS(2-ETHYLHEXYL) PHOSPHITE,59;66,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+516-03-0,FERROUS OXALATE,59;61,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 10026-17-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+591-08-2,1-ACETYL-2-THIOUREA,12;59;64,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+62-76-0,SODIUM OXALATE,59;61,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 10026-17-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+6487-48-5,POTASSIUM OXALATE MONOHYDRATE,59;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 10026-17-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7681-11-0,POTASSIUM IODIDE,59;61,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 10026-17-2로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7782-42-5,GRAPHITE (NATURAL),33;59,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+998-40-3,TRIBUTYLPHOSPHANE,14;59,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=reducer) 소속으로 무제한 편입
+108-95-2,"PHENOL SOLUTION, [AQUEOUS]",5;55;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+110-22-5,"ACETYL PEROXIDE SOLUTION, [&lt;= 25% PEROXIDE]",53;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+117-80-6,DICHLONE,16;38;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+118-96-7,"TNT, WETTED WITH NOT LESS THAN 30% WATER",46;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+1194-65-6,DICHLOBENIL,16;45;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+121-82-4,"CYCLOTRIMETHYLENE TRINITRAMINE, [DESENSITIZED]",17;46;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+12262-58-7,"CYCLOHEXANONE PEROXIDE, NOT MORE THAN 72% IN SOLUTION",1;8;53;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+124-09-4,"HEXAMETHYLENEDIAMINE, SOLID",14;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+128-03-0,POTASSIUM DIMETHYLDITHIOCARBAMATE,67;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+131-74-8,"AMMONIUM PICRATE, WETTED WITH NOT LESS THAN 10% WATER",46;54;60;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+1310-65-2,"LITHIUM HYDROXIDE, SOLUTION",18;68,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 1310-58-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)
+1310-82-3,RUBIDIUM HYDROXIDE,18;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 1310-58-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+1312-73-8,"POTASSIUM SULFIDE, HYDRATED, WITH NOT LESS THAN 30% WATER OF CRYSTALLIZATION",63;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+1341-49-7,"AMMONIUM BIFLUORIDE, SOLID",29;60;68,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 1333-83-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+137-41-7,POTASSIUM N-METHYLDITHIOCARBAMATE,67;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+137-42-8,"METAM SODIUM (COMPOUNDS, WEED, KILLING, LIQUID)",67;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+13780-03-5,"CALCIUM HYDROGEN SULFITE, SOLUTION",65;68,REVIEW,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 13774-25-9로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+13814-96-5,LEAD FLUOBORATE,47;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+13826-88-5,ZINC FLUOROBORATE,60;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+14486-19-2,CADMIUM FLUOROBORATE,60;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13826-88-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+14708-14-6,NICKEL FLUOROBORATE,47;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13814-96-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+151-50-8,POTASSIUM CYANIDE,19;24;68,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 143-33-9로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)
+15245-44-0,"LEAD STYPHNATE, [WETTED WITH &gt;= 20 % WATER OR MIXTURE OF ALCOHOL AND WATER]",46;54;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+15825-70-4,"MANITOL HEXANITRATE, [WET WITH &gt;= 40 % WATER OR MIXTURE OF ALCOHOL AND WATER]",46;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+16721-80-5,"SODIUM HYDROSULFIDE, SOLID, WITH LESS THAN 25% WATER OF CRYSTALLIZATION",19;63;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+16940-81-1,HEXAFLUOROPHOSPHORIC ACID,3;29;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+16961-83-4,FLUOROSILICIC ACID,3;29;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 16940-81-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+1854-26-8,DIMETHYLOLDIHYDROXYETHYLENEUREA,8;12;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+18810-58-7,"BARIUM AZIDE, WETTED WITH NOT LESS THAN 50% WATER",17;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+1918-00-9,DICAMBA,2;16;28;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+21351-79-1,CESIUM HYDROXIDE,18;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 1310-58-3로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+2217-06-3,"DIPICRYL SULFIDE, WETTED WITH NOT LESS THAN 10% WATER",46;64;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+22397-33-7,"3,3,6,6,9,9-HEXAMETHYL-1,2,4,5-TETRAOXACYCLONONANE",53;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 110-22-5로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+2492-26-4,SODIUM 2-MERCAPTOBENZOTHIAZOL SOLUTION,17;64;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+25167-32-2,DODECYL DIPHENYL ETHER DISULFONATE SOLUTION,28;61;66;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+25550-58-7,"DINITROPHENOL, SOLUTION",46;55;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+2691-41-0,"CYCLOTETRAMETHYLENE TETRANITRAMINE, [WET WITH &gt;= 10% WATER]",17;46;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+298-12-4,GLYOXYLIC ACID (50% OR LESS),2;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+3025-88-5,"2,5-DIMETHYL-2,5-DIHYDROPEROXY HEXANE, NOT MORE THAN 82% WITH WATER",53;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 110-22-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+38465-60-0,COPPER FLUOROBORATE,47;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13814-96-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.5)
+50-00-0,FORMALDEHYDE,9;56;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+50-99-7,DEXTROSE SOLUTION,8;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+545-55-1,TRIS(1-AZIRIDINYL) PHOSPHINE OXIDE,26;27;56;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+556-88-7,"NITROGUANIDINE, WETTED WITH NOT LESS THAN 20% WATER",14;17;46;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+57-12-5,"CYANIDE SOLUTION, N.O.S.",24;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+628-86-4,"MERCURY FULMINATE, [WET]",24;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+63868-82-6,ZIRCONIUM PICRAMATE,13;46;54;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+6484-52-2,AMMONIUM NITRATE,12;19;43;60;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+65-30-5,"NICOTINE SULFATE, SOLID",60;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,"대표물질 13826-88-5로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.6666666666666666)"
+7446-70-0,"ALUMINUM CHLORIDE, ANHYDROUS",3;32;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+76-03-9,TRICHLOROACETIC ACID,2;31;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+7631-90-5,SODIUM BISULFITE,65;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13774-25-9로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=0.6666666666666666)
+7632-00-0,SODIUM NITRITE,43;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+7646-85-7,"ZINC CHLORIDE, ANHYDROUS",3;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+7681-38-1,"SODIUM BISULFATE, SOLID",60;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 13826-88-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7681-49-4,SODIUM FLUORIDE,61;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+7773-03-7,POTASSIUM BISULFITE SOLUTION,65;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 13774-25-9로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7783-18-8,AMMONIUM THIOSULFATE,60;65;68,REVIEW,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 10192-30-0로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+7784-30-7,"ALUMINUM PHOSPHATE, SOLUTION",60;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,B_representative_substitutable,대표물질 13826-88-5로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)
+7784-46-5,"SODIUM ARSENITE, AQUEOUS SOLUTION",61;68,DUPLICATE,REVIEW,REVIEW_NOT_TESTED,REVIEW,C_redundant,"대표물질 7681-49-4로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_NOT_TESTED(hit_rate=)"
+7788-97-8,"CHROMIC FLUORIDE, SOLID",61;68,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,B_representative_substitutable,대표물질 7681-49-4로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)
+7789-29-9,POTASSIUM BIFLUORIDE,29;60;68,DUPLICATE,REVIEW,REVIEW_SUPPORTED,KEEP_RETRIEVAL_DIAGNOSTIC,A_unique_dependency,대표물질 1333-83-1로 매트릭스상 대체 가능 | PHASE7 재평가: REVIEW_SUPPORTED(hit_rate=1.0)
+78-11-5,PENTAERYTHRITE TETRANITRATE,46;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+78-18-2,1-HYDROXY-1&#39;-HYDROPEROXY DICYCLOHEXYL PEROXIDE,1;8;53;68,DUPLICATE,RETAIN_COVERAGE,,KEEP_COVERAGE,A_unique_dependency,curriculum/coverage 근거 — 대체 불가
+79-06-1,ACRYLAMIDE,6;12;56;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+79-08-3,BROMOACETIC ACID,2;31;68,DUPLICATE,REVIEW,REVIEW_UNSUPPORTED,REVIEW,C_redundant,"대표물질 76-03-9로 대체, §10 실질근거 없음 | PHASE7 재평가: REVIEW_UNSUPPORTED(hit_rate=0.0)"
+82-71-3,TRINITRORESORCINOL,46;55;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+831-52-7,SODIUM PICRAMATE,13;46;54;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+88-89-1,"PICRIC ACID, WETTED WITH NOT LESS THAN 30% WATER BY MASS",46;55;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+924-42-5,N-METHYLOLACRYLAMIDE,6;8;12;56;68,REVIEW,,,KEEP_EMPIRICAL,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+96-91-3,"2-AMINO-4,6-DINITROPHENOL",13;46;55;68,REVIEW,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입
+99-35-4,"TRINITROBENZENE, WETTED WITH NOT LESS THAN 30% WATER",46;68,DUPLICATE,,,REVIEW,D_not_observed,실측 §10 위험관계 고빈도 그룹(위험관계=water) 소속으로 무제한 편입

@@ -1,7 +1,98 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-06 (Stage 4 세션)
-**현재 단계**: Stage 4 (RAG) — Retrieval 계층 완료, RAG 지표·Abstain 미착수
+**최종 갱신**: 2026-08-08 (CAMEO 데이터 소스 robots.txt 준수 전환 세션)
+**현재 단계**: Stage 4(RAG) 결과는 2026-08-07 기준 유지, 이번 세션은 Stage 1~3의
+CAS↔CAMEO 그룹 매핑 데이터 소스를 CAMEO 웹 스크레이핑(robots.txt 위반)에서
+PubChem 공식 경로로 전환·재검증하는 별도 트랙
+
+## 0-2. 2026-08-08 갱신: CAMEO 데이터 소스 robots.txt 준수 전환 (전체 완료)
+
+기존 `chemicals`/`chemical_group_membership`(3,386종/6,657행)은
+`cameochemicals.noaa.gov` 검색 결과 페이지를 직접 스크레이핑해 확보한 것으로,
+`robots.txt`의 `/search` 계열 disallow를 위반한 상태로 식별돼 있었다(비상업
+포트폴리오 목적으로 사용 승인은 받았으나 방어 논리가 필요한 취약점으로 트래킹
+중이었음). 이번 세션에서 대체 경로를 검증·전환·확대 실행까지 전부 완료했다.
+상세 근거는 `docs/decisions.md` §1.2b/§1.2c/§1.2a-upd, 실행 스크립트는
+`01_collection/pubchem_verify_groups.py` + `02_classification/group_fallback.py`.
+
+1. **경로 검증 (12종 파일럿 → 199종 → 3,396종 전체)**:
+   - CAS→CID: 공식 PUG-REST(`/rest/pug/compound/name/{CAS}/cids/JSON`).
+   - CID→CAMEO그룹: PubChem Classification Browser의 JSON 엔드포인트
+     (`/classification_2/classification_2.fcgi?hid=86&...`) — PUG-REST 공식
+     문서엔 없는 비공식 엔드포인트지만 robots.txt disallow 대상 아님(hid=86 =
+     "CAMEO Chemical Reactivity Classification", 핸드오프 초안이 가정했던
+     hid=80은 오답이었음 — 그건 현재 "PubChem BioAssay Classification").
+   - **3,396종 전체 실행 결과**: MATCH 3,185 + 표기차이뿐인 사실상 일치 7 =
+     **94.0%가 깨끗하게 재검증됨**. 나머지 6.0%(204종)는 진짜 결측(9, 전부
+     "MIXTURE" 혼합물 표기 + 티오황산나트륨) + CID 조회 실패(195, 고분자·천연수지·
+     광물·상표명·N.O.S. 총칭명 — PubChem의 "단일 이산 구조" 전제상 원리적으로
+     색인 안 되는 범주, 우리 조회 로직 결함 아님).
+   - robots.txt 재확인: `/classification_2/`는 전면 허용, `/rest/pug/`는
+     `User-agent:*`에 명시적 disallow가 있으나 NCBI가 이를 PUG-REST라는
+     이름으로 공식 문서화·요청제한정책까지 공개해 API 클라이언트 사용을 전제로
+     운영한다는 점에서 "검색엔진 크롤링 차단"과는 통상 구분되는 사안 — 다만
+     100% 무결한 주장은 아니라는 뉘앙스를 그대로 남겨둠(§1.2b).
+2. **부수 발견·정정**:
+   - UREA CAS 오류: DB·CSV 양쪽에 `497-19-8`(실제 탄산나트륨 CAS)로 잘못
+     등록된 것을 발견 → 올바른 `57-13-6`으로 확인. 이미 스크레이핑 데이터에
+     정확한 UREA(CAS 57-13-6)가 존재해 **완전 중복**이었음이 드러나 중복
+     레코드(chemical_id 3398) 삭제.
+   - 그룹명 표기 통일: PubChem 대조 중 그룹42("Metals, Less Reactive"),
+     그룹48("Not Chemically Reactive")이 실제로는 각각 "...agents" 접미사가
+     붙은 이름임을 발견해 정정(5종+7종 false mismatch 해소).
+3. **그룹 대표물질 폴백 로직 구현**: `02_classification/group_fallback.py`
+   `get_fallback_candidates()`. 특정 CAS의 데이터가 결측/조회실패일 때, 같은
+   CAMEO 그룹 내 이미 KOSHA MSDS를 확보한 다른 물질을 대체 후보로 추천(최대
+   3건). 199종 파일럿의 문제 10종 전부 즉시 대체 가능함을 확인 — 급한
+   블로커 없음. 최종 반응성 판정 단계(`compatibility_engine.py`)의 Abstain
+   원칙과는 별개 계층(수집 단계 전용).
+4. **반응성 기본물질 풀 확장**: §1.2a("물·산소 등은 반응 상대로 자주 등장")의
+   "실측 아님" 추정을 197종 §10 "피해야 할 물질" 텍스트 전수조사로 실제 측정 —
+   **물 55.3%, 금속(포괄) 22.3%**, 나머지 키워드는 0%. 물이 실측 1순위임을
+   확인하고 우선순위 6종(물·산소·질소·이산화탄소·수소·암모니아)의 KOSHA MSDS를
+   전부 수집 완료(4개 섹션 전부). Tier2(CO2·수소·암모니아)는 PubChem 경로로
+   CAMEO 그룹 매핑도 신규 확보(`chemicals` chemical_id 3399~3401).
+   `01_collection/undergrad_target_chemicals.csv`에 `source=reactive_basics_tier1/2`로
+   6행 추가, 기존 `kosha_msds_collector.py`를 코드 변경 없이 재사용해 수집.
+5. **CAMEO 스크레이핑 원본 아카이브 이동**: robots.txt 위반 스크레이퍼
+   (`scrape_cameo_chemical_groups.py`+테스트), 원시 출력(`cameo_chemical_groups.db`,
+   9,231행), 시드 CSV 2종(`cas_reactive_group_mapping.csv`,
+   `Cameo_reactivity.csv`)을 `archive/01_collection/`로 이동. 단, 이 두 CSV는
+   `reactivity_reference.db`를 0부터 재빌드할 때 여전히 필요한 시드 입력이라
+   완전 폐기하지 않고, `build_chemical_group_membership.py`·
+   `seed_reactivity_reference.py`의 경로 상수만 아카이브 경로로 갱신(재현성
+   유지). 상세는 `archive/01_collection/NOTES.md`.
+6. **환경 이슈 기록**: 3,396종 전체 재수집(백그라운드, 40분)과 KOSHA 수집이
+   동시에 DB에 쓰기를 시도하며 `database is locked` 충돌 반복 발생 →
+   `kosha_msds_collector.py`의 `sqlite3.connect`에 `timeout=120`(busy_timeout)
+   추가로 해결. **두 수집 스크립트를 동시 실행할 때는 이 타임아웃이 필요**하다는
+   점을 기록해둠(향후 병렬 실행 시 재확인).
+
+**PubChem 기반 CAS→CAMEO 재수집/교차검증 트랙은 이걸로 종료.** 이번 세션에서
+검증→199종 실행→3,396종 전체 확대→폴백 로직→기본물질 풀 확장→구 스크레이핑
+아카이브까지 전부 완결.
+
+**추가: 타겟리스트 2차 확장 — 웨이브1 누락분 보강 (같은 날 후속)** — 웨이브1
+(203종, tier 슬롯 기반)은 "68그룹 골고루 커버 + 교육 현실성" 기준이라 실제
+반응 상대로 자주 등장하는 물질(금속·환원제·물 등)이 얼마나 실제로 자주
+검색/등장하는지는 반영 못 했다. 이 빈틈을 메우려고 "그룹당 슬롯 채워 총원수
+목표 달성"(200→380종, tier 기반) 방식 대신 "실측 반응 빈도 높은 그룹만 무제한
+수집"으로 웨이브2를 추가(웨이브1을 대체한 게 아니라 웨이브1엔 없던 축을
+더한 것). 근거: §1.2a-upd 실측(§10 "피해야 할 물질" 전수조사) — 가연성/환원성
+47.6%, 금속 34.9%, 물 23.0%. 이 실측이
+직접 가리키는 8개 그룹(금속 40/41/42, 산화제 50/51, 환원제 58/59, 물 68)만
+PubChem 확정 풀 전체를 상한 없이 수집(`01_collection/expand_by_reaction_frequency.py`).
+KOSHA 수집 결과: 시도 272종 중 426종 성공(4섹션 전부, 기존분 포함 누적)/49종
+Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
+- **round2 안전필터 적용 안 함**: 신규 배치에 급성치사·CMR1급 물질이 섞여도
+  거르지 않기로 결정 — 이 배치의 선정 이유 자체가 "위험 상대로 자주 지목됨"이라
+  걸러내면 이 프로젝트 목적(반응성 위험 고지)과 충돌. round2 필터는 §1.2
+  커리큘럼 대표성 축에만 유효(교육 현실성 문제였지 위험도 문제가 아니었음).
+  상세는 `docs/decisions.md` §1.2d.
+- **미반영 — 다음 세션 확인 필요**: Stage 4(RAG) 파이프라인(청킹 805개 섹션,
+  임베딩 인덱스, 평가셋 gold_pair 등)은 전부 **198~203종 기준으로 빌드된 상태**.
+  종수가 203→427로 2배 넘게 늘었으니 재구축 필요 여부를 다음 세션에서 판단할
+  것 — 이번 세션엔 실행 안 함(범위 밖 판단, 큰 작업이라 별도 확인 필요).
 
 ---
 
@@ -153,6 +244,53 @@ Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로
 - **평가셋 검수 미완**: 샘플 20건 사용자 검수를 못 받은 채 현 템플릿으로 실측 진행됨.
   템플릿 수정 시 질의 벡터만 재생성하면 되므로 반영은 수 분.
 - **Hybrid 재검토 여부**: 위 0절 주의 참조.
+
+### 4-6. CAMEO 그룹 매핑 데이터 소스 전환 (robots.txt 준수) — **완료(199종 + 3,396종 전체)**
+2026-08-07 파일럿(12종) → 199종 전체 실행까지 완료. 상세 근거·엔드포인트·robots.txt
+뉘앙스·199종 실행 결과 표는 `docs/decisions.md` §1.2b 참고. 스크립트:
+`01_collection/pubchem_verify_groups.py`(재실행 가능, idempotent — `INSERT OR IGNORE`).
+결과: MATCH 183 / 표기차이뿐인 사실상 일치 5(그룹명 정정으로 해소) / 진짜 결측 1
+(티오황산나트륨) / CID 조회 실패 9(혼합물·희귀 화합물, PubChem 자체 커버리지 한계).
+UREA CAS 오류(`497-19-8`→`57-13-6`)는 DB(`chemical_id 3398` 삭제)와
+`01_collection/undergrad_target_chemicals.csv` 양쪽 정정 완료.
+**그룹 대표물질 폴백 로직 — 구현 완료(2026-08-08)**: `02_classification/group_fallback.py`.
+결측/CID실패 10종 전부 같은 그룹 내 KOSHA MSDS 확보 완료 물질로 즉시 대체 가능함을
+확인(급한 블로커 아님). 상세는 `docs/decisions.md` §1.2c.
+
+**3,396종 전체 풀 실행 완료(2026-08-08)**: MATCH 3,185 / 표기차이(정정완료) 7 /
+진짜결측 9(전부 혼합물+티오황산나트륨) / CID조회실패 195(고분자·광물·총칭명 —
+PubChem 구조적 커버리지 한계). **실질 문제는 3,396종 중 204종(6.0%)뿐**이고
+전부 그룹 대표물질 폴백(§1.2c) 적용 대상. 상세는 `docs/decisions.md` §1.2b.
+남은 것 없음 — 이 항목은 종료.
+### 4-7. 반응성 기본물질 풀 확장 — **실행 완료(2026-08-08)**
+§1.2a의 "섹션10 등장빈도 추정"을 197종 §10 "피해야 할 물질" 전수조사로 실측
+(`docs/decisions.md` §1.2a-upd): **물 55.3%, 금속(포괄) 22.3%**, 나머지 키워드는
+0%. 물은 실측 1순위, 금속은 이미 68그룹 체계·현재 풀에 대표종 다수 있어 신규
+추가 불요.
+- **Tier 1(그룹매핑 이미 있음, KOSHA MSDS만 필요)**: 물(7732-18-5, "Water and
+  Aqueous Solutions"), 산소(7782-44-7, "Oxidizing Agents, Strong"), 질소
+  (7727-37-9, "Not Chemically Reactive").
+- **Tier 2(그룹매핑도 신규 필요)**: 이산화탄소(124-38-9), 수소(1333-74-0),
+  암모니아(7664-41-7) — §1.2b PubChem 경로로 그룹매핑은 즉시 가능, KOSHA MSDS는
+  별도.
+- **실행 결과**: 사용자 승인 후 6종 전부 수집 완료.
+  - Tier 2(CO2 124-38-9, 수소 1333-74-0, 암모니아 7664-41-7)는 먼저 PubChem
+    경로(§1.2b)로 CAMEO 그룹 매핑 신규 확보(`chemicals` chemical_id 3399~3401,
+    `source='pubchem_verified'`).
+  - `01_collection/undergrad_target_chemicals.csv`에 6행 추가
+    (`source='reactive_basics_tier1'`/`'reactive_basics_tier2'`) — 기존
+    `01_collection/kosha_msds_collector.py`를 코드 변경 없이 재실행해 그대로 수집
+    (idempotent라 기존 199종은 스킵, 신규 6종만 API 호출).
+  - 6종 전부 4개 섹션(2/3/9/10) 완전 수집 확인.
+  - **부수 이슈**: 이번 실행 중 `01_collection/pubchem_verify_groups.py --full`
+    (3,386종 전체 재수집, 아래 참고)이 동시에 DB에 쓰기 중이라 `database is
+    locked` 충돌이 반복 발생 — `kosha_msds_collector.py`의 `sqlite3.connect`에
+    `timeout=120` 추가로 해결(재시도 로직 아님, SQLite busy_timeout 활용). 두
+    스크립트를 **동시 실행할 때는 이 타임아웃이 필요**하다는 점을 기록.
+  - **그룹명 표기 통일**: PubChem 대조 중 그룹 42("Metals, Less Reactive" →
+    "...agents") 이어서 그룹 48("Not Chemically Reactive" → "...agents")도
+    동일 패턴으로 발견·수정. 3,386종 전체 재수집 결과에서 같은 패턴의 다른
+    그룹명도 추가로 나올 수 있음 — 완료되면 일괄 재확인 필요.
 
 ---
 
