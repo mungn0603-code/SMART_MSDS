@@ -105,7 +105,11 @@ def prepare(gran: str, gold: list[dict], task: str, sections: set[int] | None = 
 
     kept, gold_sets = [], []
     for g in gold:
-        raw = g[key]
+        # Evidence-level 채점: gold_pair.jsonl(173종 재정의, 2026-08-08)에 gold_evidence가
+        # 있으면 그걸 정답으로 쓴다. gold_section은 §10 boilerplate/review-required 청크까지
+        # 포함해 "같은 문서의 무관한 chunk"도 Hit으로 잘못 셀 수 있음(2026-08-09 검증으로 확인,
+        # 샘플 5건 중 2건 재현). gold_evidence가 없는 gold(fact task 등)는 기존 동작 그대로.
+        raw = g["gold_evidence"] if key == "gold_section" and "gold_evidence" in g else g[key]
         ids = raw if isinstance(raw, list) else [raw]
         idx = {pos[c] for c in ids if c in pos}
         if idx:
