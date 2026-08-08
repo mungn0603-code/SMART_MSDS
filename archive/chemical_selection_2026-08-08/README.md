@@ -96,6 +96,11 @@ phase4_coverage_and_proposal 세 파일은 이동 전 `sys.path.insert(0, ...02_
 `04_rag_agent/phase5~8_*.py`는 Stage4 RAG 트랙 소재라 이번 archive 대상에서
 제외했다(Chemical Selection과 Stage4 RAG 커밋을 섞지 않는다는 원칙).
 
+**정정(2026-08-08 후속 세션)**: 위 판단을 재검토한 결과, 이 스크립트들이 만들어내는
+후보 세트(426/259proposed/259_retrieval_aware 등) 자체가 "retrieval 진단으로 selection을
+재판정"하는 동일한 문제의 산출물이라 판단해 결국 archive로 옮겼다 —
+[`stage4_rag_diagnostic_2026-08-08/`](stage4_rag_diagnostic_2026-08-08/README.md) 참고.
+
 ## Archive 대상에서 제외한 것 (의도적으로 남겨둔 것)
 
 - `01_collection/chemical_selection_audit_dataset_2026-08-08.csv`(475행 provenance 감사)와
