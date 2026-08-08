@@ -1,0 +1,200 @@
+﻿cas_number,chemical_name,expected_group,pubchem_cid,pubchem_groups,status
+103-75-3,ETHOXYDIHYDROPYRAN,"Acetals, Ketals, Hemiacetals, and Hemiketals",7676,"Acetals, Ketals, Hemiacetals, and Hemiketals;Ethers;Hydrocarbons, Aliphatic Unsaturated",MATCH
+60-00-4,EDTA,"Acids, Carboxylic",6049,"Acids, Carboxylic;Amines, Phosphines, and Pyridines",MATCH
+64-19-7,ACETIC ACID,"Acids, Carboxylic",176,"Acids, Carboxylic;Water and Aqueous Solutions",MATCH
+100-21-0,TEREPHTHALIC ACID,"Acids, Carboxylic",7489,"Acids, Carboxylic;Hydrocarbons, Aromatic",MATCH
+104-01-8,4-METHOXYPHENYLACETIC ACID,"Acids, Carboxylic",7690,"Acids, Carboxylic;Ethers",MATCH
+107-94-8,3-CHLOROPROPIONIC ACID,"Acids, Carboxylic",7899,"Acids, Carboxylic;Halogenated Organic Compounds",MATCH
+107-97-1,SARCOSINE,"Acids, Carboxylic",1088,"Acids, Carboxylic;Amides and Imides",MATCH
+109-52-4,PENTANOIC ACID,"Acids, Carboxylic",7991,"Acids, Carboxylic",MATCH
+7647-01-0,HYDROCHLORIC ACID,"Acids, Strong Non-oxidizing",313,"Acids, Strong Non-oxidizing;Water and Aqueous Solutions",MATCH
+7705-08-0,FERRIC CHLORIDE,"Acids, Strong Non-oxidizing",24380,"Acids, Strong Non-oxidizing;Water and Aqueous Solutions",MATCH
+10025-91-9,ANTIMONY TRICHLORIDE,"Acids, Strong Non-oxidizing",24814,"Acids, Strong Non-oxidizing;Halogenating Agents;Oxidizing Agents, Strong",MATCH
+10026-06-9,"STANNIC CHLORIDE, PENTAHYDRATE","Acids, Strong Non-oxidizing",61442,"Acids, Strong Non-oxidizing",MATCH
+10026-11-6,ZIRCONIUM TETRACHLORIDE,"Acids, Strong Non-oxidizing",,,ERROR
+10026-13-8,PHOSPHORUS PENTACHLORIDE,"Acids, Strong Non-oxidizing",24819,"Acids, Strong Non-oxidizing;Halogenating Agents;Oxidizing Agents, Strong",MATCH
+1271-19-8,TITANOCENE DICHLORIDE,"Acids, Strong Non-oxidizing",76030824,"Acids, Strong Non-oxidizing;Hydrocarbons, Aromatic;Organometallics",MATCH
+7664-93-9,SULFURIC ACID,"Acids, Strong Oxidizing",1118,"Acids, Strong Oxidizing",MATCH
+7697-37-2,NITRIC ACID,"Acids, Strong Oxidizing",944,"Acids, Strong Oxidizing",MATCH
+104-15-4,"TOLUENE SULFONIC ACID, LIQUID, WITH MORE THAN 5% FREE SULFURIC ACID","Acids, Strong Oxidizing",6101,"Acids, Strong Oxidizing",MATCH
+1120-71-4,PROPANE SULTONE,"Acids, Strong Oxidizing",14264,"Acids, Strong Oxidizing;Sulfonates, Phosphonates, and Thiophosphonates, Organic",MATCH
+1333-39-7,"PHENOLSULFONIC ACID, LIQUID","Acids, Strong Oxidizing",15619088,"Acids, Strong Oxidizing",MATCH
+42615-29-2,"Benzenesulfonic acid, alkyl deriv., linear","Acids, Strong Oxidizing",16649,"Acids, Strong Oxidizing",MATCH
+27176-87-0,DODECYLBENZENESULFONIC ACID,"Acids, Strong Oxidizing",,,ERROR
+10265-92-6,METHAMIDOPHOS,"Acids, Weak",4096,"Acids, Weak;Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+107-35-7,타우린,"Acids, Weak",1123,"Acids, Weak;Amines, Phosphines, and Pyridines",MATCH
+105-16-8,"DIETHYLAMINOETHYLMETHACRYLATE, [LIQUID]",Acrylates and Acrylic Acids,61012,"Acrylates and Acrylic Acids;Amines, Phosphines, and Pyridines;Polymerizable Compounds",MATCH
+100-07-2,4-METHOXYBENZOYL CHLORIDE,"Acyl Halides, Sulfonyl Halides, and Chloroformates",7477,"Acyl Halides, Sulfonyl Halides, and Chloroformates",MATCH
+103-80-0,PHENYLACETYL CHLORIDE,"Acyl Halides, Sulfonyl Halides, and Chloroformates",7679,"Acyl Halides, Sulfonyl Halides, and Chloroformates",MATCH
+64-17-5,ETHANOL,Alcohols and Polyols,702,"Acids, Weak;Alcohols and Polyols;Cyanides, Inorganic;Polymerizable Compounds",MATCH
+106-24-1,게라니올,Alcohols and Polyols,637566,"Alcohols and Polyols;Hydrocarbons, Aliphatic Unsaturated",MATCH
+100-51-6,BENZYL ALCOHOL,Alcohols and Polyols,244,Alcohols and Polyols,MATCH
+105-11-3,"1,4-벤조퀴논, 다이옥심",Alcohols and Polyols,7737,"Alcohols and Polyols;Amines, Phosphines, and Pyridines;Hydrocarbons, Aliphatic Unsaturated",MATCH
+10016-20-3,ALPHA-CYCLODEXTRIN,Alcohols and Polyols,444913,Alcohols and Polyols,MATCH
+105-59-9,N-메틸다이에탄올아민,Alcohols and Polyols,7767,"Alcohols and Polyols;Amines, Phosphines, and Pyridines",MATCH
+102-71-6,TRIETHANOLAMINE,Alcohols and Polyols,7618,"Alcohols and Polyols;Amines, Phosphines, and Pyridines",MATCH
+100-73-2,"ACROLEIN DIMER, STABILIZED",Aldehydes,60994,"Aldehydes;Ethers;Hydrocarbons, Aliphatic Unsaturated;Polymerizable Compounds",MATCH
+101-39-3,ALPHA-METHYLCINNAMALDEHYDE,Aldehydes,5372813,"Aldehydes;Hydrocarbons, Aliphatic Unsaturated;Hydrocarbons, Aromatic",MATCH
+115-19-5,2-METHYL-2-HYDROXY-3-BUTYNE,"Alkynes, with Acetylenic Hydrogen",8258,"Alcohols and Polyols;Alkynes, with Acetylenic Hydrogen",MATCH
+101-27-9,BARBAN,"Alkynes, with No Acetylenic Hydrogen",7551,"Alkynes, with No Acetylenic Hydrogen;Aryl Halides;Carbamates;Halogenated Organic Compounds",MATCH
+497-19-8,UREA,Amides and Imides,10340,,NO_PUBCHEM_DATA
+101-20-2,TRICLOCARBAN,Amides and Imides,7547,"Amides and Imides;Amines, Aromatic;Aryl Halides",MATCH
+100-01-6,"P-NITROANILINE, [SOLID]","Amines, Aromatic",7475,"Amines, Aromatic;Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",MATCH
+100-15-2,N-METHYL-4-NITROANILINE,"Amines, Aromatic",7483,"Amines, Aromatic;Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",MATCH
+100-22-1,"N,N,N&#39;,N&#39;-TETRAMETHYL-P-PHENYLENEDIAMINE","Amines, Phosphines, and Pyridines",7490,"Amines, Phosphines, and Pyridines",MATCH
+108-24-7,ACETIC ANHYDRIDE,Anhydrides,7918,Anhydrides,MATCH
+106-31-0,BUTYRIC ANHYDRIDE,Anhydrides,7798,Anhydrides,MATCH
+100-00-5,P-NITROCHLOROBENZENE,Aryl Halides,7474,"Aryl Halides;Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",MATCH
+101-05-3,ANILAZINE,Aryl Halides,7541,"Amines, Phosphines, and Pyridines;Aryl Halides",MATCH
+100-16-3,"4-NITROPHENYLHYDRAZINE, [WETTED WITH NOT LESS THAN 30% WATER BY MASS]","Azo, Diazo, Azido, Hydrazine, and Azide Compounds",3310889,"Azo, Diazo, Azido, Hydrazine, and Azide Compounds;Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic;Water and Aqueous Solutions",MATCH
+1310-58-3,"POTASSIUM HYDROXIDE, SOLUTION","Bases, Strong",14797,"Bases, Strong;Water and Aqueous Solutions",MATCH
+1310-73-2,SODIUM HYDROXIDE SOLUTION,"Bases, Strong",14798,"Bases, Strong;Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes;Water and Aqueous Solutions",MATCH
+100-57-2,PHENYLMERCURIC HYDROXIDE,"Bases, Strong",7512,"Bases, Strong;Organometallics",MATCH
+11138-49-1,"SODIUM ALUMINATE, SOLUTION","Bases, Strong",14766,"Bases, Strong;Water and Aqueous Solutions",MATCH
+12030-88-5,POTASSIUM SUPEROXIDE,"Bases, Strong",61541,"Bases, Strong;Oxidizing Agents, Strong",MATCH
+12031-80-0,LITHIUM PEROXIDE,"Bases, Strong",25489,"Bases, Strong;Oxidizing Agents, Strong",MATCH
+12136-45-7,산화 칼륨,"Bases, Strong",9989219,"Bases, Strong",MATCH
+1336-21-6,AMMONIUM HYDROXIDE,"Bases, Weak",14923,"Bases, Weak;Water and Aqueous Solutions",MATCH
+12124-99-1,"AMMONIUM HYDROSULFIDE, SOLUTION","Bases, Weak",25515,"Bases, Strong;Bases, Weak;Sulfides, Inorganic;Water and Aqueous Solutions",MATCH
+1305-62-0,CALCIUM HYDROXIDE,"Bases, Weak",6093208,"Bases, Weak",MATCH
+1310-61-8,POTASSIUM HYDROSULFIDE,"Bases, Weak",102109,"Bases, Weak;Sulfides, Inorganic",MATCH
+1313-82-2,"SODIUM SULFIDE, ANHYDROUS","Bases, Weak",237873,"Bases, Weak;Sulfides, Inorganic;Water and Aqueous Solutions",MATCH
+13983-17-0,WOLLASTONITE,"Bases, Weak",26370,"Bases, Weak;Salts, Basic;Siloxanes",MATCH
+143-33-9,SODIUM CYANIDE,"Bases, Weak",8929,"Bases, Weak;Cyanides, Inorganic;Water and Aqueous Solutions",MATCH
+101-21-3,ISOPROPYL-N-(3-CHLOROPHENYL)CARBAMATE,Carbamates,2728,Aryl Halides;Carbamates,MATCH
+1066-33-7,AMMONIUM BICARBONATE,Carbonate Salts,14013,"Carbonate Salts;Salts, Basic",MATCH
+1317-65-3,LIMESTONE,Carbonate Salts,,,ERROR
+144-55-8,SODIUM BICARBONATE,Carbonate Salts,516892,Carbonate Salts,MATCH
+15630-89-4,SODIUM PERCARBONATE,Carbonate Salts,159762,"Carbonate Salts;Oxidizing Agents, Strong;Salts, Basic",MATCH
+506-87-6,탄산 디암모늄,Carbonate Salts,517111,"Carbonate Salts;Salts, Acidic",MATCH
+3486-35-9,ZINC CARBONATE,Carbonate Salts,19005,Carbonate Salts,MATCH
+471-34-1,CALCIUM CARBONATE,Carbonate Salts,10112,Carbonate Salts,MATCH
+1558-25-4,트리클로로(클로로메틸)실란(TRICHLORO(CHLOROMETHYL)SILANE),Chlorosilanes,15258,Chlorosilanes;Halogenated Organic Compounds,MATCH
+110-16-7,MALEIC ACID,Conjugated Dienes,444266,"Acids, Carboxylic;Conjugated Dienes;Hydrocarbons, Aliphatic Unsaturated",MATCH
+1335-31-5,MERCURIC OXYCYANIDE,"Cyanides, Inorganic",56843208,"Cyanides, Inorganic",MATCH
+135072-82-1,4-DIMETHYLAMINO-6-(2-DIMETHYLAMINOETHOXY)TOLUENE-2-DIAZONIUM ZINC CHLORIDE,Diazonium Salts,,,ERROR
+15005-97-7,3-(2-HYDROXYETHOXY)-4-PYRROLIDIN-1-YL BENZENEDIAZONIUM ZINC CHLORIDE,Diazonium Salts,,,ERROR
+101-90-6,DIGLYCIDYL RESORCINOL ETHER,Epoxides,7586,"Epoxides;Ethers;Hydrocarbons, Aromatic",MATCH
+10031-87-5,2-ETHYLBUTYL ACETATE,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",61448,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+105-79-3,Isobutyl hexanoate,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",7775,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+102-16-9,BENZYL PHENYLACETATE,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",60999,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+103-09-3,ETHYLHEXYL ACETATE,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",7635,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+103-23-1,BIS(2-ETHYLHEXYL) ADIPATE,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",7641,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+1031-07-8,ENDOSULFAN SULFATE,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",13940,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Halogenated Organic Compounds;Hydrocarbons, Aliphatic Unsaturated",MATCH
+1031-47-6,TRIAMIPHOS,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",13943,"Amines, Phosphines, and Pyridines;Azo, Diazo, Azido, Hydrazine, and Azide Compounds;Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",MATCH
+60-29-7,ETHYL ETHER,Ethers,3283,Ethers,MATCH
+104-46-1,아네토레,Ethers,637563,"Ethers;Hydrocarbons, Aliphatic Unsaturated",MATCH
+109-59-1,이소프로폭시에탄올,Ethers,7996,Alcohols and Polyols;Ethers,MATCH
+101-80-4,"4,4&#39;-DIAMINODIPHENYL ETHER",Ethers,7579,"Amines, Aromatic;Ethers",MATCH
+108-60-1,비스(2-클로로아이소프로필)에테르,Ethers,7944,Ethers;Halogenated Organic Compounds,MATCH
+103-50-4,DIBENZYL ETHER,Ethers,7657,Ethers,MATCH
+109-53-5,아이소뷰틸 비닐 에테르,Ethers,7992,"Ethers;Hydrocarbons, Aliphatic Unsaturated;Polymerizable Compounds",MATCH
+12125-01-8,AMMONIUM FLUORIDE,"Fluoride Salts, Soluble",25516,"Fluoride Salts, Soluble;Salts, Acidic",MATCH
+1333-83-1,"SODIUM BIFLUORIDE, SOLID","Fluoride Salts, Soluble",219061,"Fluoride Salts, Soluble;Salts, Acidic;Water and Aqueous Solutions",MATCH
+121-17-5,4-클로로-3-나이트로벤조트리플루오르화물,Fluorinated Organic Compounds,8462,"Aryl Halides;Fluorinated Organic Compounds;Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",MATCH
+100-14-1,"BENZENE, 1-(CHLOROMETHYL)-4-NITRO-",Halogenated Organic Compounds,7482,"Halogenated Organic Compounds;Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",MATCH
+10222-01-2,"2,2-DIBROMO-3-NITRILOPROPIONAMIDE",Halogenated Organic Compounds,25059,Amides and Imides;Halogenated Organic Compounds;Nitriles,MATCH
+1024-57-3,HEPTACHLOR EPOXIDE,Halogenated Organic Compounds,15559699,"Epoxides;Halogenated Organic Compounds;Hydrocarbons, Aliphatic Unsaturated",MATCH
+10311-84-9,DIALIFOR,Halogenated Organic Compounds,25146,"Amides and Imides;Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Halogenated Organic Compounds",MATCH
+107-04-0,1-브로모-2-클로로에탄,Halogenated Organic Compounds,7849,Halogenated Organic Compounds,MATCH
+107-81-3,2-브로모펜테인,Halogenated Organic Compounds,7890,Halogenated Organic Compounds,MATCH
+105-48-6,ISOPROPYL CHLOROACETATE,Halogenated Organic Compounds,7759,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Halogenated Organic Compounds",MATCH
+10241-05-1,MOLYBDENUM PENTACHLORIDE,Halogenating Agents,61497,Halogenating Agents,MATCH
+118-52-5,"1,3-DICHLORO-5,5-DIMETHYLHYDANTOIN",Halogenating Agents,8360,"Acyl Halides, Sulfonyl Halides, and Chloroformates;Halogenating Agents;Oxidizing Agents, Strong",MATCH
+110-54-3,HEXANE,"Hydrocarbons, Aliphatic Saturated",8058,"Hydrocarbons, Aliphatic Saturated",MATCH
+112-95-8,N-EICOSANE,"Hydrocarbons, Aliphatic Saturated",8222,"Hydrocarbons, Aliphatic Saturated",MATCH
+12002-43-6,GILSONITE,"Hydrocarbons, Aliphatic Saturated",,,ERROR
+123-01-3,DODECYLBENZENE,"Hydrocarbons, Aliphatic Saturated",31237,"Hydrocarbons, Aliphatic Saturated;Hydrocarbons, Aromatic",MATCH
+1333-86-4,CARBON BLACK,"Hydrocarbons, Aliphatic Saturated",5462310,"Hydrocarbons, Aliphatic Saturated;Reducing Agents, Weak",MATCH
+1338-02-9,COPPER NAPHTHENATE,"Hydrocarbons, Aliphatic Saturated",,,ERROR
+151-21-3,"DODECYL SULFATE, [SODIUM SALT]","Hydrocarbons, Aliphatic Saturated",3423265,"Hydrocarbons, Aliphatic Saturated;Salts, Basic",MATCH
+105-87-3,게라닐 아세트산,"Hydrocarbons, Aliphatic Unsaturated",1549026,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Hydrocarbons, Aliphatic Unsaturated",MATCH
+1025-15-6,TRIALLYL ISOCYANURATE,"Hydrocarbons, Aliphatic Unsaturated",13931,"Hydrocarbons, Aliphatic Unsaturated;Isocyanates and Isothiocyanates",MATCH
+108-88-3,TOLUENE,"Hydrocarbons, Aromatic",1140,"Hydrocarbons, Aromatic",MATCH
+102-08-9,THIOCARBANILIDE,"Hydrocarbons, Aromatic",700999,"Amides and Imides;Hydrocarbons, Aromatic;Sulfides, Organic",MATCH
+102-54-5,FERROCENE,"Hydrocarbons, Aromatic",10219726,"Hydrocarbons, Aromatic;Organometallics",MATCH
+104-72-3,N-DECYLBENZENE,"Hydrocarbons, Aromatic",7716,"Hydrocarbons, Aromatic",MATCH
+104-88-1,4-CHLOROBENZALDEHYDE,"Hydrocarbons, Aromatic",7726,"Aldehydes;Aryl Halides;Hydrocarbons, Aromatic",MATCH
+115-86-6,트리페닐 포스페이트,"Hydrocarbons, Aromatic",8289,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Hydrocarbons, Aromatic",MATCH
+114-49-8,SCOPOLAMINE HYDROBROMIDE,"Hydrocarbons, Aromatic",6603108,"Alcohols and Polyols;Epoxides;Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Hydrocarbons, Aromatic;Salts, Acidic",MATCH
+101-68-8,"DIPHENYLMETHANE-4,4&#39;-DIISOCYANATE",Isocyanates and Isothiocyanates,7570,Isocyanates and Isothiocyanates,MATCH
+67-64-1,ACETONE,Ketones,180,Ketones,MATCH
+119-53-9,벤조인,Ketones,8400,"Alcohols and Polyols;Hydrocarbons, Aromatic;Ketones",MATCH
+102-01-2,ACETOACETANILIDE,Ketones,7592,"Amides and Imides;Amines, Aromatic;Ketones",MATCH
+106-51-4,BENZOQUINONE,Ketones,4650,Ketones,MATCH
+107-70-0,4-METHOXY-4-METHYLPENTAN-2-ONE,Ketones,7884,Ethers;Ketones,MATCH
+110-13-4,"2,5-HEXANEDIONE",Ketones,8035,Ketones,MATCH
+117-39-5,케르세틴(QUERCETIN),Ketones,5280343,Ketones;Phenols and Cresols,MATCH
+16940-66-2,SODIUM BOROHYDRIDE,"Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes",4311764,"Bases, Strong;Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes;Water and Aqueous Solutions",MATCH
+102-67-0,TRIPROPYLALUMINUM,"Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes",16683069,"Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes",MATCH
+7440-09-7,Potassium,"Metals, Alkali, Very Active",5462222,"Metals, Alkali, Very Active",MATCH
+7439-93-2,LITHIUM,"Metals, Alkali, Very Active",3028194,"Metals, Alkali, Very Active",MATCH
+7440-66-6,ZINC ASHES,"Metals, Elemental and Powder, Active",23994,"Metals, Elemental and Powder, Active",MATCH
+7439-95-4,Magnesium,"Metals, Elemental and Powder, Active",5462224,"Metals, Elemental and Powder, Active",MATCH
+7440-02-0,니켈,"Metals, Elemental and Powder, Active",935,"Metals, Elemental and Powder, Active",MATCH
+7440-21-3,실리콘,"Metals, Elemental and Powder, Active",5461123,"Metals, Elemental and Powder, Active",MATCH
+7440-25-7,탄탈럼(탄탈),"Metals, Elemental and Powder, Active",23956,"Metals, Elemental and Powder, Active",MATCH
+7429-90-5,"ALUMINUM POWDER, COATED","Metals, Elemental and Powder, Active",5359268,"Metals, Elemental and Powder, Active",MATCH
+7439-89-6,"IRON, [POWDERED]","Metals, Elemental and Powder, Active",23925,"Metals, Elemental and Powder, Active",MATCH
+7440-50-8,COPPER,"Metals, Less Reactive",23978,"Metals, Less Reactive agents",MISMATCH
+10112-91-1,MERCUROUS CHLORIDE,"Metals, Less Reactive",24956,"Metals, Less Reactive agents;Non-Redox-Active Inorganic Compounds",MISMATCH
+10124-48-8,MERCURY AMMONIUM CHLORIDE,"Metals, Less Reactive",3032553,"Metals, Less Reactive agents;Non-Redox-Active Inorganic Compounds",MISMATCH
+10294-26-5,SILVER SULFATE,"Metals, Less Reactive",159865,"Metals, Less Reactive agents;Non-Redox-Active Inorganic Compounds",MISMATCH
+1191-80-6,MERCURY OLEATE,"Metals, Less Reactive",6433251,"Hydrocarbons, Aliphatic Unsaturated;Metals, Less Reactive agents;Oxidizing Agents, Weak;Salts, Basic",MISMATCH
+1304-82-1,BISMUTH TELLURIDE,"Metals, Less Reactive",,,ERROR
+10099-74-8,LEAD NITRATE,"Nitrate and Nitrite Compounds, Inorganic",24924,"Nitrate and Nitrite Compounds, Inorganic",MATCH
+7761-88-8,SILVER NITRATE,"Nitrate and Nitrite Compounds, Inorganic",24470,"Nitrate and Nitrite Compounds, Inorganic",MATCH
+12057-74-8,MAGNESIUM PHOSPHIDE,"Nitrides, Phosphides, Carbides, and Silicides",61546,"Nitrides, Phosphides, Carbides, and Silicides",MATCH
+104-85-8,P-TOLUNITRILE,Nitriles,7724,Nitriles,MATCH
+105-56-6,ETHYL CYANOACETATE,Nitriles,7764,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters;Nitriles",MATCH
+100-02-7,4-NITROPHENOL,"Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",980,"Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic;Phenols and Cresols",MATCH
+10361-37-2,BARIUM CHLORIDE,Non-Redox-Active Inorganic Compounds,25204,Non-Redox-Active Inorganic Compounds,MATCH
+7447-40-7,POTASSIUM CHLORIDE,Non-Redox-Active Inorganic Compounds,4873,Non-Redox-Active Inorganic Compounds,MATCH
+1002-89-7,AMMONIUM STEARATE,Non-Redox-Active Inorganic Compounds,9861187,Non-Redox-Active Inorganic Compounds,MATCH
+10025-73-7,CHROMIC CHLORIDE,Non-Redox-Active Inorganic Compounds,24808,Non-Redox-Active Inorganic Compounds,MATCH
+10101-63-0,LEAD IODIDE,Non-Redox-Active Inorganic Compounds,,,ERROR
+10102-50-8,FERROUS ARSENATE,Non-Redox-Active Inorganic Compounds,24938,Non-Redox-Active Inorganic Compounds,MATCH
+13007-92-6,크롬 카보닐(CHROMIUM CARBONYL),Organometallics,25589,Organometallics,MATCH
+1271-28-9,니켈로센,Organometallics,62390,Organometallics,MATCH
+7722-64-7,POTASSIUM PERMANGANATE,"Oxidizing Agents, Strong",516875,"Oxidizing Agents, Strong",MATCH
+7722-84-1,HYDROGEN PEROXIDE,"Oxidizing Agents, Strong",784,"Oxidizing Agents, Strong;Water and Aqueous Solutions",MATCH
+10034-81-8,MAGNESIUM PERCHLORATE,"Oxidizing Agents, Strong",24840,"Oxidizing Agents, Strong",MATCH
+10034-82-9,SODIUM CHROMATE TETRAHYDRATE,"Oxidizing Agents, Strong",22146515,"Oxidizing Agents, Strong;Salts, Basic",MATCH
+10101-50-5,SODIUM PERMANGANATE,"Oxidizing Agents, Strong",23673458,"Oxidizing Agents, Strong",MATCH
+10118-76-0,CALCIUM PERMANGANATE,"Oxidizing Agents, Strong",24959,"Oxidizing Agents, Strong",MATCH
+7553-56-2,IODINE,"Oxidizing Agents, Weak",807,"Oxidizing Agents, Weak",MATCH
+10048-95-0,SODIUM ARSENATE HEPTAHYDRATE,"Oxidizing Agents, Weak",61460,"Oxidizing Agents, Weak;Salts, Basic",MATCH
+10102-49-5,FERRIC ARSENATE,"Oxidizing Agents, Weak",61477,"Oxidizing Agents, Weak;Salts, Basic",MATCH
+132259-10-0,"압축된 공기, 호흡하는 공기(COMPRESSED AIR, BREATHING AIR)","Oxidizing Agents, Weak",195130,"Oxidizing Agents, Strong;Oxidizing Agents, Weak",MATCH
+1303-28-2,ARSENIC PENTOXIDE,"Oxidizing Agents, Weak",14771,"Acids, Weak;Anhydrides;Oxidizing Agents, Weak",MATCH
+1312-03-4,"MERCURIC SUBSULFATE, [SOLID]","Oxidizing Agents, Weak",14799,"Metals, Less Reactive agents;Oxidizing Agents, Weak;Salts, Basic",MATCH
+100-64-1,CYCLOHEXANONE OXIME,Oximes,7517,Oximes,MATCH
+105-64-6,DIISOPROPYL PEROXYDICARBONATE,"Peroxides, Organic",7769,"Peroxides, Organic",MATCH
+105-74-8,LAUROYL PEROXIDE,"Peroxides, Organic",7773,"Peroxides, Organic",MATCH
+131-52-2,SODIUM PENTACHLOROPHENATE,Phenolic Salts,23663539,Aryl Halides;Phenolic Salts,MATCH
+101-18-8,3-HYDROXY-N-PHENYLANILINE,Phenols and Cresols,7546,"Amines, Phosphines, and Pyridines;Phenols and Cresols",MATCH
+10169-02-5,C.I. ACID RED 97,Phenols and Cresols,25026,"Azo, Diazo, Azido, Hydrazine, and Azide Compounds;Phenols and Cresols;Salts, Basic;Sulfonates, Phosphonates, and Thiophosphonates, Organic",MATCH
+105-60-2,CAPROLACTAM,Polymerizable Compounds,7768,Amides and Imides;Polymerizable Compounds,MATCH
+106-87-6,1-VINYL-3-CYCLOHEXENE DIOXIDE,Polymerizable Compounds,7833,Epoxides;Polymerizable Compounds,MATCH
+112-02-7,HEXADECYLTRIMETHYLAMMONIUM CHLORIDE,Quaternary Ammonium and Phosphonium Salts,8154,Non-Redox-Active Inorganic Compounds;Quaternary Ammonium and Phosphonium Salts,MATCH
+1762-95-4,AMMONIUM THIOCYANATE,"Reducing Agents, Strong",15666,"Reducing Agents, Strong;Salts, Acidic;Water and Aqueous Solutions",MATCH
+10039-54-0,HYDROXYLAMINE SULFATE,"Reducing Agents, Strong",24846,"Reducing Agents, Strong;Salts, Acidic",MATCH
+10026-17-2,COBALT FLUORIDE,"Reducing Agents, Weak",24820,"Reducing Agents, Weak;Salts, Basic",MATCH
+101-02-0,TRIPHENYL PHOSPHITE,"Reducing Agents, Weak",7540,"Reducing Agents, Weak;Sulfonates, Phosphonates, and Thiophosphonates, Organic",MATCH
+7758-98-7,CUPRIC SULFATE,"Salts, Acidic",24462,"Salts, Acidic",MATCH
+7786-81-4,NICKEL SULFATE,"Salts, Acidic",24586,"Salts, Acidic",MATCH
+10031-13-7,LEAD(II) ARSENITE,"Salts, Basic",197119,"Salts, Basic",MATCH
+10102-20-2,SODIUM TELLURITE,"Salts, Basic",24935,"Reducing Agents, Weak;Salts, Basic",MATCH
+1344-00-9,규화알루미늄산 나트륨(SODIUM SILICOALUMINATE),Siloxanes,72941443,"Salts, Basic;Siloxanes",MATCH
+1185-81-5,DIBUTYLTIN-BIS(LAURYL MERCAPTIDE),"Sulfides, Inorganic",9561614,"Organometallics;Sulfides, Inorganic",MATCH
+12035-72-2,NICKEL SUBSULFIDE,"Sulfides, Inorganic",25199732,"Sulfides, Inorganic",MATCH
+7220-79-3,"메틸렌 블루, 트리수화물(METHYLENE BLUE, TRIHYDRATE)","Sulfides, Organic",104827,"Amines, Phosphines, and Pyridines;Hydrocarbons, Aromatic;Quaternary Ammonium and Phosphonium Salts;Sulfides, Organic",MATCH
+7772-98-7,SODIUM THIOSULFATE,Sulfite and Thiosulfate Salts,24477,,NO_PUBCHEM_DATA
+10192-30-0,"AMMONIUM BISULFITE, SOLID",Sulfite and Thiosulfate Salts,10441651,"Salts, Acidic;Sulfite and Thiosulfate Salts;Water and Aqueous Solutions",MATCH
+10196-04-0,AMMONIUM SULFITE,Sulfite and Thiosulfate Salts,25041,"Salts, Acidic;Sulfite and Thiosulfate Salts",MATCH
+10431-47-7,POTASSIUM SELENITE,Sulfite and Thiosulfate Salts,23677934,Sulfite and Thiosulfate Salts,MATCH
+13718-59-7,BARIUM SELENITE,Sulfite and Thiosulfate Salts,166893,Sulfite and Thiosulfate Salts,MATCH
+13774-25-9,MAGNESIUM BISULFITE SOLUTION,Sulfite and Thiosulfate Salts,10130272,Sulfite and Thiosulfate Salts;Water and Aqueous Solutions,MATCH
+1071-83-6,GLYPHOSATE,"Sulfonates, Phosphonates, and Thiophosphonates, Organic",3496,"Acids, Carboxylic;Amines, Phosphines, and Pyridines;Sulfonates, Phosphonates, and Thiophosphonates, Organic",MATCH
+111-54-6,"ETHYLENEBISDITHIOCARBAMIC ACID, SALTS AND ESTERS",Thiocarbamate Esters and Salts/Dithiocarbamate Esters and Salts,3000605,"Acids, Weak;Thiocarbamate Esters and Salts/Dithiocarbamate Esters and Salts",MATCH
+10043-01-3,"ALUMINUM SULFATE, SOLID",Water and Aqueous Solutions,24850,"Salts, Acidic;Water and Aqueous Solutions",MATCH
