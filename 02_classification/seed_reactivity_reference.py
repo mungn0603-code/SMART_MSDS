@@ -9,7 +9,7 @@ import sqlite3
 from pathlib import Path
 
 BASE = Path(r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS")
-CSV_PATH = BASE / "01_collection" / "Cameo_reactivity.csv"
+CSV_PATH = BASE / "archive" / "01_collection" / "Cameo_reactivity.csv"
 SCHEMA_PATH = BASE / "02_classification" / "schema.sql"
 DB_PATH = BASE / "02_classification" / "reactivity_reference.db"
 

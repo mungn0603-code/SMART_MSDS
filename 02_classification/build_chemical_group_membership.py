@@ -1,7 +1,7 @@
 import sqlite3, csv
 
 DB = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\reactivity_reference.db"
-CSV = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\01_collection\cas_reactive_group_mapping.csv"
+CSV = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\archive\01_collection\cas_reactive_group_mapping.csv"
 
 conn = sqlite3.connect(DB)
 cur = conn.cursor()
