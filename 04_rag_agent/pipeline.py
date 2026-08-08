@@ -21,6 +21,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 import re
 import sqlite3
 import unicodedata
@@ -33,6 +34,15 @@ SOURCE = "KOSHA_MSDS"
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "reactivity_reference.db"
 CHUNK_DIR = Path(__file__).resolve().parent / "chunks"
+
+
+def load_target_cas(target_csv: str | None) -> set[str] | None:
+    """PHASE 5 대응: --target-csv로 넘긴 CSV의 cas_number만 청킹 대상으로 제한.
+    None이면 기존 동작(msds_sections 전체) 그대로 — 하위호환 유지."""
+    if not target_csv:
+        return None
+    with open(target_csv, encoding="utf-8-sig") as f:
+        return {row["cas_number"] for row in csv.DictReader(f)}
 
 # §8 상한. 실측 (물질,섹션) 합본 최대 2,095자 -> 대부분 무분할, 초과분만 Recursive Split.
 MAX_CHARS = 1800
@@ -189,16 +199,29 @@ def heading(lev: int) -> str:
     return "#" * (lev + 1)
 
 
-def build_chunks(con: sqlite3.Connection, ref: dict[str, dict]) -> list[dict]:
+def build_chunks(
+    con: sqlite3.Connection, ref: dict[str, dict], target_cas: set[str] | None = None,
+    version: str = PIPELINE_VERSION,
+) -> list[dict]:
     cur = con.cursor()
     rows = cur.execute(
         "select cas_number, section, item_name_kor, item_detail, lev, msds_item_code, ordr_idx "
         "from msds_sections order by cas_number, section, ordr_idx"
     ).fetchall()
 
+    skipped_no_ref, skipped_not_target = set(), set()
+
     # (cas, section) -> 정규화된 항목 리스트
     grouped: dict[tuple[str, int], list[dict]] = {}
     for cas, section, name, detail, lev, code, ordr in rows:
+        if target_cas is not None and cas not in target_cas:
+            skipped_not_target.add(cas)
+            continue
+        if cas not in ref:
+            # chemicals 테이블에 없는 고아 레코드(예: 497-19-8, docs/decisions.md §1.2b
+            # UREA CAS 오류 정정 후 msds_sections에만 남은 잔재) — 청킹 대상에서 제외.
+            skipped_no_ref.add(cas)
+            continue
         body, sources, no_data = normalize_detail(detail)
         grouped.setdefault((cas, section), []).append(
             {
@@ -215,6 +238,13 @@ def build_chunks(con: sqlite3.Connection, ref: dict[str, dict]) -> list[dict]:
             }
         )
 
+    if skipped_no_ref:
+        print(f"[경고] chemicals 테이블에 없어 청킹 제외된 고아 CAS {len(skipped_no_ref)}건: "
+              f"{sorted(skipped_no_ref)}")
+    if target_cas is not None and skipped_not_target:
+        print(f"[정보] --target-csv 대상 아니라 제외된 CAS {len(skipped_not_target)}건 "
+              f"(msds_sections엔 있으나 이번 rebuild 범위 밖)")
+
     now = datetime.now(timezone.utc).isoformat(timespec="seconds")
     chunks: list[dict] = []
 
@@ -230,7 +260,7 @@ def build_chunks(con: sqlite3.Connection, ref: dict[str, dict]) -> list[dict]:
             "cameo_group_names": " | ".join(r["group_names"]),
             "revision": r["revision"],
             "source": SOURCE,
-            "version": PIPELINE_VERSION,
+            "version": version,
             "status": "active",
             "created_at": now,
         }
@@ -335,9 +365,9 @@ CREATE INDEX IF NOT EXISTS idx_rag_chunks_abstain ON rag_chunks(abstain);
 """
 
 
-def persist(con: sqlite3.Connection, chunks: list[dict]) -> None:
+def persist(con: sqlite3.Connection, chunks: list[dict], version: str = PIPELINE_VERSION) -> None:
     con.executescript(DDL)
-    con.execute("DELETE FROM rag_chunks WHERE version = ?", (PIPELINE_VERSION,))
+    con.execute("DELETE FROM rag_chunks WHERE version = ?", (version,))
     con.executemany(
         f"INSERT OR REPLACE INTO rag_chunks ({','.join(COLUMNS)}) "
         f"VALUES ({','.join('?' * len(COLUMNS))})",
@@ -396,17 +426,25 @@ def report(chunks: list[dict]) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--no-markdown", action="store_true", help="마크다운 파일 생성 생략")
+    ap.add_argument("--target-csv", default=None,
+                     help="이 CSV(cas_number 컬럼)에 있는 물질만 청킹. 생략 시 기존 동작"
+                          "(msds_sections 전체) 그대로 — PHASE 5: 426/259 두 코퍼스 분리 rebuild용")
+    ap.add_argument("--version", default=PIPELINE_VERSION,
+                     help="rag_chunks.version 태그. 코퍼스별로 다르게 줘야 서로 안 겹침")
     args = ap.parse_args()
+
+    target_cas = load_target_cas(args.target_csv)
 
     con = sqlite3.connect(DB_PATH)
     ref = load_reference(con)
-    chunks = build_chunks(con, ref)
-    persist(con, chunks)
+    chunks = build_chunks(con, ref, target_cas=target_cas, version=args.version)
+    persist(con, chunks, version=args.version)
     if not args.no_markdown:
         write_markdown(chunks)
     con.close()
     report(chunks)
-    print(f"\nDB: {DB_PATH} (rag_chunks)")
+    print(f"\nversion: {args.version}")
+    print(f"DB: {DB_PATH} (rag_chunks)")
     print(f"MD: {CHUNK_DIR}")
 
 

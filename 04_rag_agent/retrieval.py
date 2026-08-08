@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import os
 import pickle
+import re
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
@@ -26,6 +27,25 @@ CACHE_DIR = Path(__file__).resolve().parent / "index"
 
 RRF_K = 60
 MAX_SEQ_LEN = 2048
+
+# STEP 2/3 실측 확정(2026-08-08): §10 "피해야 할 물질"이 173종 코퍼스 안에서 2회 이상
+# 그대로 반복되는 정형문구 15종 - evidence_full173_tagged.jsonl 태깅으로 식별됨.
+# 이 문구가 BM25 어휘매칭으로 상위 rank를 차지해 실제 evidence(주로 §2 분류)를 밀어내는
+# 문제를 완화하기 위해 RRF 융합 시 고정 penalty를 적용한다(실측: Evidence MRR 0.52->0.83,
+# Section 지표엔 부작용 없음 - retrieval_experiments_report.txt 참고). §10 자체는 검색
+# 대상에서 제거하지 않는다.
+BOILERPLATE_PENALTY_LAMBDA = 0.01
+_BOILERPLATE_SEC10_PATH = Path(__file__).resolve().parent / "boilerplate_sec10_values.json"
+_boilerplate_values: set[str] | None = None
+
+
+def _load_boilerplate_values() -> set[str]:
+    global _boilerplate_values
+    if _boilerplate_values is None:
+        import json
+
+        _boilerplate_values = set(json.loads(_BOILERPLATE_SEC10_PATH.read_text(encoding="utf-8")))
+    return _boilerplate_values
 
 EMBEDDING_MODELS = {
     "bge-m3": "BAAI/bge-m3",
@@ -67,23 +87,60 @@ class Corpus:
         return len(self.chunk_ids)
 
 
-def load_corpus(granularity: str) -> Corpus:
+def load_corpus(granularity: str, corpus_tag: str | None = None) -> Corpus:
+    """corpus_tag=None이면 기존 동작 그대로(모든 활성 청크, 하위호환).
+
+    PHASE 5 교훈(중요): rag_chunks.chunk_id(예: sec::{cas}::{section})는 cas+section
+    으로만 정해지고 어느 "코퍼스 정의"에서 왔는지와 무관한 content-addressed 키다.
+    426종 대상과 259종(proposed final) 대상을 각각 다른 rag_chunks.version 태그로
+    두 번 실행했더니, 두 코퍼스가 공유하는 CAS의 chunk_id가 겹쳐서 INSERT OR REPLACE가
+    나중 실행의 version으로 덮어써버렸다(426 전용 202 3종만 남고 나머지는 259 태그로
+    바뀜 — 실측 확인). 즉 **rag_chunks.version은 코퍼스 멤버십 필터로 신뢰할 수 없다.**
+    대신 별도의 `rag_corpus_membership(corpus_tag, cas_number)` 테이블(코퍼스 정의 CSV의
+    cas_number만 담음, 청크 내용과 무관)로 어느 코퍼스에 어떤 CAS가 속하는지를
+    관리하고, 여기서 cas_number 기준으로 rag_chunks를 필터링한다 — chunk_id 충돌
+    문제와 완전히 무관해지는 방식.
+    """
     con = sqlite3.connect(DB_PATH)
     con.row_factory = sqlite3.Row
-    rows = con.execute(
-        "select chunk_id, text, cas_number, chemical_name, section, item_codes, "
-        "       evidence_grade, evidence_grades, cameo_groups, abstain "
-        "from rag_chunks where granularity=? and status='active' order by chunk_id",
-        (granularity,),
-    ).fetchall()
+    if corpus_tag:
+        rows = con.execute(
+            "select rc.chunk_id, rc.text, rc.cas_number, rc.chemical_name, rc.section, rc.item_codes, "
+            "       rc.evidence_grade, rc.evidence_grades, rc.cameo_groups, rc.abstain "
+            "from rag_chunks rc "
+            "join rag_corpus_membership m on m.cas_number = rc.cas_number and m.corpus_tag = ? "
+            "where rc.granularity=? and rc.status='active' order by rc.chunk_id",
+            (corpus_tag, granularity),
+        ).fetchall()
+    else:
+        rows = con.execute(
+            "select chunk_id, text, cas_number, chemical_name, section, item_codes, "
+            "       evidence_grade, evidence_grades, cameo_groups, abstain "
+            "from rag_chunks where granularity=? and status='active' order by chunk_id",
+            (granularity,),
+        ).fetchall()
     con.close()
     if not rows:
-        raise SystemExit(f"rag_chunks 에 granularity={granularity} 청크가 없음. pipeline.py 먼저 실행.")
+        raise SystemExit(f"rag_chunks 에 granularity={granularity} corpus_tag={corpus_tag} 청크가 없음. "
+                          f"pipeline.py 먼저 실행하거나 rag_corpus_membership을 확인할 것.")
     return Corpus(
         chunk_ids=[r["chunk_id"] for r in rows],
         texts=[r["text"] for r in rows],
         meta=[dict(r) for r in rows],
     )
+
+
+def boilerplate_penalty_vector(corpus: Corpus, lam: float = BOILERPLATE_PENALTY_LAMBDA) -> np.ndarray:
+    """corpus 청크별 penalty(section=10이고 "피해야 할 물질" 값이 정형문구 집합에 속하면 lam, 아니면 0)."""
+    values = _load_boilerplate_values()
+    pen = np.zeros(len(corpus), dtype=np.float64)
+    for i, (text, meta) in enumerate(zip(corpus.texts, corpus.meta)):
+        if meta.get("section") != 10:
+            continue
+        m = re.search(r"## 피해야 할 물질\n(.*?)\n## 분해시 생성되는 유해물질", text, re.S)
+        if m and m.group(1).strip() in values:
+            pen[i] = lam
+    return pen
 
 
 def _cache(name: str) -> Path:
@@ -102,9 +159,13 @@ def torch_threads() -> int:
     return n
 
 
-def embed_corpus(model_key: str, gran: str, corpus: Corpus, batch_size: int = 8) -> np.ndarray:
-    """문서 벡터 생성(+캐시). 200종 규모라 1회성 비용 — §4 판단근거."""
-    path = _cache(f"emb_{model_key}_{gran}.npy")
+def embed_corpus(model_key: str, gran: str, corpus: Corpus, batch_size: int = 8, corpus_tag: str = "") -> np.ndarray:
+    """문서 벡터 생성(+캐시). 200종 규모라 1회성 비용 — §4 판단근거.
+    corpus_tag: PHASE 5의 426/259 코퍼스처럼 같은 model/gran 조합에서도 서로 다른
+    코퍼스를 동시에 캐시해두고 싶을 때 구분용(예: "426"/"259proposed"). 비우면 기존
+    동작과 동일한 파일명(하위호환)."""
+    suffix = f"_{corpus_tag}" if corpus_tag else ""
+    path = _cache(f"emb_{model_key}_{gran}{suffix}.npy")
     if path.exists():
         vecs = np.load(path)
         if len(vecs) == len(corpus):
@@ -158,14 +219,15 @@ def build_faiss(vecs: np.ndarray):
     return index
 
 
-def build_bm25(gran: str, corpus: Corpus):
+def build_bm25(gran: str, corpus: Corpus, corpus_tag: str = ""):
     """BM25는 임베딩 모델과 무관하므로 granularity 단위로 캐시.
 
     pickle 사용: 이 스크립트가 같은 머신에서 직접 생성한 캐시만 읽는다(외부 입력 아님).
     BM25Okapi 객체가 JSON 직렬화 대상이 아니라 pickle 을 쓰며, 캐시 파일이 없거나
-    청크 수가 다르면 무조건 재생성한다.
+    청크 수가 다르면 무조건 재생성한다. corpus_tag는 embed_corpus와 동일한 용도.
     """
-    path = _cache(f"bm25_{gran}.pkl")
+    suffix = f"_{corpus_tag}" if corpus_tag else ""
+    path = _cache(f"bm25_{gran}{suffix}.pkl")
     if path.exists():
         with path.open("rb") as f:
             obj = pickle.load(f)
@@ -192,8 +254,14 @@ def bm25_rank(bm25, queries: list[str], k: int) -> np.ndarray:
     return out
 
 
-def rrf_fuse(rank_lists: list[np.ndarray], k: int, rrf_k: int = RRF_K) -> np.ndarray:
-    """여러 랭킹을 Reciprocal Rank Fusion 으로 합침. rank_lists: [(nq, kk), ...]"""
+def rrf_fuse(rank_lists: list[np.ndarray], k: int, rrf_k: int = RRF_K,
+             penalty: np.ndarray | None = None) -> np.ndarray:
+    """여러 랭킹을 Reciprocal Rank Fusion 으로 합침. rank_lists: [(nq, kk), ...]
+
+    penalty: corpus 청크 수 길이의 배열(예: boilerplate_penalty_vector()). 지정하면
+    각 후보의 RRF 점수에서 penalty[doc]를 뺀 뒤 재정렬한다(§10 boilerplate가 상위 rank를
+    차지하는 문제 완화 - STEP 2/3 실측 확정, 미지정시 기존 동작과 완전히 동일/하위호환).
+    """
     nq = rank_lists[0].shape[0]
     fused = np.empty((nq, k), dtype=np.int64)
     for i in range(nq):
@@ -201,6 +269,9 @@ def rrf_fuse(rank_lists: list[np.ndarray], k: int, rrf_k: int = RRF_K) -> np.nda
         for ranks in rank_lists:
             for pos, doc in enumerate(ranks[i]):
                 scores[int(doc)] = scores.get(int(doc), 0.0) + 1.0 / (rrf_k + pos + 1)
+        if penalty is not None:
+            for doc in list(scores):
+                scores[doc] -= float(penalty[doc])
         top = sorted(scores.items(), key=lambda kv: -kv[1])[:k]
         row = [d for d, _ in top]
         row += [-1] * (k - len(row))

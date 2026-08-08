@@ -85,12 +85,13 @@ def metrics(ranks: np.ndarray, gold_sets: list[set[int]]) -> dict[str, float]:
     return {k: v / n for k, v in acc.items()}
 
 
-def prepare(gran: str, gold: list[dict], task: str, sections: set[int] | None = None):
+def prepare(gran: str, gold: list[dict], task: str, sections: set[int] | None = None, corpus_tag: str | None = None):
     """sections 지정 시 검색공간을 해당 섹션으로 축소(§6 payload 의 section 필터).
 
     문서 벡터 캐시는 전체 코퍼스 기준이므로, 캐시를 재생성하지 않고 인덱스만 잘라 쓴다.
+    corpus_tag: PHASE 5 — 426/259proposed 등 rag_corpus_membership 기준 코퍼스 선택.
     """
-    corpus = R.load_corpus(gran)
+    corpus = R.load_corpus(gran, corpus_tag=corpus_tag)
     keep = None
     if sections:
         keep = [i for i, m in enumerate(corpus.meta) if m["section"] in sections]
@@ -123,20 +124,23 @@ def _per_query_ms(fn, n: int = 50) -> float:
     return round(float(np.median(samples)), 3)
 
 
-def _search(model_key: str, gran: str, gold: list[dict], task: str, k: int, sections=None):
-    corpus, kept, gold_sets, dropped, keep = prepare(gran, gold, task, sections)
+def _search(model_key: str, gran: str, gold: list[dict], task: str, k: int, sections=None, corpus_tag=None):
+    corpus, kept, gold_sets, dropped, keep = prepare(gran, gold, task, sections, corpus_tag)
     queries = [g["query"] for g in kept]
-    dvecs = R.embed_corpus(model_key, gran, R.load_corpus(gran))
+    dvecs = R.embed_corpus(model_key, gran, R.load_corpus(gran, corpus_tag=corpus_tag), corpus_tag=corpus_tag or "")
     if keep is not None:
         dvecs = dvecs[keep]
     qvecs = R.embed_queries(model_key, queries, f"{task}_q")
     index = R.build_faiss(dvecs)
     tag = f"{gran}_s{''.join(map(str, sorted(sections)))}" if sections else gran
+    if corpus_tag:
+        tag = f"{tag}_{corpus_tag}"
     bm25 = R.build_bm25(tag, corpus)
 
     d_ranks = R.dense_rank(index, qvecs, k)
     b_ranks = R.bm25_rank(bm25, queries, k)
-    h_ranks = R.rrf_fuse([d_ranks, b_ranks], k)
+    penalty = R.boilerplate_penalty_vector(corpus)  # STEP 2/3 확정 baseline: §10 boilerplate penalty
+    h_ranks = R.rrf_fuse([d_ranks, b_ranks], k, penalty=penalty)
 
     lat = {
         "dense": _per_query_ms(lambda i: index.search(qvecs[i : i + 1], k)),
@@ -146,9 +150,9 @@ def _search(model_key: str, gran: str, gold: list[dict], task: str, k: int, sect
     return corpus, kept, gold_sets, dropped, queries, (d_ranks, b_ranks, h_ranks), lat
 
 
-def evaluate(model_key: str, gran: str, gold: list[dict], task: str, sections=None) -> list[dict]:
+def evaluate(model_key: str, gran: str, gold: list[dict], task: str, sections=None, corpus_tag=None) -> list[dict]:
     corpus, kept, gold_sets, dropped, queries, (d, b, h), lat = _search(
-        model_key, gran, gold, task, TOPK, sections
+        model_key, gran, gold, task, TOPK, sections, corpus_tag
     )
     avg_gold = sum(len(s) for s in gold_sets) / len(gold_sets)
     q_ms = query_encode_ms(model_key, queries)
@@ -191,9 +195,9 @@ def query_encode_ms(model_key: str, queries: list[str], n: int = 20) -> float:
     )
 
 
-def evaluate_reranker(model_key: str, gran: str, rr_key: str, gold: list[dict], task: str, sections=None) -> dict:
+def evaluate_reranker(model_key: str, gran: str, rr_key: str, gold: list[dict], task: str, sections=None, corpus_tag=None) -> dict:
     corpus, kept, gold_sets, dropped, queries, (_d, _b, h), _t = _search(
-        model_key, gran, gold, task, CAND_K, sections
+        model_key, gran, gold, task, CAND_K, sections, corpus_tag
     )
     # 하이브리드 재채택(2026-08-06 결정 재검토, decisions.md §2.4) -> hybrid 상위 후보를 리랭커 입력으로
     ranks, secs = R.rerank(rr_key, queries, h, corpus, TOPK)
@@ -240,25 +244,29 @@ def main() -> None:
     ap.add_argument("--sections", help="검색공간을 이 섹션들로 축소(쉼표 구분). 예: 2,10")
     ap.add_argument("--winner", help="reranker 단계에서 쓸 임베딩 모델 키")
     ap.add_argument("--winner-granularity", help="reranker 단계에서 쓸 청킹 단위")
+    ap.add_argument("--corpus-tag", default=None,
+                     help="PHASE 5: rag_corpus_membership의 corpus_tag(예: 426, 259proposed). "
+                          "미지정시 기존 동작(rag_chunks 전체, 하위호환)")
     args = ap.parse_args()
 
     gold = load_gold(args.task)
     sections = {int(x) for x in args.sections.split(",")} if args.sections else None
     grans = ["section", "item"] if args.granularity == "both" else [args.granularity]
+    name_suffix = f"_{args.corpus_tag}" if args.corpus_tag else ""
 
     if args.stage == "embedding":
         rows = []
         for key in (args.models.split(",") if args.models else list(R.EMBEDDING_MODELS)):
             for gran in grans:
-                rows += evaluate(key, gran, gold, args.task, sections)
-                save(rows, f"02_embedding_{args.task}" + (f"_sec{args.sections.replace(',', '')}" if args.sections else ""))  # 조합마다 중간 저장
+                rows += evaluate(key, gran, gold, args.task, sections, args.corpus_tag)
+                save(rows, f"02_embedding_{args.task}" + (f"_sec{args.sections.replace(',', '')}" if args.sections else "") + name_suffix)  # 조합마다 중간 저장
     else:
         if not args.winner or not args.winner_granularity:
             raise SystemExit("--winner 와 --winner-granularity 필수")
         rows = []
         for rr in (args.rerankers.split(",") if args.rerankers else list(R.RERANKER_MODELS)):
-            rows.append(evaluate_reranker(args.winner, args.winner_granularity, rr, gold, args.task, sections))
-            save(rows, f"03_reranker_{args.task}")
+            rows.append(evaluate_reranker(args.winner, args.winner_granularity, rr, gold, args.task, sections, args.corpus_tag))
+            save(rows, f"03_reranker_{args.task}" + name_suffix)
 
 
 if __name__ == "__main__":

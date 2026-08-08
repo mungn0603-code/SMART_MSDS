@@ -1,0 +1,9 @@
+exp                  config             |  SecR@10  SecMRR |   EvR@5   EvR@10  EvHit@5   EvMRR  EvnDCG10
+weight_sweep         dense=1.0,bm25=1.0 |   0.8627  0.9834 |  0.7292   0.8567   0.9264  0.5157    0.5671
+weight_sweep         dense=1.5,bm25=1.0 |   0.8418  0.9840 |  0.7319   0.8370   0.9269  0.5231    0.5660
+weight_sweep         dense=2.0,bm25=1.0 |   0.8421  0.9844 |  0.7340   0.8377   0.9273  0.5378    0.5751
+weight_sweep         dense=1.0,bm25=0.5 |   0.8421  0.9844 |  0.7340   0.8377   0.9273  0.5378    0.5751
+boilerplate_penalty  lambda=0.0         |   0.8627  0.9834 |  0.7292   0.8567   0.9264  0.5157    0.5671
+boilerplate_penalty  lambda=0.005       |   0.8684  0.9805 |  0.8090   0.9199   0.9560  0.8302    0.7869
+boilerplate_penalty  lambda=0.01        |   0.8684  0.9801 |  0.8113   0.9201   0.9569  0.8347    0.7906
+boilerplate_penalty  lambda=0.02        |   0.6649  0.9758 |  0.9088   0.9567   0.9894  0.8534    0.8334
