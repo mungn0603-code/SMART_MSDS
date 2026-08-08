@@ -14,7 +14,6 @@ from __future__ import annotations
 import hashlib
 import os
 import pickle
-import re
 import sqlite3
 from dataclasses import dataclass
 from pathlib import Path
@@ -28,24 +27,16 @@ CACHE_DIR = Path(__file__).resolve().parent / "index"
 RRF_K = 60
 MAX_SEQ_LEN = 2048
 
-# STEP 2/3 실측 확정(2026-08-08): §10 "피해야 할 물질"이 173종 코퍼스 안에서 2회 이상
-# 그대로 반복되는 정형문구 15종 - evidence_full173_tagged.jsonl 태깅으로 식별됨.
-# 이 문구가 BM25 어휘매칭으로 상위 rank를 차지해 실제 evidence(주로 §2 분류)를 밀어내는
-# 문제를 완화하기 위해 RRF 융합 시 고정 penalty를 적용한다(실측: Evidence MRR 0.52->0.83,
-# Section 지표엔 부작용 없음 - retrieval_experiments_report.txt 참고). §10 자체는 검색
-# 대상에서 제거하지 않는다.
+# STEP 2/3 실측 확정(2026-08-08): §10 "피해야 할 물질" 중 173종 코퍼스 안에서 2회 이상
+# 반복되는 정형문구 15종(boilerplate_sec10_values.json, evidence_full173_tagged.jsonl 태깅으로
+# 식별)이 BM25 어휘매칭으로 상위 rank를 차지해 실제 evidence(§2 분류)를 밀어내는 문제를
+# 완화하려고 RRF 융합 시 고정 penalty를 도입(Evidence MRR 0.52->0.83).
+# 2026-08-09 확장: gold_evidence 재정의상 상대 물질을 직접 지목하는 §10은 0건 확인됨(§0-3
+# STEP2) - 즉 boilerplate 여부와 무관하게 **§10 청크는 전부 gold_evidence가 될 수 없다**.
+# 정형문구 15종만 감점하던 기존 범위를 §10 전체로 넓힘(실측: 나머지 173종/2,160질의에서
+# 추가로 MRR 0.835->0.917, nDCG@10 0.791->0.850, 다른 지표 전부 동반 상승/±0 - 악화 없음).
+# lambda 값은 그대로(튜닝 아님, 적용 범위만 확장). §10 자체는 검색 대상에서 제거하지 않는다.
 BOILERPLATE_PENALTY_LAMBDA = 0.01
-_BOILERPLATE_SEC10_PATH = Path(__file__).resolve().parent / "boilerplate_sec10_values.json"
-_boilerplate_values: set[str] | None = None
-
-
-def _load_boilerplate_values() -> set[str]:
-    global _boilerplate_values
-    if _boilerplate_values is None:
-        import json
-
-        _boilerplate_values = set(json.loads(_BOILERPLATE_SEC10_PATH.read_text(encoding="utf-8")))
-    return _boilerplate_values
 
 EMBEDDING_MODELS = {
     "bge-m3": "BAAI/bge-m3",
@@ -131,16 +122,8 @@ def load_corpus(granularity: str, corpus_tag: str | None = None) -> Corpus:
 
 
 def boilerplate_penalty_vector(corpus: Corpus, lam: float = BOILERPLATE_PENALTY_LAMBDA) -> np.ndarray:
-    """corpus 청크별 penalty(section=10이고 "피해야 할 물질" 값이 정형문구 집합에 속하면 lam, 아니면 0)."""
-    values = _load_boilerplate_values()
-    pen = np.zeros(len(corpus), dtype=np.float64)
-    for i, (text, meta) in enumerate(zip(corpus.texts, corpus.meta)):
-        if meta.get("section") != 10:
-            continue
-        m = re.search(r"## 피해야 할 물질\n(.*?)\n## 분해시 생성되는 유해물질", text, re.S)
-        if m and m.group(1).strip() in values:
-            pen[i] = lam
-    return pen
+    """corpus 청크별 penalty(section=10이면 lam, 아니면 0 - gold_evidence는 전부 §2이므로 §10은 전부 비정답)."""
+    return np.array([lam if m.get("section") == 10 else 0.0 for m in corpus.meta], dtype=np.float64)
 
 
 def _cache(name: str) -> Path:
