@@ -1,11 +1,62 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-09 (§0-3에서 확정했다고 기록한 Evidence 기준 baseline이 실제로는
-`run_ab.py` 채점 코드에 반영되지 않고 있었던 것을 발견·수정한 검증 세션)
+**최종 갱신**: 2026-08-09 (§0-4 Evidence-level Hit 판정 버그 수정에 이어, 실제 실패
+사례를 검토해 §10 penalty 적용범위를 넓힌 세션)
 **현재 단계**: Chemical Selection은 173종으로 최종 동결됨(§0-3 참고). Stage 4 RAG는
-173종 기준 Gold Evidence 재정의 + Retrieval 개선까지 완료됐고, 이번 세션에서 그
-**Evidence 기준 baseline이 코드로 재현 가능함을 검증·수정까지 완료**한 상태(§0-4).
+173종 기준 Gold Evidence 재정의 + Retrieval 개선까지 완료됐고, Evidence 기준
+baseline이 코드로 재현 가능함을 검증(§0-4)한 뒤 실패 사례 분석으로 §10 penalty
+범위를 확장해 **현재 baseline은 hybrid Recall@10 0.9336 / MRR 0.9169**(§0-5).
 다음은 ⑧ Hazard/Reactivity Assessment 단계.
+
+## 0-5. 2026-08-09 갱신: 실패 사례 분석 → §10 penalty 범위 확장 (baseline 개선)
+
+**목적**: §0-4로 Evidence 기준 채점이 정확해진 뒤, "실제로 개선할 문제가 있는가"를
+판단하기 위해 baseline(hybrid, 2,160질의)에서 실패 사례(MRR 계산상 첫 정답 rank가
+5 초과이거나 top20 안에도 없는 질의, 총 93건/2,160=4.3%)를 추려 상위 15건을 직접
+확인했다.
+
+**패턴 발견**: 대다수가 "정답 §2 청크는 코퍼스에 존재하지만, 같은 물질 또는 다른
+물질의 §10 청크가 더 상위 rank를 차지해 밀려남"이었다(예:
+`sec::7487-94-7::2::p1`이 gold인 질의에서 같은 물질의 `sec::7487-94-7::10`이 4위,
+정작 gold는 top20 밖). §0-3 STEP2에서 이미 "상대 물질을 직접 지목하는 §10은 0건"이
+확인돼 있었으므로 — 즉 **boilerplate 여부와 무관하게 §10 청크는 전부 gold_evidence가
+될 수 없다** — 기존 penalty(정형문구 15종만 감점, §10 173개 중 144개만 해당)가
+범위상 좁았다는 게 명확한 단일 원인이었다.
+
+**검증(코드 수정 전 가설 테스트)**: `boilerplate_penalty_vector()`를 "§10이면 무조건
+λ=0.01"로 넓혀 캐시된 벡터로 2,160질의 재채점 → 전 지표 동시 개선(악화 없음):
+
+| Metric | 기존(정형문구 15종만) | 확장(§10 전체) |
+|---|---:|---:|
+| Recall@5 | 0.8118 | 0.8303 |
+| Recall@10 | 0.9204 | 0.9336 |
+| Recall@20 | 0.9676 | 0.9681 |
+| Hit@5 | 0.9569 | 0.9644 |
+| Hit@10 | 0.9866 | 0.9884 |
+| MRR | 0.8352 | **0.9169** |
+| nDCG@10 | 0.7912 | **0.8500** |
+
+λ 값은 그대로 두고 적용 조건만 확장했다(파라미터 튜닝 아님). gold_evidence가 100%
+§2 기반이라 §10 청크가 정답이 되는 경우가 구조적으로 없으므로, 이 확장이 손해를 볼
+경로 자체가 없다 — dense/bm25 단독 지표(penalty 미적용)는 그대로였고 hybrid만
+개선됐다.
+
+**코드 반영**: `retrieval.py`의 `boilerplate_penalty_vector()`를 "section==10이면
+lam, 아니면 0"으로 단순화(정형문구 값 매칭 로직·`_load_boilerplate_values()`·미사용
+`re` import 제거). `boilerplate_sec10_values.json`은 삭제하지 않고 보존 — 코드가
+더는 읽지 않지만 "173종 중 정형문구 15종이 무엇이었는지"의 실측 기록으로 남긴다.
+production 코드(`run_ab.py embedding --models bge-m3-ko --granularity section
+--task pair --sections 2,10 --corpus-tag 173`)로 재현한 결과가 가설 테스트 수치와
+정확히 일치함을 확인.
+
+**현재 baseline(최신)**: hybrid Recall@5=0.8303 / Recall@10=0.9336 / Recall@20=0.9681
+/ Hit@5=0.9644 / Hit@10=0.9884 / MRR=0.9169 / nDCG@10=0.8500 (2,160질의, 15건
+no-gold-evidence 제외). 남은 실패(약 3.6%)는 §10 penalty로 해소되지 않는 다른
+유형(예: 짧은 §2 텍스트 대비 무관 물질의 §10 텍스트가 여전히 우세, 희귀 금속류
+질의에서 정답 물질 자체가 top20 밖) — 리랭커 없이 저비용으로 잡을 수 있는 범위는
+이번 수정으로 소진됐다고 판단, 추가 개선은 후속 세션 판단 필요.
+
+---
 
 ## 0-4. 2026-08-09 갱신: Evidence-level Hit 판정 버그 발견·수정 (검증 세션, 재설계 아님)
 
@@ -600,9 +651,10 @@ MSDS\
 │   ├── test_pipeline.py      자체검증
 │   ├── evalset_pairs.py      쌍 평가셋 (제품 과제)
 │   ├── evalset.py            단일물질 평가셋 (부품 점검용)
-│   ├── retrieval.py          임베딩/FAISS/BM25/RRF(+boilerplate penalty)/리랭커
+│   ├── retrieval.py          임베딩/FAISS/BM25/RRF(+§10 전체 penalty, 2026-08-09 확장)/리랭커
 │   ├── run_ab.py             평가 드라이버 (hybrid에 penalty 기본 적용)
-│   ├── boilerplate_sec10_values.json  §10 정형문구 15종 고정 목록 (2026-08-08 확정)
+│   ├── boilerplate_sec10_values.json  §10 정형문구 15종 목록(2026-08-08) — 코드 미참조,
+│   │                         2026-08-09 penalty가 §10 전체로 확장돼 기록용으로만 보존
 │   ├── llm.py                NVIDIA NIM Nemotron Nano
 │   ├── chunks\               section 805 + item 7,420 마크다운
 │   ├── evalset\              gold_pair(173종 기준 435쌍×5=2,175, gold_evidence 포함) /
