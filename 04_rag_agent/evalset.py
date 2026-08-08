@@ -29,6 +29,7 @@ OUT_DIR = Path(__file__).resolve().parent / "evalset"
 
 SEED = 42
 PER_ITEM_DEFAULT = 12  # 항목코드당 표본 물질 수
+CORPUS_TAG_DEFAULT = "173"  # docs/chemical_selection_final_2026-08-08.md 확정 코퍼스
 
 # EAV 항목코드 -> 질의 템플릿. {n} = 물질 한글명
 TEMPLATES: dict[str, str] = {
@@ -104,13 +105,22 @@ def section_gold(
     return None
 
 
-def build(con: sqlite3.Connection, per_item: int) -> tuple[list[dict], list[dict]]:
+def build(con: sqlite3.Connection, per_item: int, corpus_tag: str = CORPUS_TAG_DEFAULT) -> tuple[list[dict], list[dict]]:
     rng = random.Random(SEED)
-    rows = con.execute(
-        "select chunk_id, cas_number, chemical_name, section, item_codes, abstain, "
-        "       evidence_grade, cameo_groups "
-        "from rag_chunks where granularity='item' order by chunk_id"
-    ).fetchall()
+    if corpus_tag:
+        rows = con.execute(
+            "select rc.chunk_id, rc.cas_number, rc.chemical_name, rc.section, rc.item_codes, rc.abstain, "
+            "       rc.evidence_grade, rc.cameo_groups "
+            "from rag_chunks rc join rag_corpus_membership m "
+            "  on m.cas_number = rc.cas_number and m.corpus_tag = ? "
+            "where rc.granularity='item' order by rc.chunk_id", (corpus_tag,)
+        ).fetchall()
+    else:
+        rows = con.execute(
+            "select chunk_id, cas_number, chemical_name, section, item_codes, abstain, "
+            "       evidence_grade, cameo_groups "
+            "from rag_chunks where granularity='item' order by chunk_id"
+        ).fetchall()
 
     by_code: dict[str, list[tuple]] = {}
     for r in rows:
@@ -148,9 +158,16 @@ def build(con: sqlite3.Connection, per_item: int) -> tuple[list[dict], list[dict
                 sink.append(rec)
 
     # KOSHA MSDS 자체가 없는 물질 -> 물질 특정 근거 없음 -> 무조건 Abstain
-    missing = con.execute(
-        "select cas_number from msds_chem_id_cache where chem_id is null order by cas_number"
-    ).fetchall()
+    if corpus_tag:
+        missing = con.execute(
+            "select c.cas_number from msds_chem_id_cache c "
+            "join rag_corpus_membership m on m.cas_number = c.cas_number and m.corpus_tag = ? "
+            "where c.chem_id is null order by c.cas_number", (corpus_tag,)
+        ).fetchall()
+    else:
+        missing = con.execute(
+            "select cas_number from msds_chem_id_cache where chem_id is null order by cas_number"
+        ).fetchall()
     names = dict(
         con.execute("select cas_number, chemical_name from chemicals").fetchall()
     )
@@ -210,11 +227,13 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--per-item", type=int, default=PER_ITEM_DEFAULT)
     ap.add_argument("--review-n", type=int, default=20)
+    ap.add_argument("--corpus-tag", default=CORPUS_TAG_DEFAULT,
+                     help="rag_corpus_membership 태그(기본: 173 = 확정 코퍼스). 빈 문자열이면 rag_chunks 전체(하위호환)")
     args = ap.parse_args()
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     con = sqlite3.connect(DB_PATH)
-    gold, abstain = build(con, args.per_item)
+    gold, abstain = build(con, args.per_item, args.corpus_tag)
     con.close()
 
     for name, data in (("gold_retrieval", gold), ("gold_abstain", abstain)):
