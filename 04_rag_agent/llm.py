@@ -17,6 +17,8 @@ import argparse
 import hashlib
 import json
 import os
+import time
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -109,8 +111,16 @@ def chat(
         },
         method="POST",
     )
-    with urllib.request.urlopen(req, timeout=timeout) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    # 일시적 서버 과부하(503)/rate limit(429) 재시도. 평가 배치가 15~수백 콜 규모라
+    # 한 번의 순간적 오류로 전체를 잃지 않게 함. 그 외 오류(4xx 등)는 즉시 올린다.
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                return json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            if e.code not in (429, 500, 502, 503, 504) or attempt == 3:
+                raise
+            time.sleep(2**attempt * 3)
 
 
 def ask(prompt: str, **kw) -> str:

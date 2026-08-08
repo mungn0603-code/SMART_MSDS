@@ -46,7 +46,7 @@
 - **평가 지표**: Recall@5, Recall@10, MRR, nDCG, Context Recall, Answer Relevancy
 
 ## 5. Reranker
-- **방식**: bge-reranker-v2-m3(경량/빠름) vs bge-reranker-base(대형/고성능) **A/B**
+- **방식**: bge-reranker-v2-m3(대형/고성능, 568M/2.2GB) vs bge-reranker-base(경량/빠름, 278M/1.2GB) **A/B**
 - **순서**: 임베딩 3파전 승자 확정 후 그 위에서 순차 진행(임베딩×reranker 6조합 전수비교는 200종 MVP 규모 대비 과잉으로 판단 — 필요 시 병렬 전수비교로 전환 가능)
 - **판단 근거**: MSDS는 문서 수가 많지 않아 둘 다 테스트하는 비용이 낮음. 속도-성능 트레이드오프가 꽤 크다.
 - **평가 지표**: Recall, Precision, nDCG, Latency, First Token Time
