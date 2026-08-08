@@ -1,9 +1,130 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-08 (CAMEO 데이터 소스 robots.txt 준수 전환 세션)
-**현재 단계**: Stage 4(RAG) 결과는 2026-08-07 기준 유지, 이번 세션은 Stage 1~3의
-CAS↔CAMEO 그룹 매핑 데이터 소스를 CAMEO 웹 스크레이핑(robots.txt 위반)에서
-PubChem 공식 경로로 전환·재검증하는 별도 트랙
+**최종 갱신**: 2026-08-08 (Stage 4 RAG — 173종 Dataset Freeze + Gold Evidence 재정의 +
+Retrieval 최종 baseline 확정 세션)
+**현재 단계**: Chemical Selection은 173종으로 최종 동결됨(§0-3 참고). Stage 4 RAG는
+이번 세션에서 173종 기준으로 완전히 재동기화됐고, Gold Evidence 재정의 + Retrieval
+개선까지 완료해 **Evidence 기준 baseline이 최초로 확정**된 상태. 다음은 ⑧ Hazard/
+Reactivity Assessment 단계.
+
+## 0-3. 2026-08-08 갱신: Stage 4 RAG — 173종 Dataset Freeze + Gold Evidence 재정의 + Retrieval 최종 baseline (전체 완료)
+
+**배경**: 이 세션은 "①Chemical Selection 완료 → Gold Evidence 확정 → Evaluation Logic
+→ Baseline Retrieval" 순으로 진행하라는 continuation 프롬프트로 시작했다. 그런데 실제
+저장소 상태를 먼저 확인해보니 전제가 어긋나 있었다 — §0-2(CAMEO 트랙)와 **같은 날, 그
+이후에** 화학물질 선정 기준 자체가 재설계되어 **173종으로 재동결**된 상태였고
+(`docs/chemical_selection_final_2026-08-08.md`, MANDATORY 30/HAZARD-RELEVANT 129/
+REPRESENTATIVE 14), 그 근거가 바로 "Selection은 Retrieval Evaluation과 독립되어야
+한다"는 원칙이었다(과거 `259proposed`/`phase6_D`/`phase7_D`/`phase8_E` 등 retrieval
+성능·marginal utility로 물질 수를 정당화하던 방식을 전부 폐기하고
+`archive/chemical_selection_2026-08-08/`로 이동). **왜 먼저 확인이 필요했는가**: 이
+사실을 놓치고 곧바로 Gold Evidence 작업을 시작했다면, 이미 폐기된 기준(426종/259종
+등)으로 만들어진 산출물 위에서 작업하게 될 뻔했다.
+
+### 1) 정리 — 폐기된 diagnostic 트랙 archive 이동
+`04_rag_agent/phase5~8_*.py`, `independent_evalset_prototype.py`,
+`independent_eval_*.jsonl`, `02_embedding_pair_sec210_{259proposed,426}.*` 등은 미커밋
+상태로 남아있던 "426 vs 259 corpus retrieval 비교" 작업 흔적이었다. 위와 같은 이유
+(retrieval 진단으로 selection을 재판정하는 방식 자체가 폐기됨)로
+`archive/chemical_selection_2026-08-08/stage4_rag_diagnostic_2026-08-08/`로 이동.
+**왜**: 상위 archive README가 이미 "왜 이런 시행착오를 거쳤는지 추적 가능하게 보존"
+원칙을 세워뒀고, 같은 원칙을 Stage4 쪽 잔재에도 그대로 적용했다.
+
+### 2) STEP 1 — Dataset Freeze (173종 corpus_tag 등록 + 재동기화)
+`rag_corpus_membership`에 `corpus_tag='173'`을 등록(173종 전부 `rag_chunks` 커버리지
+확인, 누락 0). `evalset_pairs.py`/`evalset.py`에 `--corpus-tag`(기본값 `173`) 옵션을
+추가해 평가셋을 173종 기준으로 재생성: `gold_pair.jsonl` 435쌍×5템플릿=2,175질의,
+`gold_pair_abstain.jsonl` 15쌍×5=75, `gold_retrieval.jsonl` 402건, `gold_abstain.jsonl`
+357건.
+
+**baseline 실측 결과가 기존(198종, Recall@10 0.9234)보다 낮게 나옴(0.8627)** — 원인을
+파고들어 보니 retrieval 품질 저하가 아니라 **n_gold(정답청크 수)에 따른 구조적
+아티팩트**였다: n_gold=4(분할 없음) 쌍만 보면 0.9278로 오히려 더 높고, §10이 여러
+청크로 쪼개져 n_gold=5~6인 쌍만 낮다(0.69/0.55). 173종은 "§10에 구체적 근거가 있는
+물질"을 선정 기준으로 삼았기 때문에(HAZARD-RELEVANT 정의) §10 텍스트가 길어서 분할되는
+비율이 기존보다 높아진 것 — **선정 기준의 부수효과이지 검색기 결함이 아니다**. 이
+진단을 근거로 baseline을 **그대로 동결**하기로 함(지표 정의를 바꿔서 숫자를 올리지
+않음).
+
+### 3) STEP 2 — Gold Evidence 재정의 (근본 원인 재발견)
+26쌍 파일럿에서 §10 "피해야 할 물질" 텍스트를 실제로 읽어보니, **52개 물질 청크 중
+90%가 5종 이하의 정형 문구 반복**이었다(예: `가연성 물질, 환원성 물질 / 금속`이 서로
+무관한 물질들에 글자 하나 안 틀리고 반복). 173종 전체로 확대 확인한 결과도 동일 —
+15종의 정형 문구가 173종 §10의 대다수를 차지하고, **상대 물질을 직접 지목하는 §10은
+0건**이었다. **왜 문제였는가**: 기존 `gold_section`(문서/섹션 단위)을 그대로
+"정답 근거"로 썼다면, 실제로는 아무 관계도 증명 못 하는 boilerplate를 evidence로
+잘못 인정하는 셈이었다 — Document Hit과 Evidence Hit을 구분하자는 이 프로젝트의
+핵심 원칙(§7 본문 도입부)이 바로 이 문제를 겨냥한 것이었는데, 기존 gold 정의는 그
+구분을 못 하고 있었다.
+
+최소 규칙(복잡한 ontology 안 만듦)으로 재정의: §2 GHS 분류는 항상 gold
+(`HAZARD_CLASSIFICATION`), §10은 173종 안에서 2회 이상 반복 확인된 정형문구만
+`BOILERPLATE`로 제외, 나머지는 `NO_DIRECT_MSDS_EVIDENCE`(자료없음) 또는
+`REVIEW_REQUIRED`(1회만 등장해 정형 여부 자동판정 불가 — 억지 해석하지 않음, 173종 중
+9개 물질/45쌍에서 발생). 435쌍/2,175질의 전체 적용 결과: `gold_evidence`가 기존
+`gold_section` 평균 4.28개 → 1.88개로 축소, **그 중 100%가 §2 기반**. `gold_pair.jsonl`에
+`gold_evidence`/`evidence_count`/`evidence_detail` 필드로 병합(원본은
+`gold_pair.jsonl.bak_20260808_230337`로 백업 보존). 부수 발견: 티타늄·텅스텐·
+사이클로헥사논옥심 3종의 §10 "분리 그룹(segregation group)" 필드값이 파싱 결함으로
+비어있음 — evidence 정의 문제와 별개로 `04_rag_agent/pipeline.py`의 §10 서브필드
+파서 확인이 필요한 채로 남겨둠(이번 세션엔 수정 안 함).
+
+### 4) Evidence 기준 재평가 — Section 지표가 가려온 진짜 병목 발견
+Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이가 없는데(@10
+0.863→0.857) MRR·nDCG@10은 거의 반토막**(0.983→0.516, 0.866→0.567)이었다. **왜
+이렇게 갈렸는가**: top-10 안에 정답이 있긴 있지만(Recall 유지), 1순위로 뜨는 건
+대개 boilerplate 청크였고 진짜 evidence(§2)는 순위가 밀려 있었다 — Section 기준
+평가는 "그 섹션 청크가 top-k에 있는가"만 보기 때문에 이 문제를 완전히 가리고
+있었다. Hit@5도 0.9995→0.9264로 떨어져, **질의의 7%가량은 top-5 안에 진짜 evidence가
+전혀 없었다**는 게 처음으로 드러났다.
+
+### 5) STEP 3 — Retrieval 개선 실험 (reranker 없이 해결)
+바로 리랭커를 붙이지 않고, 저비용 대안부터 검증:
+- **실험1 Dense/BM25 weight sweep**: dense 비중을 올려도 Evidence MRR 개선폭이
+  작고(0.516→0.538) Section Recall@10은 오히려 하락(0.863→0.842) — **폐기**.
+- **실험2 Boilerplate penalty**(`adjusted_score = rrf_score - λ×boilerplate_flag`,
+  STEP2에서 이미 확정한 정형문구 판정을 그대로 재사용, 새 classifier 없음): λ=0.01에서
+  **Evidence MRR 0.516→0.835(+62%), nDCG@10 0.567→0.791(+39%)**, Section 지표는 오히려
+  소폭 개선(Recall@10 0.863→0.869)되어 부작용이 없었다. λ=0.02는 더 좋아 보였지만
+  Section Recall@10이 0.66까지 급락(boilerplate 청크가 아예 밀려남)해 채택하지 않음.
+
+**왜 리랭커 대신 이걸 택했나**: 진단(§4)이 지목한 원인이 "BM25 어휘매칭이 정형문구를
+과대평가한다"는 매우 구체적인 것이었고, penalty는 그 원인에 정확히 대응하는 최소
+개입이었다. 근본 원인에 딱 맞는 저비용 수정이 이미 문제를 해소했는데 굳이 무거운
+모델(리랭커)을 도입할 이유가 없었다.
+
+**최종 baseline으로 코드에 반영**: `retrieval.py`에
+`boilerplate_penalty_vector()`(정형문구 15종은 `boilerplate_sec10_values.json`에 고정
+저장) + `rrf_fuse(..., penalty=...)` 파라미터 추가(미지정시 기존 동작과 완전 동일 —
+하위호환), `run_ab.py`의 `_search()`가 hybrid 융합 시 기본으로 이 penalty를 적용하도록
+연결. production 코드 경로로 재현한 최종 수치(173종/2,175질의):
+
+| Metric | 기존 Hybrid | 최종 baseline(+penalty λ=0.01) |
+|---|---:|---:|
+| Evidence Recall@5 | 0.7292 | 0.8118 |
+| Evidence Recall@10 | 0.8567 | 0.9204 |
+| Evidence Hit@5 | 0.9264 | 0.9569 |
+| Evidence MRR | 0.5157 | 0.8352 |
+| Evidence nDCG@10 | 0.5671 | 0.7912 |
+| Section Recall@10 | 0.8627 | 0.8688 |
+| Section MRR | 0.9834 | 0.9806 |
+
+실험 전체 기록은 `04_rag_agent/results/retrieval_experiments_{full.json,report.txt}`,
+최종 비교표는 `04_rag_agent/results/step3_final_baseline_comparison.md`에 보존.
+
+### 다음 세션 확인 필요
+- **REVIEW_REQUIRED 46건(9개 물질)**: 의도적으로 미해결 상태로 남김(억지 해석
+  금지 원칙) — 필요시에만 개별 검토.
+- **§10 "분리 그룹(segregation group)" 파싱 결함**(티타늄/텅스텐/사이클로헥사논옥심):
+  `pipeline.py` 서브필드 파서 확인 필요, evidence 결론에는 영향 없어 이번엔 보류.
+- **`gold_pair_abstain.jsonl`(15쌍)은 173종 기준으로 재생성만 됐고 evidence 태깅은
+  안 함** — abstain 정의(양쪽 J08 자료없음) 특성상 우선순위 낮다고 판단, 필요시 STEP2
+  방식 그대로 적용 가능.
+- **리랭커는 "불필요"가 아니라 "이번 단계 기준으론 보류"** — 향후 물질 수가 늘거나
+  코퍼스가 바뀌면 재검토 여지 있음.
+- 다음 단계는 ⑧ Hazard/Reactivity Assessment(Verified Evidence → 위험성 판정 로직).
+
+---
 
 ## 0-2. 2026-08-08 갱신: CAMEO 데이터 소스 robots.txt 준수 전환 (전체 완료)
 
@@ -93,6 +214,61 @@ Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
   임베딩 인덱스, 평가셋 gold_pair 등)은 전부 **198~203종 기준으로 빌드된 상태**.
   종수가 203→427로 2배 넘게 늘었으니 재구축 필요 여부를 다음 세션에서 판단할
   것 — 이번 세션엔 실행 안 함(범위 밖 판단, 큰 작업이라 별도 확인 필요).
+
+---
+
+## 0-1. 2026-08-07 갱신: 청석면 제외 + 질의 템플릿 다양화 재측정
+
+1. **청석면(12001-28-4) 제외**: 사용자 결단. CSV(200→199 유효 대상, 이하 198종 활성)·DB
+   3테이블(40행)·평가셋 3종에서 제거. 근거 `decisions.md` §1.2a 인접 항목.
+2. **질의 템플릿 단일→5개 다양화**: `docs/retrieval_query_diversity_review_2026-08-07.md`
+   에서 정답 청크 원문에 템플릿 단어("위험성" 51.6%, "취급" 42.7%)가 리터럴 중복됨을
+   실측 확인, 어휘 편향 리스크 제기. `evalset_pairs.py`의 `QUERY_TEMPLATES`를 5개로
+   확장(383쌍 × 5템플릿 = 1,915질의, 그중 4개는 "위험성"/"취급" 의도적 배제)해 재생성.
+3. **재측정 결과** (hybrid, §2·§10 필터, 리랭커 미실행, 2026-08-07):
+
+   | 지표 | 기존(단일템플릿 369쌍) | 신규(5템플릿 1,915질의) |
+   |---|---:|---:|
+   | Recall@10 | 0.9005 | **0.9234** |
+   | Recall@5 | 0.7811 | 0.8166 |
+   | MRR | 0.9986 | 0.9915 |
+   | nDCG@10 | 0.8932 | 0.9104 |
+   | Hit@5 | 1.0000 | 0.9995 |
+   | 질의 임베딩 지연 | 501.724ms (목표 500ms 미달) | **368.009ms (목표 충족)** |
+
+   **질의를 다양화해도 Recall@10·nDCG@10이 오히려 상승**했다 — 단일 템플릿 결과가
+   어휘 중복으로 부풀려졌다는 가설과 반대 방향.
+   질의 임베딩 지연 개선(501.7→368.0ms, 재현시행마다 368~395ms 범위)은 템플릿 문장이
+   짧아진 평균 효과로 추정 — §4-4 목표는 이번 재측정으로 **충족 상태로 전환**됨(단,
+   재측정 전제 조건이 바뀌어서 생긴 부수 효과이니 인코더 자체를 최적화한 결과는 아님).
+
+   **템플릿별 개별 breakdown (383쌍 기준, hybrid, 383개 전용 재실행)** — 5개 중 2개만
+   측정 완료, 나머지 3개는 환경 문제로 미완료(아래 참고):
+
+   | 템플릿 | "위험성"/"취급" 포함 | Recall@10 | MRR | nDCG@10 |
+   |---|---|---:|---:|---:|
+   | t0(기존, 취급·혼합·위험성 포함) | 포함 | 0.9149 | 0.9974 | 0.8990 |
+   | t1("같이 보관해도 안전한가요?") | 미포함 | **0.9503** | 0.9926 | **0.9347** |
+   | t2~t4 | — | 측정 안 됨 | — | — |
+
+   **어휘 편향 가설과 반대 결과**: 리터럴 중복 단어가 없는 t1이 기존 템플릿(t0)보다
+   Recall@10·nDCG@10 모두 더 높게 나왔다. 표본 2개뿐이라 결론으로 단정할 수는 없지만,
+   적어도 "단일 템플릿이 어휘 중복 덕에 부풀려진 숫자"라는 우려는 이 두 표본에서는
+   기각되는 방향. t2~t4까지 마쳐야 확정 가능.
+
+   **환경 문제 진단**: 같은 세션에서 `run_ab.py`를 반복 실행하면 재현되는
+   Segmentation Fault(exit 139)를 총 5회 관측. 패턴은 "세션당 첫 실행은 항상 성공,
+   바로 이어지는 재실행은 실패"— 프로세스 분리(subprocess)·25초 대기를 넣어도 실패가
+   재현되어, 단순 OneDrive 파일 잠금 가설은 기각. `torch`/`FAISS`/`kiwipiepy`를 함께
+   로드하는 상태에서 반복 프로세스 기동 시 Windows 쪽 자원(스레드 풀·DLL 핸들 등)이
+   완전히 해제되지 않는 문제로 추정되나 근본 원인 미확인 — **후속 세션 과제**. 재실행이
+   필요하면 매 실행 사이 텀(수 분 이상)을 두거나 재부팅 후 1회씩 실행 권장.
+   시행 중 `gold_pair.jsonl`이 일시적으로 서브셋 상태로 남는 사고가 있었으나 즉시
+   복구했고, 최종 확인 결과 1,915건(템플릿당 383건) 전체 정상 복원됨.
+4. **원본 CSV(evalset_pairs.py) 재실행 결과 쌍 구성도 바뀜**: 198종 기준 재추출이라
+   기존 369쌍(청석면 포함, per_category 150 상한)과 다른 383쌍이 됨(카테고리 분포
+   Incompatible 135/Caution 128/Compatible 120). `gold_pair_abstain.jsonl`도 67쌍
+   ×5템플릿=335질의로 갱신.
 
 ---
 
@@ -217,11 +393,52 @@ python 04_rag_agent/llm.py --check
 - `.env` 는 이미 `.gitignore` 등록됨. 키 원문은 출력·로그·커밋 어디에도 남기지 말 것
   (`llm.py` 의 `key_fingerprint()` 가 길이+해시만 보여준다)
 
-### 4-2. RAG 지표 측정 (§10, §13 5단계)
-Faithfulness / Context Recall / Context Precision / Answer Relevancy.
-`ragas` **미설치**. 설치 시 NVIDIA NIM은 OpenAI 호환이므로 base_url 지정으로 연결 가능.
-Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로 비워둔 상태 — 실측값을
-먼저 보고하고 확정은 사용자 승인 후.
+### 4-1a. ~~평가셋 질의 다양화~~ **(완료, 2026-08-07)**
+템플릿 5개로 확장, 383쌍×5템플릿=1,915질의로 재측정 완료. 결과는 §0-1 참고. 남은 것은
+템플릿별 개별 breakdown(환경 세그폴트로 미완료, §0-1 참고)뿐.
+
+### 4-2. RAG 지표 측정 (§10, §13 5단계) — **파일럿 완료(n=7), 확대는 후속 과제**
+
+`ragas 0.4.3` 설치·연결 완료. NVIDIA NIM(judge LLM) + bge-m3-ko(embeddings, AnswerRelevancy용)
+조합으로 4개 지표 파일럿 측정.
+
+**패키징 버그 우회**: ragas 0.4.3이 `langchain_community.chat_models.vertexai`를
+무조건 import하는데, `langchain-community` 0.4.x 리스트럭처링으로 그 서브모듈이
+사라져 있음(업스트림 미수정 버그, Vertex AI는 이 프로젝트와 무관). google-cloud
+전체를 설치하는 대신 `sys.modules`에 빈 스텁을 미리 넣어 import만 통과시키는 방식으로
+우회(`rag_metrics.py` 상단 참고, 대형 의존성 설치 안 함).
+
+**신규 스크립트**:
+- `04_rag_agent/generate.py` — gold_pair.jsonl(template_idx=0)에서 카테고리 균형표집한
+  쌍에 대해 (확정 구성으로) 실제 검색 → LLM 답변 생성. reference(오라클 정답)는 같은
+  쌍의 gold_section 전체(§2·§10 완전근거)로 별도 생성 — **사람이 쓴 정답이 없어 LLM
+  생성으로 대체**, 완전 독립적인 참조는 아님(한계로 명시).
+- `04_rag_agent/rag_metrics.py` — 4개 지표 채점, 결과 `results/rag_metrics.csv`.
+
+**파일럿 결과 (n=7, 카테고리 균형표집 15쌍 중 7건 성공, 2026-08-07)**:
+
+| 지표 | 실측 평균 |
+|---|---:|
+| Faithfulness | 0.5104 |
+| Context Precision | 0.4003 |
+| Context Recall | 0.7429 |
+| Answer Relevancy | 0.4672 |
+
+Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로 비워둔 상태 — 이
+값을 사용자에게 보고하고 확정은 승인 후. **표본 7개는 파일럿 규모라 확정 수치가
+아님** — Faithfulness·Context Precision·Answer Relevancy가 모두 0.5 안팎으로 낮게
+나온 건 표본 노이즈일 수도, 실제 생성 프롬프트/검색 개선 여지일 수도 있어 n을 늘려
+재확인이 필요하다.
+
+**환경 문제로 미완료**: 15쌍 전체 채점 목표였으나 8건은 API "Connection error"(5건,
+재시도 로직 추가로 완화) 또는 프로세스 Segmentation Fault(반복 재현, 이 세션 내내
+관측된 것과 동일 계열)로 손실. 병렬화(asyncio.gather) 시도는 3회 연속 시작 직후
+즉시 크래시 — 임베딩 호출만 락으로 직렬화해도 동일해서 되돌림. 크래시 직후 시스템을
+확인하니 python 프로세스가 하나도 없는데 **CPU 81%, 여유메모리 22%**로 부하가 높았음
+— 이번 세션에서 문서·CSV·JSONL·인덱스 캐시를 계속 고쳐써서 OneDrive 동기화가 그
+변경분을 백그라운드에서 처리 중이었을 가능성. **후속 세션 과제**: 시스템이 유휴
+상태일 때(또는 OneDrive 동기화 일시정지 후) 15쌍 전체, 이후 필요시 383쌍 전체로 확대
+재측정.
 
 ### 4-3. Abstain Precision 측정 (§13 6단계)
 평가셋 `gold_pair_abstain.jsonl` **81쌍** 생성 완료.
@@ -235,10 +452,11 @@ Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로
 후보: ONNX Runtime, 동적 양자화(int8), 질의 전용 경량 인코더.
 
 ### 4-5. 조치 대기 (사용자 판단 필요)
-- **청석면(ASBESTOS [BLUE], 12001-28-4)이 200종 리스트에 잔존**.
-  백업 5개 전수추적 결과 **원본 `pool_supplement` 항목**이며 대체 후보가 아니다.
-  기존 안전필터는 **대체 후보 32종에만** 적용됐고 원본 200종은 재검증된 적이 없다.
-  Stage 4 동작에는 영향 없음. 변경 아카이브 §10.
+- ~~청석면(ASBESTOS [BLUE], 12001-28-4)이 200종 리스트에 잔존~~ **(해결, 2026-08-07)**:
+  사용자 결단으로 즉시 제외. CSV 200종, DB 3테이블(40행), 평가셋 3종 반영 완료,
+  인덱스 캐시 재빌드 대기 상태로 삭제함. 근거 `docs/decisions.md` §4-5.
+  **나머지 199종 전수 재검증은 여전히 미착수** — 대체 후보 32종에만 적용됐던 안전필터가
+  원본 리스트 전체에는 아직 미적용.
 - **설계문서 §5 사실오류**: `bge-reranker-v2-m3`를 "경량/빠름", `bge-reranker-base`를
   "대형/고성능"이라 적었으나 반대. 실제 v2-m3=2.2GB(568M), base=1.2GB(278M). 수정 대기.
 - **평가셋 검수 미완**: 샘플 20건 사용자 검수를 못 받은 채 현 템플릿으로 실측 진행됨.
@@ -343,18 +561,24 @@ MSDS\
 │   ├── test_pipeline.py      자체검증
 │   ├── evalset_pairs.py      쌍 평가셋 (제품 과제)
 │   ├── evalset.py            단일물질 평가셋 (부품 점검용)
-│   ├── retrieval.py          임베딩/FAISS/BM25/RRF/리랭커
-│   ├── run_ab.py             평가 드라이버
+│   ├── retrieval.py          임베딩/FAISS/BM25/RRF(+boilerplate penalty)/리랭커
+│   ├── run_ab.py             평가 드라이버 (hybrid에 penalty 기본 적용)
+│   ├── boilerplate_sec10_values.json  §10 정형문구 15종 고정 목록 (2026-08-08 확정)
 │   ├── llm.py                NVIDIA NIM Nemotron Nano
 │   ├── chunks\               section 805 + item 7,420 마크다운
-│   ├── evalset\              gold_pair 369 / gold_pair_abstain 81 / gold_retrieval 407
-│   ├── index\                벡터·BM25 캐시
-│   └── results\              실측 CSV/md
+│   ├── evalset\              gold_pair(173종 기준 435쌍×5=2,175, gold_evidence 포함) /
+│   │                         gold_pair_abstain 75 / gold_retrieval 402 / gold_abstain 357
+│   │                         (*.bak_2026-08-08 = evidence 병합 전 백업)
+│   ├── index\                벡터·BM25 캐시 (corpus_tag=173 포함)
+│   └── results\              실측 CSV/md + retrieval_experiments_*/step3_final_baseline_comparison.md
 ├── 05_evaluation\        (미착수)
+├── archive\
+│   └── chemical_selection_2026-08-08\    173종 재설계 이전 폐기 산출물(선정+RAG 진단 양쪽)
 └── docs\
     ├── HANDOFF.md                            ← 이 문서
+    ├── chemical_selection_final_2026-08-08.md  ★ 화학물질 선정 최종 확정(173종)
     ├── stage4_design_principles_v2.md        설계 확정본
-    ├── stage4_design_changes_2026-08-06.md   ★ 설계 변경 아카이브 (구현과 다른 부분의 기준)
+    ├── stage4_design_changes_2026-08-06.md   설계 변경 아카이브
     ├── HANDOFF_ARCHIVE.md                    과거 이력
     └── msds_risk_assessment_readme.md
 ```
