@@ -226,7 +226,7 @@ def main():
         print('PowerShell 예: $env:KOSHA_SERVICE_KEY = "발급받은키"')
         sys.exit(1)
 
-    con = sqlite3.connect(DB_PATH)
+    con = sqlite3.connect(DB_PATH, timeout=120)  # 병렬 실행 중인 다른 수집 스크립트와의 잠금 대기
     ensure_tables(con)
 
     targets = load_targets(TARGET_CSV)

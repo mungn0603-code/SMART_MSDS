@@ -28,9 +28,22 @@ from collections import Counter
 
 DB_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\reactivity_reference.db"
 OUT_CSV = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\01_collection\undergrad_target_chemicals.csv"
+PUBCHEM_REPORT = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\01_collection\pubchem_verification_report_full.csv"
 
-TARGET_MIN = 200
-TARGET_MAX = 250
+TARGET_MIN = 380
+TARGET_MAX = 420
+
+# 2026-08-08: 판정 기준을 "CAMEO 스크레이핑 일치"에서 "PubChem 재검증 통과"로 전환
+# (docs/decisions.md 1.2b). 풀은 PubChem이 CAMEO 그룹을 확인해준 물질(MATCH/MISMATCH
+# — MISMATCH는 표기차이뿐, 실질 불일치 아님, 상세는 decisions.md 참고)로 제한한다.
+def load_pubchem_confirmed_cas(path=PUBCHEM_REPORT):
+    import csv as _csv
+    confirmed = set()
+    with open(path, encoding="utf-8-sig") as f:
+        for row in _csv.DictReader(f):
+            if row["status"] in ("MATCH", "MISMATCH"):
+                confirmed.add(row["cas_number"])
+    return confirmed
 
 # ---------------------------------------------------------------
 # 1) 그룹 티어 분류 (group_id: tier) - 화공/학부실험 도메인 판단, 필요시 재조정
@@ -49,7 +62,7 @@ GROUP_TIER = {
     63: "MED", 64: "LOW", 65: "HIGH", 66: "LOW", 67: "LOW", 68: "HIGH",
 }
 
-TIER_SLOTS = {"HIGH": 6, "MED": 2, "LOW": 1}
+TIER_SLOTS = {"HIGH": 12, "MED": 4, "LOW": 2}
 
 # ---------------------------------------------------------------
 # 2) 커리큘럼 근거 확인된 큐레이션 리스트 (CAS 직접 검증, 30종)
@@ -81,7 +94,7 @@ CURATED_LIST = [
     ("무기화학", "착물합성/페놀검출", "7705-08-0"),
     ("무기화학", "착물합성", "7786-81-4"),
     ("무기화학", "착물 색반응", "1762-95-4"),
-    ("무기화학", "완충/염기반응", "497-19-8"),
+    ("무기화학", "완충/염기반응", "57-13-6"),
     ("물리화학", "전도도/전기화학 셀", "7447-40-7"),
     ("물리화학", "갈바니 전지(아연)", "7440-66-6"),
     ("물리화학", "갈바니 전지(구리)", "7440-50-8"),
@@ -93,6 +106,19 @@ def main():
     cur = con.cursor()
 
     group_names = dict(cur.execute("SELECT group_id, group_name FROM reactivity_groups").fetchall())
+
+    # PubChem 재검증 통과 + 이미 KOSHA 수집 완료한 것(교차검증 배치 이후 추가된
+    # 반응성 기본물질 등, 리포트 CSV 스냅샷보다 최신)은 허용 풀에 포함
+    pubchem_ok = load_pubchem_confirmed_cas()
+    try:
+        with open(OUT_CSV, encoding="utf-8-sig") as f:
+            import csv as _csv
+            already_rows = list(_csv.DictReader(f))
+    except FileNotFoundError:
+        already_rows = []
+    already_collected = set(r["cas_number"] for r in already_rows)
+    allowed_cas = pubchem_ok | already_collected
+    print(f"[허용 풀] PubChem 재검증 {len(pubchem_ok)}종 + 기존 수집분 {len(already_collected)}종 = {len(allowed_cas)}종")
 
     # --- CURATED_LIST 존재 확인 + 소속 그룹 조회 ---
     curated_rows = []
@@ -113,6 +139,17 @@ def main():
 
     final = {}
     filled_per_group = {}
+
+    # 이미 KOSHA로 실제 수집을 마친 물질은 무조건 보존한다(재생성 때마다
+    # 잘리면 이미 쓴 KOSHA 쿼터·수집 데이터가 목표 리스트에서 유실됨).
+    for row in already_rows:
+        cas, gid = row["cas_number"], int(row["group_id"])
+        final.setdefault(cas, {
+            "cas": cas, "name": row["chemical_name"], "group_id": gid,
+            "source": row["source"], "course": row["course"], "experiment": row["experiment"],
+        })
+        filled_per_group.setdefault(gid, set()).add(cas)
+
     for row in curated_rows:
         final.setdefault(row["cas"], row)
         filled_per_group.setdefault(row["group_id"], set()).add(row["cas"])
@@ -133,7 +170,8 @@ def main():
             WHERE m.group_id = ?
             ORDER BY c.chemical_id
         """, (gid,))
-        pool = [row for row in cur.fetchall() if row[0] not in have and row[0] not in final]
+        pool = [row for row in cur.fetchall()
+                if row[0] not in have and row[0] not in final and row[0] in allowed_cas]
         for cas, name in pool[:need]:
             final[cas] = {
                 "cas": cas, "name": name, "group_id": gid,
@@ -158,7 +196,7 @@ def main():
                     ORDER BY c.chemical_id
                 """, (gid,))
                 for cas, name in cur.fetchall():
-                    if cas in final:
+                    if cas in final or cas not in allowed_cas:
                         continue
                     final[cas] = {
                         "cas": cas, "name": name, "group_id": gid,
@@ -169,9 +207,10 @@ def main():
                 if len(final) >= TARGET_MIN:
                     break
 
-    # --- 250종 상한 강제 (초과분은 topup/supplement 순으로 정리) ---
+    # --- 상한 강제 (초과분은 topup/supplement 순으로 정리, 기존 수집분은 보존) ---
     if len(final) > TARGET_MAX:
-        removable = [k for k, v in final.items() if v["source"] in ("pool_topup", "pool_supplement")]
+        removable = [k for k, v in final.items()
+                     if v["source"] in ("pool_topup", "pool_supplement") and k not in already_collected]
         excess = len(final) - TARGET_MAX
         for k in removable[:excess]:
             del final[k]
