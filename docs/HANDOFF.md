@@ -1,11 +1,50 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-08 (Stage 4 RAG — 173종 Dataset Freeze + Gold Evidence 재정의 +
-Retrieval 최종 baseline 확정 세션)
+**최종 갱신**: 2026-08-09 (§0-3에서 확정했다고 기록한 Evidence 기준 baseline이 실제로는
+`run_ab.py` 채점 코드에 반영되지 않고 있었던 것을 발견·수정한 검증 세션)
 **현재 단계**: Chemical Selection은 173종으로 최종 동결됨(§0-3 참고). Stage 4 RAG는
-이번 세션에서 173종 기준으로 완전히 재동기화됐고, Gold Evidence 재정의 + Retrieval
-개선까지 완료해 **Evidence 기준 baseline이 최초로 확정**된 상태. 다음은 ⑧ Hazard/
-Reactivity Assessment 단계.
+173종 기준 Gold Evidence 재정의 + Retrieval 개선까지 완료됐고, 이번 세션에서 그
+**Evidence 기준 baseline이 코드로 재현 가능함을 검증·수정까지 완료**한 상태(§0-4).
+다음은 ⑧ Hazard/Reactivity Assessment 단계.
+
+## 0-4. 2026-08-09 갱신: Evidence-level Hit 판정 버그 발견·수정 (검증 세션, 재설계 아님)
+
+**배경**: §0-3이 "production 코드 경로로 재현한 최종 수치"라고 적어둔 Evidence 기준
+표(Recall@10 0.9204 등)를 신뢰하기 전에, Hit 판정이 실제로 `gold_evidence`(§2 GHS
+분류 등 진짜 근거) 기준인지 아니면 `gold_section`(§10 boilerplate/review-required
+청크까지 포함) 기준인지 코드로 직접 확인하는 것이 이번 세션의 목적이었다.
+
+**발견**: `run_ab.py:104` `prepare()`가 `key = "gold_item" if gran=="item" else
+"gold_section"`으로 하드코딩돼 있어, `gold_pair.jsonl`에 이미 존재하는 `gold_evidence`
+필드를 전혀 참조하지 않았다. 즉 **§0-3이 "코드로 재현했다"고 적은 수치는 실제로는 그
+커밋된 코드로 재현되지 않는 상태**였다 — 채점은 여전히 `gold_section` 기준으로
+동작했고, 이 필드에는 §10의 무근거 청크(예: `REVIEW_REQUIRED`, `NO_DIRECT_MSDS_EVIDENCE`)가
+정답으로 섞여 있어 "같은 물질의 무관한 §10 청크가 검색돼도 Hit"으로 잘못 셀 수 있는
+구조였다.
+
+**샘플 검증(5건)**: hybrid top-1을 직접 뽑아 대조한 결과 5건 중 2건에서 실제로 재현됨
+(`sec::7697-37-2::10`=REVIEW_REQUIRED, `sec::60-00-4::10`=NO_DIRECT_MSDS_EVIDENCE인
+청크가 기존 코드 기준으론 Hit, evidence 기준으론 MISS).
+
+**수정**: `prepare()`에 4줄만 추가 — `gold_evidence` 필드가 있으면 그걸 정답으로 쓰고,
+없는 gold(예: `gold_retrieval.jsonl`의 fact task)는 기존 동작 그대로 유지(하위호환).
+구조 변경·파라미터 튜닝·재설계 없음.
+
+**재계산 결과 — 수치는 바뀌지 않았다**: 수정된 코드로 173종/2,175질의(2,160질의 유효,
+15건은 gold_evidence 없음)를 캐시된 임베딩·BM25로 재채점한 결과, hybrid
+Recall@5=0.8118/Recall@10=0.9204/Hit@5=0.9569/MRR=0.8352/nDCG@10=0.7912로 §0-3이 이미
+문서화해둔 Evidence 기준 수치와 **소수점 4자리까지 정확히 일치**했다. 즉 §0-3의
+결론(baseline 수치) 자체는 옳았다 — 다만 그 수치를 실제로 재현하는 코드가 커밋되지
+않은 채 문서에만 남아있던 것이 문제였다. 저장 산출물
+`results/02_embedding_pair_sec210_173.{csv,md}`는 재실행 전까지 실제로는
+`gold_section` 기준 옛 수치(n=2175, dropped=0, Recall@10=0.8688, MRR=0.9806 — 이건
+Section 기준 표 값과 일치)를 담고 있었고, 이번 세션에서 Evidence 기준 값으로
+재생성해 문서와 저장 파일을 일치시켰다.
+
+**결론**: baseline 수치는 유지, 코드만 수정. §0-3의 "production 코드 경로로 재현한
+최종 수치"라는 서술은 이제 실제로 참이다.
+
+---
 
 ## 0-3. 2026-08-08 갱신: Stage 4 RAG — 173종 Dataset Freeze + Gold Evidence 재정의 + Retrieval 최종 baseline (전체 완료)
 
