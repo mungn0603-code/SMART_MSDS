@@ -17,8 +17,8 @@ __pycache__/
 # API 비용 없음). 8천개 넘는 청크 markdown + 임베딩/BM25 캐시를 git에 담을 이유 없음.
 # 재현 명령은 docs/HANDOFF.md 참고. reactivity_reference.db는 KOSHA API 호출 비용이
 # 들어간 데이터라 별개로 취급 - 여기서 제외 안 함.
-04_rag_agent/chunks/
-04_rag_agent/index/
+data/chunks/
+data/index/
 
 # 로컬 전용 IDE 설정 - 유저 전역 gitignore에도 있지만 이 저장소를 다른 환경에서
 # clone했을 때도 안전하게 프로젝트 자체 규칙으로 한 번 더 명시

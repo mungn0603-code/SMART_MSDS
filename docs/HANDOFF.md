@@ -1,12 +1,108 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-09 (§0-4 Evidence-level Hit 판정 버그 수정에 이어, 실제 실패
-사례를 검토해 §10 penalty 적용범위를 넓힌 세션)
-**현재 단계**: Chemical Selection은 173종으로 최종 동결됨(§0-3 참고). Stage 4 RAG는
-173종 기준 Gold Evidence 재정의 + Retrieval 개선까지 완료됐고, Evidence 기준
-baseline이 코드로 재현 가능함을 검증(§0-4)한 뒤 실패 사례 분석으로 §10 penalty
-범위를 확장해 **현재 baseline은 hybrid Recall@10 0.9336 / MRR 0.9169**(§0-5).
-다음은 ⑧ Hazard/Reactivity Assessment 단계.
+**최종 갱신**: 2026-08-17 (§0-7: prompt v2 폐기 → CAMEO-context 전환 → 전수실행 →
+문서·저장소 재편 완료)
+**현재 단계**: Chemical Selection 173종 동결(§0-3), Retrieval baseline hybrid
+Recall@10 0.9336 / MRR 0.9169 / Hit@10 0.9884(§0-5)에 이어, Generation 단계도
+CAMEO-context 파이프라인으로 **정답률 99.9% / faithful 97.2%**까지 완료(§0-7,
+상세는 [`GENERATION.md`](GENERATION.md)). 저장소 구조도 numbered stage 폴더에서
+`src/scripts/data/results/docs/archive`로 재편했다(§0-7, [`FILE_GUIDE.md`](FILE_GUIDE.md)).
+**남은 것**: faithful 잔여 실패 2.8%(61건), N종 조합의 RAG 검색 실측(현재는 쌍
+단위까지만), 리랭커 미실행(보류 상태).
+
+## 0-7. 2026-08-17 갱신: prompt v2 폐기 → CAMEO-context 전환 → 전수실행 → 문서·저장소 재편
+
+§0-6이 지목한 over-abstention(46.1%)·과잉위험 판정(30.9%)을 prompt v2/v2.1로
+고쳐보려 했으나 정상 케이스 회귀만 유발해 기각. 대신 CAMEO 반응성 그룹 조회가
+matrix_verdict와 2,160건 전수 100% 일치함을 확인하고, **LLM이 판정을 직접 하지
+않고 CAMEO 판정을 그대로 받아 MSDS 근거로 설명만 하는 구조**로 전환(v4, 사용자
+작성 프롬프트). 이 과정에서 judge가 CAMEO 근거를 못 보고 채점하는 버그를 발견·
+수정했고(같은 13건 파일럿이 6/13→13/13 faithful로 뒤집힘), 전수실행에서 나온
+잔여 unfaithful 203건을 v5로 표적 재시도해 74.3% 회수했다. Cascade Judge(비용
+절감 시도)는 신뢰도 문제로 기각, 전수실행 중 API 429 오류 685건은 재시도 로직
+강화(backoff+jitter, workers 조정)로 전부 해소.
+
+최종: 2,160건 중 2,142건 유효 채점, 정답률 99.9%(판정줄 기준)/93.6%(judge
+재분류 기준), faithful 97.2%, 물질혼동 0건. 상세 경위·프롬프트 반복·실패 패턴
+분석은 전부 [`GENERATION.md`](GENERATION.md)로 옮겼다(이 문서는 앞으로 "지금
+어디까지 왔는가"만 간결하게 유지).
+
+이어서 저장소를 `01_collection~05_evaluation` numbered 폴더에서
+`src/`(재사용 모듈)·`scripts/`(실행 스크립트)·`data/`(DB·평가셋·캐시)·
+`results/`(산출물)·`docs/`(표준 문서 8종)·`archive/`(폐기·기각, 원위치 유지)로
+재편했다. 기각된 실험(cascade judge, prompt v2, RAGAS 파이프라인)은
+`archive/generation_experiments/`로, 흡수된 원본 상세 문서는
+`archive/superseded_docs/`로 이동. 전체 경위·파일 매핑은
+[`PIPELINE.md`](PIPELINE.md)/[`FILE_GUIDE.md`](FILE_GUIDE.md).
+
+---
+
+## 0-6. 2026-08-09~17 — STEP1~5: Generation·Judge·Retrieval×Generation 분리분석 (§0-7로 대체된 초기 결론)
+
+**배경**: §0-5까지 확정된 Retrieval baseline 위에서, 실제 생성(Generation) 단계
+성능을 측정하기 위해 STEP1~5를 진행했다. STEP1(Retrieval 결과 고정, 2,160질의
+Hit@10=0.9884 재확인) → STEP2(Generation baseline prompt/model 확정, pilot 검증) →
+STEP3(Generation 전체 실행, 2,160건 중 2,158건 정상/오류 2건) → STEP4(Judge 평가,
+2,158건 전체를 Large Judge로 평가 — `meta/llama-3.1-8b-instruct` 대체실험 15건은
+별도 진행했으나 최종 Judge로 미채택, 재실행 없음) → STEP5(`04_rag_agent/analyze_generation.py`
+신규 작성, STEP3+STEP4 결과를 join해 Retrieval×Generation 분리분석). self-check
+3건 3/3 통과, `bucket4()` 재계산과 저장된 라벨 100% 일치 확인.
+
+**STEP5 핵심 수치** (`04_rag_agent/results/step5_summary.json`, n=2,158):
+
+| bucket | 건수 | 비율 |
+|---|---:|---:|
+| evidence_retrieved__correct | 427 | 19.8% |
+| evidence_retrieved__over_abstain | 995 | 46.1% |
+| evidence_retrieved__wrong | 666 | 30.9% |
+| evidence_retrieved__unclassified(judge 판정추출 실패) | 45 | 2.1% |
+| no_evidence_retrieved__answer_or_abstain(retrieval miss) | 25 | 1.2% |
+
+**해석 (원본 `generation_baseline.jsonl`/`eval_generation.jsonl` 재집계로 검증,
+STEP5 로직·Judge 재실행 없음)**:
+1. Retrieval은 병목이 아님 — hit rate 98.84%(2,133/2,158), miss 25건뿐.
+2. 실패의 77.9%(1,661/2,133, `retrieval_success_generation_failure_ratio`)가
+   retrieval 성공 상태에서도 Generation 단계에서 발생.
+3. **over_abstain(46.1%, 최대 버킷)**: matrix_verdict 등급(Compatible/Caution/
+   Incompatible)별로 44~49%로 고르게 분포 — 특정 위험등급 문제가 아니라 "쌍별
+   반응 명시 문장이 없으면 근거가 있어도 회피"하는 일반화된 정책성 실패. 원인은
+   KOSHA MSDS가 물질별(per-substance) 문서라 "두 물질이 함께일 때"를 직접 명시한
+   문장이 소스 데이터에 구조적으로 드물다는 점(§0-3 STEP2에서 이미 "상대 물질을
+   직접 지목하는 §10은 0건"으로 확인된 것과 같은 계열의 문제).
+4. **wrong(30.9%)**: 방향성이 뚜렷함 — 정답 Compatible인데 오답 처리된 306건 중
+   238건(78%)이 Incompatible로 과잉판정, 정답 Caution 오답 282건 중 233건(83%)도
+   Incompatible로 과잉판정. 반대로 진짜 위험한 조합(Incompatible)을 안전하다고
+   오판(false negative, 더 위험한 오류 방향)한 경우는 78건(전체의 3.6%)뿐. "개별
+   물질의 위험문구(가연성·부식성 등)"를 "두 물질 간 실제 반응성"으로 오인해
+   과잉위험 쪽으로 치우치는 편향으로 판단.
+5. correct 버킷(427건) 중 65건(15.2%)은 최종 판정은 matrix_verdict와 일치했지만
+   근거 청크에 없는 부연설명을 덧붙임(faithful=False) — 판정 로직보다 답변 생성
+   과정의 근거 외 일반화 경향.
+6. no_evidence(25건, 1.2%)는 표본이 작아 별도 결론 도출 안 함 — retrieval hit
+   rate가 이미 98.84%라 전체 성능에 미치는 영향도 무시할 수준.
+
+**정정**: 이전 세션 구두 보고에서 over_abstain/wrong 수치가 서로 바뀌어 전달된
+적 있음(오기: wrong=995/over_abstain=666) — 본 절 수치가 `step5_summary.json`
+원본 기준 정정판. "unclassified"(45건)도 "unfaithful-but-correct"가 아니라 judge가
+`predicted_verdict`를 추출하지 못한 별개의 케이스(파싱/추출 실패)임을 확인.
+
+**사용자 결정(2026-08-17)**: over-abstention을 prompt 수정(v2)으로 개선 시도.
+진행 순서 — (1) 본 절로 결과표 아카이빙 완료 → (2) prompt v2 설계 → (3) 전수
+재실행 없이 소규모 pilot으로 개선 확인(기존 `generation_v2_pilot.jsonl`,
+`generation_v2_1_pilot.jsonl` 계열 인프라 재사용) → (4) 개선 확인되면 프로젝트
+정리(README 등) → (5) 공개/발표자료.
+
+**타협 불가 원칙 재확인**: v2는 "매트릭스 단독 최종판정 금지"·"근거 부족시
+Abstain" 원칙(§2) 자체를 없애는 방향이 아니라, "개별 위험군 조합 규칙으로 판단
+가능한 경우까지 과도하게 회피하지 않도록" 범위만 조정하는 것. wrong 방향(과잉위험
+판정) 악화를 막는 가드레일을 v2 설계에 반드시 포함.
+
+**산출물**: `04_rag_agent/results/step5_summary.json`,
+`step5_failure_sample.jsonl`(35건 대표사례, 근거 원문 포함),
+`step5_condensed_review.txt`(사람이 읽기 쉬운 버전),
+`step5_clean_correct_sample.jsonl`(정답+faithful 15건 query_id).
+
+---
 
 ## 0-5. 2026-08-09 갱신: 실패 사례 분석 → §10 penalty 범위 확장 (baseline 개선)
 
@@ -111,7 +207,7 @@ Section 기준 표 값과 일치)를 담고 있었고, 이번 세션에서 Evide
 → Baseline Retrieval" 순으로 진행하라는 continuation 프롬프트로 시작했다. 그런데 실제
 저장소 상태를 먼저 확인해보니 전제가 어긋나 있었다 — §0-2(CAMEO 트랙)와 **같은 날, 그
 이후에** 화학물질 선정 기준 자체가 재설계되어 **173종으로 재동결**된 상태였고
-(`docs/chemical_selection_final_2026-08-08.md`, MANDATORY 30/HAZARD-RELEVANT 129/
+(`archive/superseded_docs/chemical_selection_final_2026-08-08.md`, MANDATORY 30/HAZARD-RELEVANT 129/
 REPRESENTATIVE 14), 그 근거가 바로 "Selection은 Retrieval Evaluation과 독립되어야
 한다"는 원칙이었다(과거 `259proposed`/`phase6_D`/`phase7_D`/`phase8_E` 등 retrieval
 성능·marginal utility로 물질 수를 정당화하던 방식을 전부 폐기하고
@@ -231,7 +327,7 @@ Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이�
 `robots.txt`의 `/search` 계열 disallow를 위반한 상태로 식별돼 있었다(비상업
 포트폴리오 목적으로 사용 승인은 받았으나 방어 논리가 필요한 취약점으로 트래킹
 중이었음). 이번 세션에서 대체 경로를 검증·전환·확대 실행까지 전부 완료했다.
-상세 근거는 `docs/decisions.md` §1.2b/§1.2c/§1.2a-upd, 실행 스크립트는
+상세 근거는 `archive/superseded_docs/decisions.md` §1.2b/§1.2c/§1.2a-upd, 실행 스크립트는
 `01_collection/pubchem_verify_groups.py` + `02_classification/group_fallback.py`.
 
 1. **경로 검증 (12종 파일럿 → 199종 → 3,396종 전체)**:
@@ -307,7 +403,7 @@ Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
   거르지 않기로 결정 — 이 배치의 선정 이유 자체가 "위험 상대로 자주 지목됨"이라
   걸러내면 이 프로젝트 목적(반응성 위험 고지)과 충돌. round2 필터는 §1.2
   커리큘럼 대표성 축에만 유효(교육 현실성 문제였지 위험도 문제가 아니었음).
-  상세는 `docs/decisions.md` §1.2d.
+  상세는 `archive/superseded_docs/decisions.md` §1.2d.
 - **미반영 — 다음 세션 확인 필요**: Stage 4(RAG) 파이프라인(청킹 805개 섹션,
   임베딩 인덱스, 평가셋 gold_pair 등)은 전부 **198~203종 기준으로 빌드된 상태**.
   종수가 203→427로 2배 넘게 늘었으니 재구축 필요 여부를 다음 세션에서 판단할
@@ -319,7 +415,7 @@ Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
 
 1. **청석면(12001-28-4) 제외**: 사용자 결단. CSV(200→199 유효 대상, 이하 198종 활성)·DB
    3테이블(40행)·평가셋 3종에서 제거. 근거 `decisions.md` §1.2a 인접 항목.
-2. **질의 템플릿 단일→5개 다양화**: `docs/retrieval_query_diversity_review_2026-08-07.md`
+2. **질의 템플릿 단일→5개 다양화**: `archive/superseded_docs/retrieval_query_diversity_review_2026-08-07.md`
    에서 정답 청크 원문에 템플릿 단어("위험성" 51.6%, "취급" 42.7%)가 리터럴 중복됨을
    실측 확인, 어휘 편향 리스크 제기. `evalset_pairs.py`의 `QUERY_TEMPLATES`를 5개로
    확장(383쌍 × 5템플릿 = 1,915질의, 그중 4개는 "위험성"/"취급" 의도적 배제)해 재생성.
@@ -373,7 +469,7 @@ Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
 ## 0. 이번 세션(2026-08-06 Stage 4) 결과 요약
 
 Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진행 중 설계 변경이 7건
-발생했고, 전부 근거와 함께 **`docs/stage4_design_changes_2026-08-06.md`** 에 아카이빙했다.
+발생했고, 전부 근거와 함께 **`archive/superseded_docs/stage4_design_changes_2026-08-06.md`** 에 아카이빙했다.
 설계 원칙 문서(`stage4_design_principles_v2.md`)와 실제 구현이 다른 부분은 그 문서가 기준이다.
 
 ### 확정 구성
@@ -413,7 +509,7 @@ Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진�
 > `Retrieval ≤ 10ms` 예산 안에 들어옴을 확인 → **dense 단독 결정을 철회하고 hybrid로
 > 재채택**. `04_rag_agent/run_ab.py`의 `evaluate_reranker()`에 남아있던 dense 우회
 > 코드(`h = d`)도 되돌려 실제 hybrid 후보가 리랭커 입력으로 들어가도록 수정.
-> 상세 근거·이력은 `docs/decisions.md` §2.4, `docs/stage4_design_changes_2026-08-06.md` §5·§5-1.
+> 상세 근거·이력은 `archive/superseded_docs/decisions.md` §2.4, `archive/superseded_docs/stage4_design_changes_2026-08-06.md` §5·§5-1.
 > **리랭커 단계는 아직 미실행** — hybrid 후보 기준으로 리랭커까지 재검증하는 것은
 > 다음 세션 과제.
 
@@ -471,7 +567,7 @@ Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진�
 9. **평가 드라이버** `run_ab.py` — Recall@5/10/20, Hit@5/10, MRR, nDCG@10,
    구간별 레이턴시(질의임베딩 / 검색 / 합계). 다중정답 채점 자체검증 통과
 10. **LLM 클라이언트** `llm.py` — NVIDIA NIM Nemotron Nano (키 미설정 상태, 아래 4-1)
-11. **설계변경 아카이브** `docs/stage4_design_changes_2026-08-06.md` (12절, 380줄)
+11. **설계변경 아카이브** `archive/superseded_docs/stage4_design_changes_2026-08-06.md` (12절, 380줄)
 
 ---
 
@@ -552,7 +648,7 @@ Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로
 ### 4-5. 조치 대기 (사용자 판단 필요)
 - ~~청석면(ASBESTOS [BLUE], 12001-28-4)이 200종 리스트에 잔존~~ **(해결, 2026-08-07)**:
   사용자 결단으로 즉시 제외. CSV 200종, DB 3테이블(40행), 평가셋 3종 반영 완료,
-  인덱스 캐시 재빌드 대기 상태로 삭제함. 근거 `docs/decisions.md` §4-5.
+  인덱스 캐시 재빌드 대기 상태로 삭제함. 근거 `archive/superseded_docs/decisions.md` §4-5.
   **나머지 199종 전수 재검증은 여전히 미착수** — 대체 후보 32종에만 적용됐던 안전필터가
   원본 리스트 전체에는 아직 미적용.
 - **설계문서 §5 사실오류**: `bge-reranker-v2-m3`를 "경량/빠름", `bge-reranker-base`를
@@ -563,7 +659,7 @@ Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로
 
 ### 4-6. CAMEO 그룹 매핑 데이터 소스 전환 (robots.txt 준수) — **완료(199종 + 3,396종 전체)**
 2026-08-07 파일럿(12종) → 199종 전체 실행까지 완료. 상세 근거·엔드포인트·robots.txt
-뉘앙스·199종 실행 결과 표는 `docs/decisions.md` §1.2b 참고. 스크립트:
+뉘앙스·199종 실행 결과 표는 `archive/superseded_docs/decisions.md` §1.2b 참고. 스크립트:
 `01_collection/pubchem_verify_groups.py`(재실행 가능, idempotent — `INSERT OR IGNORE`).
 결과: MATCH 183 / 표기차이뿐인 사실상 일치 5(그룹명 정정으로 해소) / 진짜 결측 1
 (티오황산나트륨) / CID 조회 실패 9(혼합물·희귀 화합물, PubChem 자체 커버리지 한계).
@@ -571,16 +667,16 @@ UREA CAS 오류(`497-19-8`→`57-13-6`)는 DB(`chemical_id 3398` 삭제)와
 `01_collection/undergrad_target_chemicals.csv` 양쪽 정정 완료.
 **그룹 대표물질 폴백 로직 — 구현 완료(2026-08-08)**: `02_classification/group_fallback.py`.
 결측/CID실패 10종 전부 같은 그룹 내 KOSHA MSDS 확보 완료 물질로 즉시 대체 가능함을
-확인(급한 블로커 아님). 상세는 `docs/decisions.md` §1.2c.
+확인(급한 블로커 아님). 상세는 `archive/superseded_docs/decisions.md` §1.2c.
 
 **3,396종 전체 풀 실행 완료(2026-08-08)**: MATCH 3,185 / 표기차이(정정완료) 7 /
 진짜결측 9(전부 혼합물+티오황산나트륨) / CID조회실패 195(고분자·광물·총칭명 —
 PubChem 구조적 커버리지 한계). **실질 문제는 3,396종 중 204종(6.0%)뿐**이고
-전부 그룹 대표물질 폴백(§1.2c) 적용 대상. 상세는 `docs/decisions.md` §1.2b.
+전부 그룹 대표물질 폴백(§1.2c) 적용 대상. 상세는 `archive/superseded_docs/decisions.md` §1.2b.
 남은 것 없음 — 이 항목은 종료.
 ### 4-7. 반응성 기본물질 풀 확장 — **실행 완료(2026-08-08)**
 §1.2a의 "섹션10 등장빈도 추정"을 197종 §10 "피해야 할 물질" 전수조사로 실측
-(`docs/decisions.md` §1.2a-upd): **물 55.3%, 금속(포괄) 22.3%**, 나머지 키워드는
+(`archive/superseded_docs/decisions.md` §1.2a-upd): **물 55.3%, 금속(포괄) 22.3%**, 나머지 키워드는
 0%. 물은 실측 1순위, 금속은 이미 68그룹 체계·현재 풀에 대표종 다수 있어 신규
 추가 불요.
 - **Tier 1(그룹매핑 이미 있음, KOSHA MSDS만 필요)**: 물(7732-18-5, "Water and

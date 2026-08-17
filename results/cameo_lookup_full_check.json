@@ -1,0 +1,11 @@
+{
+  "n_total": 2160,
+  "n_covered": 2160,
+  "n_no_group": 0,
+  "n_match": 2160,
+  "n_mismatch": 0,
+  "coverage_rate": 1.0,
+  "match_rate_of_covered": 1.0,
+  "match_rate_of_total": 1.0,
+  "mismatch_direction_counts": {}
+}

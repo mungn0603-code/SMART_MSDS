@@ -1,0 +1,33 @@
+{
+  "n_joined": 2158,
+  "retrieval_hit_rate": 0.9884,
+  "generation_correctness_vs_matrix_diagnostic": 0.375,
+  "over_abstention_rate": 0.4662,
+  "wrong_answer_rate_vs_matrix_diagnostic": 0.5781,
+  "unsupported_answer_rate": 0.0987,
+  "citation_evidence_precision_mean": 0.6004,
+  "citation_evidence_recall_mean": 0.5118,
+  "retrieval_success_generation_failure_ratio": 0.7787,
+  "bucket4": {
+    "evidence_retrieved__correct": {
+      "count": 427,
+      "ratio": 0.1979
+    },
+    "evidence_retrieved__over_abstain": {
+      "count": 995,
+      "ratio": 0.4611
+    },
+    "evidence_retrieved__wrong": {
+      "count": 666,
+      "ratio": 0.3086
+    },
+    "evidence_retrieved__unclassified": {
+      "count": 45,
+      "ratio": 0.0209
+    },
+    "no_evidence_retrieved__answer_or_abstain": {
+      "count": 25,
+      "ratio": 0.0116
+    }
+  }
+}

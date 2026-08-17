@@ -5,7 +5,10 @@
 보관하며, 각 하위 폴더에는 무엇을 왜 옮겼는지 설명하는 `NOTES.md`가 있다.
 
 현재 채택 상태의 기준 문서는 [`docs/HANDOFF.md`](../docs/HANDOFF.md)이며, 이 문서에
-없는 과거 정정 이력은 [`docs/HANDOFF_ARCHIVE.md`](../docs/HANDOFF_ARCHIVE.md)를 본다.
+없는 과거 정정 이력은 [`superseded_docs/HANDOFF_ARCHIVE.md`](superseded_docs/HANDOFF_ARCHIVE.md)를 본다.
+`docs/`는 2026-08-17부터 8개 표준 문서(README/PIPELINE/DATA/RETRIEVAL/GENERATION/
+FILE_GUIDE/HANDOFF/PROJECT_LOG)만 유지한다 — 그 문서들이 흡수한 원본 상세 문서는
+[`superseded_docs/`](superseded_docs/)에 있다.
 
 ## 폴더 구성
 
@@ -14,7 +17,9 @@
 | `01_collection/` | KOSHA/CAMEO 수집 단계 — 실행 로그, 폐기된 CSV 스냅샷, 해결된 이슈의 진단 스크립트 | [NOTES.md](01_collection/NOTES.md) |
 | `02_pubchem_rejected/` | CAS↔물질 매핑에 시도했다 기각한 PubChem SDF 경로(CAMEO 경로로 최종 대체) | [NOTES.md](02_pubchem_rejected/NOTES.md) |
 | `04_rag_agent/` | RAG 검색 단계 — 실행 로그, 섹션필터 적용 전 폐기된 A/B 실험 결과 | [NOTES.md](04_rag_agent/NOTES.md) |
+| `generation_experiments/` | Generation 단계 — 기각된 prompt v2/v2.1, Cascade Judge, RAGAS 파이프라인 | [NOTES.md](generation_experiments/NOTES.md) |
 | `design_docs/` | 설계 철학 자체가 교체되며 폐기된 문서(Stage 4 기술스택 도입근거 v1) | [NOTES.md](design_docs/NOTES.md) |
+| `superseded_docs/` | 2026-08-17 문서 재편으로 8개 표준 문서에 흡수된 원본 상세 문서(decisions.md 등) | [NOTES.md](superseded_docs/NOTES.md) |
 | `adhoc_check_scripts/` | 특정 시점 이슈 조사용 1회성 스크립트(이슈 해결 후 존재 목적 소멸) | [NOTES.md](adhoc_check_scripts/NOTES.md) |
 
 ## 원칙

@@ -22,7 +22,7 @@ MSDS 위험성평가 자동화 프로젝트의 시작(2026-07-29)부터 현재�
 
 ## 2026-07-30 — 계획 문서 확정, 스키마 설계 시작
 
-- `docs/msds_risk_assessment_readme.md` 작성(10:57) — 이 시점까지의 유일한 기준 문서로
+- `archive/superseded_docs/msds_risk_assessment_readme.md` 작성(10:57) — 이 시점까지의 유일한 기준 문서로
   선언, 기존 산출물 전부 폐기 후 재출발.
 - 반응성 그룹 체계를 **CAMEO 68그룹**으로 확정(구 EPA-600/2-80-076 41그룹 폐기 — 41그룹은
   CAMEO가 68그룹으로 확장하기 전 구버전이었기 때문).
@@ -109,12 +109,12 @@ Stage 4(RAG) 설계부터 구현·실측까지 한 세션에서 완주했다.
     후보 3개 전부 KOSHA 미등록).
 - **교훈 기록**: 단일 자동 안전판정(GHS H-code 하나)은 못 믿음 — 정부DB 자체 분류가
   부실한 경우 위험물질도 통과 가능. 용도필드+이름 직접 검토 병행 필요.
-- `docs/HANDOFF_ARCHIVE.md`(10:35), `docs/session_log_2026-08-06.md`(12:07) 작성 —
+- `archive/superseded_docs/HANDOFF_ARCHIVE.md`(10:35), `archive/superseded_docs/session_log_2026-08-06.md`(12:07) 작성 —
   Stage 1 완주 및 과거 정정 이력 정리.
 
 ### 오후~저녁 — Stage 4(RAG) 설계부터 실측까지
 - **설계 v1 → v2 전면 교체(같은 날)**: v1의 최상위 철학("기존 자산(KDIC) 재사용 우선")을
-  버리고 v2("검색 성능 우선")로 전환. `docs/stage4_design_principles_v2.md`(14:21)
+  버리고 v2("검색 성능 우선")로 전환. `archive/superseded_docs/stage4_design_principles_v2.md`(14:21)
   확정본 작성, v1은 `archive/design_docs/`로 보존.
 - `04_rag_agent/pipeline.py` / `test_pipeline.py`(14:42) — 본문추출→Normalize→Chunk→
   Metadata 파이프라인. section 청크 805개 / item 청크 7,420개 생성.
@@ -125,7 +125,7 @@ Stage 4(RAG) 설계부터 구현·실측까지 한 세션에서 완주했다.
   으로 우선 검증. `gold_pair.jsonl` 369쌍(Incompatible 135/Caution 114/Compatible 120),
   `gold_pair_abstain.jsonl` 81쌍. 단일물질 평가셋은 부품 점검용(`--task fact`)으로 격하.
   N종(N≥3) 조합은 쌍 판정을 worst-case로 종합하는 설계까지만 되어있고 미구현
-  (`docs/decisions.md` §2.10).
+  (`archive/superseded_docs/decisions.md` §2.10).
 - `run_ab.py`(16:40)로 실측 진행, 주요 발견:
   - **섹션 §2·§10 필터 적용(805→409청크)**: 정확도(Recall@10 +1.59%p, nDCG@10 +3.68%p)와
     속도(3.3배 단축)가 동시에 개선되는 순수 이득 확인.
@@ -134,7 +134,7 @@ Stage 4(RAG) 설계부터 구현·실측까지 한 세션에서 완주했다.
     단독 채택** — 레이턴시 차이(6.19ms)가 사용자가 정한 예산(10ms) 안에 들어와 실측과
     결정이 충돌하는 상황이 그대로 기록됨.
   - 리랭커 미실행 결정(Hit@5=Hit@10=1.0000으로 "탐지 실패" 문제가 없다는 근거).
-- `docs/stage4_design_changes_2026-08-06.md`(16:53) — 위 7건(D1~D7)의 변경과 근거를
+- `archive/superseded_docs/stage4_design_changes_2026-08-06.md`(16:53) — 위 7건(D1~D7)의 변경과 근거를
   전부 아카이빙(380줄, 12절).
 - `04_rag_agent/llm.py`(17:15) — NVIDIA NIM Nemotron Nano 클라이언트(API 키 미설정
   상태로 마무리).
@@ -163,7 +163,7 @@ Stage 4(RAG) 설계부터 구현·실측까지 한 세션에서 완주했다.
   한 번에 보고 싶다"는 것으로 요구사항 재확인 → `SubstanceProfile`, `to_table()`
   (N×N 매트릭스), `pair_reports()`(쌍별 상세), `full_report()`(전부 합친 리포트)
   추가. 자체검증 7건 실물 DB로 통과(중복 CAS 제거, 미등록 CAS Abstain 전파,
-  실물 3종 조합 등). 상세 설계는 `docs/decisions.md` §2.10.
+  실물 3종 조합 등). 상세 설계는 `archive/superseded_docs/decisions.md` §2.10.
 - **robots.txt / "비상업 포트폴리오" 서술 전면 삭제**: GitHub 공개 저장소로
   전환하며 CAMEO 스크레이핑의 robots.txt 위반 사실과 그 정당화 서술("비상업
   목적이므로 무시")을 `HANDOFF.md`, `HANDOFF_ARCHIVE.md`(§5 삭제, 이하 절 재번호),
@@ -175,7 +175,7 @@ Stage 4(RAG) 설계부터 구현·실측까지 한 세션에서 완주했다.
   않기로 함. `reactivity_reference.db`는 KOSHA API 호출 비용이 든 데이터라 예외로
   유지. `.claude/settings.local.json`도 프로젝트 `.gitignore`에 명시(기존엔 유저
   전역 gitignore에만 의존).
-- **N종 관련 문서 상태 동기화**: `README.md`, `docs/HANDOFF.md`, `docs/decisions.md`
+- **N종 관련 문서 상태 동기화**: `README.md`, `docs/HANDOFF.md`, `archive/superseded_docs/decisions.md`
   (§2.5, §2.10, §4-7)에 남아있던 "N종 미구현" 서술을 실제 구현 상태로 갱신.
   RAG 검색 계층의 N종 실측(Recall 등)은 여전히 없다는 점은 구분해서 남김 —
   결정론적 매트릭스 조회(구현됨)와 RAG 검색 성능 실측(안 됨)을 혼동하지 않도록.
@@ -186,14 +186,50 @@ Stage 4(RAG) 설계부터 구현·실측까지 한 세션에서 완주했다.
 
 ---
 
+## 2026-08-09~08-17 — Hazard/Reactivity Assessment STEP1~5 (Generation·Judge·실패분석)
+
+- (출처: `docs/HANDOFF.md` §0-6, 상세는 그쪽이 원본) LLM 연결 완료 후 STEP1(Retrieval
+  고정) → STEP2(Generation baseline 확정) → STEP3(2,158건 생성) → STEP4(Judge 전체
+  평가) → STEP5(`04_rag_agent/analyze_generation.py`로 Retrieval×Generation 분리분석)
+  진행.
+- 핵심 결론: Retrieval은 병목 아님(hit 98.84%). Generation 실패의 최대 원인은
+  over-abstention(46.1%, 근거 있어도 쌍별 명시 문장 없으면 회피) — wrong(30.9%)은
+  대부분 "개별물질 위험문구를 쌍 반응성으로 오인해 과잉위험 판정"하는 방향성 편향
+  (false negative는 3.6%뿐).
+- 산출물: `04_rag_agent/results/step5_summary.json` 외 3종.
+- 2026-08-17 사용자 결정: over-abstention 완화를 위한 prompt v2 설계·소규모 pilot
+  검증 착수(전수 재실행 아님). 개선 확인 후 프로젝트 정리→공개 순으로 진행 예정.
+
+---
+
+## 2026-08-17 — prompt v2 폐기 → CAMEO-context 전환 → 전수실행 → 문서·저장소 재편
+
+- prompt v2/v2.1은 정상 케이스 과잉 Abstain 회귀를 유발해 기각. CAMEO 반응성 그룹
+  조회가 matrix_verdict와 100% 일치함을 확인하고, LLM은 판정을 직접 하지 않고
+  CAMEO 판정을 MSDS 근거로 설명만 하는 구조(v4)로 전환.
+- judge가 CAMEO 근거를 못 보고 채점하는 버그 발견·수정(13건 파일럿 6/13→13/13
+  faithful). Cascade Judge는 신뢰도 문제로 기각. 전수실행(2,160건) 중 API 429
+  685건은 재시도 로직 강화로 해소, 잔여 unfaithful 203건은 v5로 표적 재시도해
+  74.3% 회수.
+- 최종: 정답률 99.9%, faithful 97.2%, 물질혼동 0/2,142. 상세는
+  `docs/HANDOFF.md` §0-7, `docs/GENERATION.md`.
+- 저장소를 `01_collection~05_evaluation`에서 `src/scripts/data/results/docs/archive`
+  구조로 재편. docs/는 8개 표준 문서(README/PIPELINE/DATA/RETRIEVAL/GENERATION/
+  FILE_GUIDE/HANDOFF/PROJECT_LOG)만 유지, 흡수된 원본은 `archive/superseded_docs/`,
+  기각된 실험은 `archive/generation_experiments/`로 이동.
+
+---
+
 ## 아직 착수하지 않은 것 (다음 세션)
 
-`docs/HANDOFF.md` §4 기준:
-1. LLM 연결(NVIDIA_API_KEY 설정 — 사용자만 가능)
-2. RAG 지표 측정(Faithfulness / Context Recall / Context Precision / Answer Relevancy) —
-   `ragas` 미설치
-3. Abstain Precision 측정(평가셋 81쌍은 준비됨, LLM 연결 필요)
-4. 질의 인코더 최적화(임베딩 지연 500ms 목표에 1.7ms 초과)
-5. 청석면 등 원본 200종 리스트 안전성 재검증(§10, 조치 대기)
-6. N종(N≥3) 물질 조합 판정 구현 — 쌍 판정을 worst-case로 종합하는 상위 함수 없음
-   (`docs/decisions.md` §2.10)
+2026-08-17 기준 최신 우선순위(`docs/HANDOFF.md` §0-7 참고):
+1. faithful 잔여 실패 2.8%(61건) — 그룹 분류를 확인된 반응처럼 단정하는 패턴,
+   프롬프트 지시만으로는 완전 해소 안 됨
+2. RAG 지표(RAGAS 계열: Context Precision 등)는 n=7 파일럿 후 중단, 자체 Judge로
+   대체된 채 재개 안 함(`archive/generation_experiments/NOTES.md`)
+3. 질의 인코더 최적화(임베딩 지연 500ms 목표는 이후 재측정에서 368ms로 충족 상태 전환)
+4. 청석면 등 원본 리스트 전체 안전성 재검증(대체 후보군만 재검증됨, 173종 전체는 아직)
+5. N종(N≥3) 물질 조합의 **RAG 검색 실측** — 매트릭스 판정 자체는
+   `src/compatibility_engine.py`의 `judge_combination_by_cas`/`full_report`로 구현
+   완료(쌍 판정을 worst-case로 종합), 다만 RAG 검색 계층의 Recall/MRR 실측은
+   여전히 쌍(2종) 질의 기준까지만

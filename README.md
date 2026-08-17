@@ -13,24 +13,20 @@
 ## 이 프로젝트가 푸는 문제
 
 실험실·창고에서 화학물질 혼재보관 사고는 물질 하나의 위험성이 아니라
-**"여러 물질을 같이 뒀을 때"** 일어난다. 두 가지든, 세 가지든 마찬가지다. 그런데
-이 상호작용 정보는 흩어져 있다 — 반응성 그룹 매트릭스는 "위험/주의/안전" 딱지만
-붙일 뿐 이유를 설명하지 않고, 정작 이유는 물질별 MSDS(물질안전보건자료) 원문
-안에 텍스트로 묻혀 있다.
+**"여러 물질을 같이 뒀을 때"** 일어난다. 그런데 이 상호작용 정보는 흩어져 있다 —
+반응성 그룹 매트릭스(CAMEO)는 "위험/주의/안전" 딱지만 붙일 뿐 이유를 설명하지
+않고, 정작 이유는 물질별 MSDS(물질안전보건자료) 원문 안에 텍스트로 묻혀 있다.
 
-이 프로젝트는 KOSHA(한국산업안전보건공단) 공개 MSDS 데이터 198종과 CAMEO
-68개 반응성 그룹 체계를 결합해, **물질을 2종 이상 입력하면 왜 위험한지 원문
-근거와 함께 답하는 시스템**을 만든다. 근거가 부족하면 억지로 답하지 않고 **기각
+이 프로젝트는 KOSHA(한국산업안전보건공단) 공개 MSDS 데이터 173종과 CAMEO 68개
+반응성 그룹 체계를 결합해, **물질을 2종 이상 입력하면 왜 위험한지 원문 근거와
+함께 답하는 시스템**을 만든다. 근거가 부족하면 억지로 답하지 않고 **기각
 (Abstain)** 한다 — 안전 도메인에서는 "모르겠다"고 말하는 것도 기능이다.
 
-> **스코프 정확히 말하기**: 물질 조합 판정(매트릭스 기반 결정론적 조회)은 **N종
-> 지원** — 입력한 물질 전부를 쌍으로 쪼개 판정하고, 물질별 프로필 + 전체 반응
-> 매트릭스 + 쌍별 유의사항을 한 리포트로 보여준다. 다만 **RAG 검색 계층의 실측
-> 지표(Recall 등)는 여전히 쌍(2종) 질의 기준뿐**이다 — 결정론적 DB 조회와 RAG
-> 검색 성능은 별개 층위라 구분해서 표시한다.
-
-> 이 원칙("매트릭스 판정만으로 최종 답을 내지 않는다")은 프로젝트 착수일부터
-> 지금까지 한 번도 흔들리지 않은 유일한 규칙이다. [`docs/decisions.md`](docs/decisions.md) §0.3
+> **타협 불가 원칙**: 매트릭스(CAMEO) 판정을 단독 최종 답변 근거로 쓰지 않는다.
+> 매트릭스는 "이미 결정된 판정값"으로 LLM에 주어지지만, LLM은 그 판정을 재판단하지
+> 않고 실제 MSDS §2/§10 근거로 **설명**만 한다 — 판정과 설명의 근거를 분리해서,
+> 설명이 근거를 벗어나면(hallucination) 그 자체로 실패로 잡는다. 착수일부터 한 번도
+> 흔들리지 않은 규칙. 상세: [`archive/superseded_docs/decisions.md`](archive/superseded_docs/decisions.md) §0.3
 
 ---
 
@@ -38,85 +34,100 @@
 
 ```mermaid
 flowchart LR
-    A["1. 수집\nKOSHA MSDS API\n198/200종"] --> B["2. 분류\nCAMEO 68그룹\n반응성 그룹 매핑"]
+    A["1. 수집\nKOSHA MSDS API\n173종"] --> B["2. 분류\nCAMEO 68그룹\n반응성 그룹 매핑"]
     B --> C["3. 매트릭스\n양립성 판정\n2,278쌍"]
-    C --> D["4. RAG · Agent\n검색 + 생성"]
-    D --> E["5. 평가\n근거등급 · Abstain"]
+    C --> D["4. RAG · Generation\n검색 + CAMEO-context 생성"]
+    D --> E["5. 평가\nJudge · Faithful · Abstain"]
 
     style A fill:#2b6cb0,color:#fff
     style B fill:#2b6cb0,color:#fff
     style C fill:#2b6cb0,color:#fff
-    style D fill:#c05621,color:#fff
-    style E fill:#718096,color:#fff
+    style D fill:#2f855a,color:#fff
+    style E fill:#2f855a,color:#fff
 ```
 
-**현재 위치**: 4단계(RAG) 중 검색 계층까지 완주. 나머지는 [진행 상태](#지금까지-완성된-것--아직인-것) 참고.
+5단계 전부 최소 1회 이상 전수 실행·측정 완료. 상세 흐름은 [`docs/PIPELINE.md`](docs/PIPELINE.md).
 
-### 4단계 내부 — 지금 가장 공들인 부분
+### 핵심 발견 — Retrieval이 아니라 Generation이 병목이었다
 
-```mermaid
-flowchart TB
-    Q["질의: 물질 A, B (, C ...)\n2종 이상"] --> F["코퍼스 필터\nMSDS 805청크 → §2·§10만 남겨 409청크"]
-    F --> D2["Dense 검색\nFAISS + bge-m3-ko"]
-    F --> BM["BM25 검색\nkiwipiepy 형태소분석"]
-    D2 --> RRF["하이브리드 융합 (RRF)"]
-    BM --> RRF
-    RRF --> RR["Reranker\n(다음 단계, 미실행)"]
-    RR --> LLM["LLM 생성\nNVIDIA NIM Nemotron\n(연결 대기)"]
-    LLM --> OUT["응답 + 근거등급\n또는 Abstain"]
+1차 라운드(baseline 프롬프트, LLM이 CAMEO 판정을 직접 재추론)에서 측정한 결과:
+Retrieval hit rate **98.84%**(병목 아님)인데도 Generation 실패율이 압도적으로
+높았다 — 근거가 있어도 회피(**over-abstention 46.1%**)하거나, 개별 물질의
+위험문구를 쌍 반응성으로 오인해 과잉위험 판정(**30.9%**)하는 두 가지 실패
+패턴이었다.
 
-    style LLM fill:#718096,color:#fff
-    style RR fill:#718096,color:#fff
-    style OUT fill:#2f855a,color:#fff
-```
+해법은 프롬프트를 다듬는 게 아니라 **역할을 바꾸는 것**이었다 — LLM에게 판정을
+맡기지 않고, CAMEO 반응성 그룹 조회(이미 2,160건 전수에서 실제 정답과 **100%
+일치** 검증됨)로 판정을 확정해 컨텍스트에 박아 넣은 뒤, LLM은 그 판정을 MSDS
+근거로 **설명만** 하게 했다. 결과:
 
-회색으로 표시한 두 블록(Reranker, LLM 연결)이 아직 남은 부분이다 — 뒤에서 있는
-그대로 밝힌다.
+| 지표 | 1차(LLM이 직접 판정) | 최종(CAMEO-context) |
+|---|---:|---:|
+| 정답률 | 19.8% | **99.9%** |
+| Over-abstention | 46.1% | 1.9% |
+| Faithful(근거 밖 주장 없음) | 측정 안 됨 | **97.2%** |
+| 물질 혼동 | 관측됨 | **0/2,142** |
+
+전체 경위(prompt v2 시도 → 실패 → CAMEO-context 전환 → judge 채점버그 발견·수정 →
+전수실행 429 재시도 강화 → 잔여 실패 표적 재시도)는 [`docs/GENERATION.md`](docs/GENERATION.md).
 
 ---
 
 ## 검색 계층 실측 결과
 
-목표 스코프(2종 이상)의 최소 단위인 **물질 쌍 369건**(Incompatible 135 / Caution 114 /
-Compatible 120)에 대해 실제로 측정한 값. 3종 이상 조합에서의 실측은 아직 없다.
+물질 쌍 2,160질의(173종, 5개 질의 템플릿) 기준.
 
-| 지표 | 목표 | 실측 | 결과 |
-|---|---:|---:|:--:|
-| Recall@10 (핵심 지표) | ≥ 0.89 | **0.9005** | ✅ |
-| MRR | ≥ 0.98 | 0.9986 | ✅ |
-| nDCG@10 | ≥ 0.88 | 0.8932 | ✅ |
-| Hit@5 (top-5 안에 정답 존재) | 1.00 | 1.0000 | ✅ |
-| 검색 지연 | ≤ 10ms | 6.3ms | ✅ |
-| 질의 임베딩 지연 | ≤ 500ms | 501.7ms | ❌ (1.7ms 초과) |
+| 지표 | 실측 |
+|---|---:|
+| Recall@10 | **0.9336** |
+| Hit@10 | 0.9884 |
+| MRR | 0.9169 |
+| nDCG@10 | 0.8500 |
+| 질의 임베딩 지연 | 368ms(목표 500ms 충족) |
+| 검색 지연 | 6.3ms |
 
-7개 목표 중 6개 충족. 유일한 미달은 검색 방식과 무관한 임베딩 모델 자체의
-속도 문제(CPU 환경, 다음 단계에서 다룰 예정).
+3종 이상 조합의 판정(매트릭스 조회)은 지원되지만, RAG 검색 자체의 실측 지표는
+쌍(2종) 질의 기준까지만이다. 상세·실험 이력은 [`docs/RETRIEVAL.md`](docs/RETRIEVAL.md).
+
+---
+
+## N종(3종 이상) 물질 조합 지원
+
+`src/compatibility_engine.py`의 `judge_combination_by_cas`가 입력 물질 전부를
+쌍(pair)으로 쪼개 매트릭스 판정 후, worst-case 종합 + 전체 반응 매트릭스 표 +
+쌍별 상세 리포트를 함께 낸다. 매트릭스 조회는 결정론적 DB 조회라 N종에 바로
+적용되지만, 위 검색 계층 실측은 여전히 쌍 단위라는 점은 구분해서 표시한다.
 
 ---
 
 ## 이 프로젝트에서 보여주고 싶은 것
 
-숫자보다 **판단 과정**을 더 신경 썼다. 가장 잘 드러나는 사례 하나:
+숫자보다 **판단 과정**을 더 신경 썼다 — 결정이 틀렸을 때 감추지 않고 왜
+틀렸는지, 어떻게 다시 바꿨는지를 그대로 남겼다. 두 가지 사례:
 
 > 검색 방식을 처음엔 "속도가 빠르다"는 이유로 dense 단독으로 정했다. 그런데
-> 같은 세션에서 검색 범위를 좁히는 최적화를 하나 더 적용하고 나니, 실측값이
-> **하이브리드 방식이 7개 목표 중 6개, dense는 4개 충족**으로 뒤집혔다. 실측이
-> 결정과 어긋난 그 순간을 감추지 않고 문서에 그대로 남겼고, 결국 그 기록을
-> 근거로 **결정 자체를 다시 뒤집어 하이브리드로 재전환**했다.
+> 검색 범위를 좁히는 최적화를 하나 더 적용하고 나니 실측값이 **하이브리드가 7개
+> 목표 중 6개, dense는 4개 충족**으로 뒤집혀, 결정 자체를 재전환했다.
 
-이 과정 전체 — 최초 결정, 충돌 발견, 재검토, 번복 — 는 [`docs/decisions.md`](docs/decisions.md#24-검색-방식-hybrid-재채택-dense-단독-결정-철회)
-에 순서대로 남아있다. 지운 게 아니라 이력으로 쌓았다.
+> Generation 채점에서 "faithful 9.5% 실패"가 나왔을 때, 곧바로 프롬프트를 더
+> 다듬는 대신 먼저 원인을 팠다 — 채점기(judge)가 CAMEO 컨텍스트를 못 보고
+> MSDS 근거만 보고 채점하는 구조적 버그였다. 버그를 고치니 같은 13건 파일럿이
+> 6/13 → 13/13 faithful로 뒤집혔다. **숫자가 나쁘게 나왔을 때 프롬프트부터
+> 의심하지 않고 채점 로직부터 의심한 것**이 이 프로젝트 전체에서 반복되는 태도다.
 
-이런 판단이 20건 넘게 쌓여 있고, 각각 **"실측인지 사용자 결단인지"**, **"출처가
-있는지 없는지"**를 구분해 기록했다. 출처 없는 주장은 "출처: 없음"이라고 그대로
-적었다 — 근거를 지어내지 않는 것도 이 문서의 원칙이다.
+이런 판단이 20건 넘게 쌓여 있고, 각각 "실측인지 사용자 결단인지", "출처가
+있는지 없는지"를 구분해 기록했다.
 
-| 문서 | 내용 |
+| 문서 | 답하는 질문 |
 |---|---|
-| [`docs/decisions.md`](docs/decisions.md) | 철학·기술 선택 23건, 근거 유형과 출처 |
-| [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md) | 착수일(07-29)부터 일자별 진행 기록 |
-| [`docs/HANDOFF.md`](docs/HANDOFF.md) | 현재 상태 기준점(다음 작업 세션용) |
-| [`archive/`](archive/) | 폐기·기각 파일과 그 사유(분야별 정리) |
+| [`docs/PIPELINE.md`](docs/PIPELINE.md) | 전체 시스템은 어떻게 흘러가는가? |
+| [`docs/DATA.md`](docs/DATA.md) | 왜 이 물질/데이터를 선택했는가? |
+| [`docs/RETRIEVAL.md`](docs/RETRIEVAL.md) | 검색은 어떻게 설계했고 결과는 어땠는가? |
+| [`docs/GENERATION.md`](docs/GENERATION.md) | 답변 생성과 평가를 어떻게 했는가? |
+| [`docs/FILE_GUIDE.md`](docs/FILE_GUIDE.md) | 각 파일은 정확히 무엇을 하는가? |
+| [`docs/HANDOFF.md`](docs/HANDOFF.md) | 현재 어디까지 왔는가? |
+| [`docs/PROJECT_LOG.md`](docs/PROJECT_LOG.md) | 어떻게 발전했는가? |
+| [`archive/`](archive/) | 폐기·기각 파일과 그 사유(분야별 정리, 원본 상세 문서 포함) |
 
 ---
 
@@ -124,43 +135,74 @@ Compatible 120)에 대해 실제로 측정한 값. 3종 이상 조합에서의 �
 
 | 영역 | 선택 | 비고 |
 |---|---|---|
-| 데이터 | KOSHA MSDS Open API, CAMEO 68그룹 | 화학 도메인 원천 |
-| 저장 | SQLite | 관계형 진실원본 (개정이력·물질관리) |
+| 데이터 | KOSHA MSDS Open API, CAMEO 68그룹(PubChem 경로로 재검증) | 화학 도메인 원천 |
+| 저장 | SQLite (`data/reactivity_reference.db`) | 관계형 진실원본 |
 | 임베딩 | `dragonkue/BGE-m3-ko` | 한국어 특화, 사용자 지정 |
-| 검색 | FAISS(dense) + BM25(kiwipiepy) + RRF 융합 | 하이브리드 |
-| LLM | NVIDIA NIM `nemotron-3-nano-omni-30b` | OpenAI 호환 API |
-| 평가 | 자체 Retrieval 지표 드라이버, RAGAS(예정) | Recall/MRR/nDCG + Faithfulness 등 |
+| 검색 | FAISS(dense) + BM25(kiwipiepy) + RRF 융합 + §10 boilerplate penalty | 하이브리드 |
+| LLM | NVIDIA NIM `nemotron-3-nano-omni-30b-a3b-reasoning` | Generation + Judge 공용, OpenAI 호환 API |
+| 평가 | 자체 rule+LLM Judge(faithful/predicted_verdict/substance_confused) | RAGAS는 파일럿 후 자체 채점기로 대체 |
+
+---
+
+## 디렉터리 구조
+
+```
+MSDS/
+├─ README.md              # 이 문서
+├─ docs/                  # 표준 문서 8종(위 표)
+├─ src/                   # 재사용 핵심 모듈 (llm/retrieval/pipeline/eval_generation/
+│                          # cameo_group_lookup/compatibility_engine)
+├─ scripts/                # 실행 스크립트 (수집/분류/RAG 평가·생성 파이프라인)
+├─ data/                  # DB·평가셋·청크·임베딩 캐시·원본 CSV
+├─ results/               # 생성·채점 산출물(jsonl/json)
+└─ archive/               # 폐기·기각 파일과 사유(NOTES.md 포함)
+```
+
+전체 파일 목록과 역할은 [`docs/FILE_GUIDE.md`](docs/FILE_GUIDE.md).
+
+---
+
+## 실행
+
+```bash
+# 1) .env에 NVIDIA_API_KEY 설정 후 연결 확인
+python src/llm.py --check
+
+# 2) Retrieval baseline 재현(캐시된 임베딩/인덱스 사용)
+python scripts/run_ab.py embedding --models bge-m3-ko --granularity section --task pair --sections 2,10 --corpus-tag 173
+
+# 3) Generation 파이프라인(CAMEO-context, 최종 채택본) 재현/이어서 실행
+python scripts/run_cameo_full.py --workers 8
+```
 
 ---
 
 ## 지금까지 완성된 것 / 아직인 것
 
 **완성**
-- [x] KOSHA MSDS 198/200종 수집 (2종은 근거 부족으로 의도적 미확보 — Abstain 정책의 실제 적용례)
-- [x] CAMEO 68그룹 · 양립성 매트릭스 2,278쌍 구축
-- [x] 근거등급제(법령>권고>참고) 자동 판정 규칙
-- [x] RAG 검색 계층 (청킹·임베딩·하이브리드 검색) — **쌍(2종) 질의 기준**으로 위 실측 결과대로 동작 확인
-- [x] **N종(3종 이상) 물질 조합 판정** — 입력 물질을 전부 쌍으로 쪼개 판정 후, 물질별
-      프로필 + 전체 반응 매트릭스 + 쌍별 유의사항을 한 리포트로 (`compatibility_engine.py`
-      `judge_combination_by_cas`/`full_report`). 상세 설계는 [`docs/decisions.md`](docs/decisions.md) §2.10
+- [x] KOSHA MSDS 173종 최종 코퍼스(수집 자체는 더 넓은 풀에서 진행, 평가셋은 173종 확정)
+- [x] CAMEO 68그룹 · 양립성 매트릭스 2,278쌍, PubChem 경로로 94% 재검증
+- [x] RAG 검색 계층 — hybrid, Recall@10 0.9336 / Hit@10 0.9884
+- [x] Generation 계층 — CAMEO-context 파이프라인, 정답률 99.9% / faithful 97.2%
+- [x] N종(3종 이상) 물질 조합 판정(`judge_combination_by_cas`/`full_report`)
+- [x] 자체 Judge 채점 파이프라인(rule + LLM, faithful/predicted_verdict/substance_confused)
 
 **미완성 (감추지 않고 그대로 남김)**
-- [ ] **N종 물질 조합에서의 RAG 검색 실측** — 위 매트릭스 판정은 결정론적 DB
-      조회라 N종 지원되지만, RAG 검색 계층 Recall/MRR 실측은 여전히 쌍(2종) 질의
-      기준뿐. 셋 이상을 한 질의로 넣었을 때 검색 품질은 측정된 적 없음
-- [ ] LLM 연결 — API 키 설정 대기, 그래서 아직 실제 "질문 → 답변"을 보여줄 수 없음
-- [ ] Reranker 실행 — 코드는 있으나 미실행
-- [ ] RAG 품질 지표(Faithfulness 등) — LLM 연결 후 측정 가능
-- [ ] 원본 200종 리스트 안전성 재검증 — 대체품 32종만 재검증됐고 원본 전체는 아직
+- [ ] Reranker 미실행 — 저비용 대안(boilerplate penalty)으로 이미 목표 충족해 보류 중
+- [ ] 잔여 faithful 실패 2.8%(61건) — 패턴은 파악됐으나(그룹 분류를 확인된 반응처럼
+      단정) 완전히 해소되진 않음
+- [ ] 원본 리스트 전체(173종 이전 풀) 안전성 재검증 미완
+- [ ] RAGAS 기반 지표(Faithfulness/Context Precision 등)는 n=7 파일럿 이후 중단,
+      자체 Judge로 대체된 채 재개 안 함(사유: [`archive/generation_experiments/NOTES.md`](archive/generation_experiments/NOTES.md))
 
 솔직한 진행률이 실제로는 더 신뢰가 간다고 생각해서 완성된 척 하지 않는다.
-상세 목록은 [`docs/HANDOFF.md`](docs/HANDOFF.md) §4.
+상세 목록은 [`docs/HANDOFF.md`](docs/HANDOFF.md).
 
 ---
 
 <div align="center">
 
-*이 문서는 열람자를 위한 요약본이다. 
+*이 문서는 열람자를 위한 요약본이다.
 실행 방법·환경변수·상세 설계 근거는 위 링크된 문서들을 참고.*
 
 </div>
