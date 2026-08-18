@@ -1,0 +1,157 @@
+# -*- coding: utf-8 -*-
+"""CAMEO 68그룹/위험코드/발생가스 영문 용어 -> 한글 풀이 고정 사전.
+
+reactivity_reference.db(reactivity_groups/hazard_code_legend/gas_product_legend)에
+한글 컬럼이 없어 UI에 영문 원문만 노출되던 문제를 메운다. 새 테이블/번역 API 없이
+정적 dict 3개로 처리 - 그룹 68종, 위험코드 11종, 발생가스 48종으로 개수가 고정
+이라 LLM 호출 없이 커버 가능.
+
+키는 DB의 원문 문자열 그대로(정확히 일치해야 조회됨). 못 찾으면 원문을 그대로
+반환(kr_* 헬퍼가 fallback 처리)."""
+
+GROUP_KR = {
+    "Acetals, Ketals, Hemiacetals, and Hemiketals": "아세탈류/케탈류/헤미아세탈류/헤미케탈류",
+    "Acids, Carboxylic": "카르복실산류",
+    "Acids, Strong Non-oxidizing": "강산(비산화성)",
+    "Acids, Strong Oxidizing": "강산(산화성)",
+    "Acids, Weak": "약산",
+    "Acrylates and Acrylic Acids": "아크릴레이트류 및 아크릴산",
+    "Acyl Halides, Sulfonyl Halides, and Chloroformates": "아실할라이드/술포닐할라이드/클로로포르메이트류",
+    "Alcohols and Polyols": "알코올류 및 폴리올류",
+    "Aldehydes": "알데히드류",
+    "Alkynes, with Acetylenic Hydrogen": "말단 수소 있는 알킨류",
+    "Alkynes, with No Acetylenic Hydrogen": "말단 수소 없는 알킨류",
+    "Amides and Imides": "아마이드류 및 이미드류",
+    "Amines, Aromatic": "방향족 아민류",
+    "Amines, Phosphines, and Pyridines": "아민류/포스핀류/피리딘류",
+    "Anhydrides": "무수물류",
+    "Aryl Halides": "아릴할라이드류",
+    "Azo, Diazo, Azido, Hydrazine, and Azide Compounds": "아조/디아조/아지도/히드라진/아자이드 화합물",
+    "Bases, Strong": "강염기",
+    "Bases, Weak": "약염기",
+    "Carbamates": "카바메이트류",
+    "Carbonate Salts": "탄산염류",
+    "Chlorosilanes": "클로로실란류",
+    "Conjugated Dienes": "공액디엔류",
+    "Cyanides, Inorganic": "무기 시안화물",
+    "Diazonium Salts": "디아조늄염류",
+    "Epoxides": "에폭사이드류",
+    "Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters": "에스터류(황산·인산·티오인산·붕산 에스터 포함)",
+    "Ethers": "에터류",
+    "Fluoride Salts, Soluble": "가용성 불화염류",
+    "Fluorinated Organic Compounds": "불소계 유기화합물",
+    "Halogenated Organic Compounds": "할로겐화 유기화합물",
+    "Halogenating Agents": "할로겐화제",
+    "Hydrocarbons, Aliphatic Saturated": "포화 지방족 탄화수소",
+    "Hydrocarbons, Aliphatic Unsaturated": "불포화 지방족 탄화수소",
+    "Hydrocarbons, Aromatic": "방향족 탄화수소",
+    "Insufficient Information for Classification": "분류 정보 부족",
+    "Isocyanates and Isothiocyanates": "이소시아네이트류 및 이소티오시아네이트류",
+    "Ketones": "케톤류",
+    "Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes": "금속수소화물/금속알킬류/금속아릴류/실란류",
+    "Metals, Alkali, Very Active": "알칼리금속(반응성 매우 높음)",
+    "Metals, Elemental and Powder, Active": "반응성 금속(단체·분말)",
+    "Metals, Less Reactive agents": "반응성 낮은 금속류",
+    "Nitrate and Nitrite Compounds, Inorganic": "무기 질산염·아질산염",
+    "Nitrides, Phosphides, Carbides, and Silicides": "질화물/인화물/탄화물/규화물",
+    "Nitriles": "니트릴류",
+    "Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic": "유기 니트로/니트로소/질산염/아질산염 화합물",
+    "Non-Redox-Active Inorganic Compounds": "산화환원 비활성 무기화합물",
+    "Not Chemically Reactive agents": "화학적으로 비반응성 물질",
+    "Organometallics": "유기금속화합물",
+    "Oxidizing Agents, Strong": "강산화제",
+    "Oxidizing Agents, Weak": "약산화제",
+    "Oximes": "옥심류",
+    "Peroxides, Organic": "유기과산화물",
+    "Phenolic Salts": "페놀염류",
+    "Phenols and Cresols": "페놀류 및 크레졸류",
+    "Polymerizable Compounds": "중합성 화합물",
+    "Quaternary Ammonium and Phosphonium Salts": "4급 암모늄염 및 포스포늄염",
+    "Reducing Agents, Strong": "강환원제",
+    "Reducing Agents, Weak": "약환원제",
+    "Salts, Acidic": "산성염",
+    "Salts, Basic": "염기성염",
+    "Siloxanes": "실록산류",
+    "Sulfides, Inorganic": "무기 황화물",
+    "Sulfides, Organic": "유기 황화물",
+    "Sulfite and Thiosulfate Salts": "아황산염 및 티오황산염",
+    "Sulfonates, Phosphonates, and Thiophosphonates, Organic": "유기 술포네이트류/포스포네이트류/티오포스포네이트류",
+    "Thiocarbamate Esters and Salts/Dithiocarbamate Esters and Salts": "티오카바메이트/디티오카바메이트 에스터 및 염류",
+    "Water and Aqueous Solutions": "물 및 수용액",
+}
+
+HAZARD_KR = {
+    "C": "반응 생성물이 부식성일 수 있음",
+    "E": "반응 생성물이 폭발성이거나 충격·마찰에 민감할 수 있음",
+    "F": "반응 생성물이 인화성일 수 있음",
+    "G": "반응 시 기체가 발생해 압력이 상승할 수 있음",
+    "NR": "알려진 위험 반응 없음",
+    "R1": "상온에서 발열반응(열 방출)",
+    "R2": "반응 생성물이 상온보다 높은 온도에서 불안정해질 수 있음",
+    "R3": "반응이 특히 격렬하거나 폭발적일 수 있음",
+    "R4": "중합반응이 격렬해지며 압력이 상승할 수 있음",
+    "T": "반응 생성물이 독성일 수 있음",
+    "UR": "위험할 수 있으나 근거 불충분(미상)",
+}
+
+GAS_KR = {
+    "Acid Fumes": "산 흄(증기)",
+    "Al2O3": "산화알루미늄",
+    "Alcohols": "알코올류",
+    "Aldehydes": "알데히드류",
+    "BR2": "브롬",
+    "Base Fumes": "염기 흄(증기)",
+    "CO": "일산화탄소",
+    "CO2": "이산화탄소",
+    "COCl2": "포스겐",
+    "COS": "황화카르보닐",
+    "CS2": "이황화탄소",
+    "Chlorinated Amines": "염소화 아민류",
+    "Cl2": "염소",
+    "ClO2": "이산화염소",
+    "Difluorodiazene": "디플루오로디아젠",
+    "Ethers": "에터류",
+    "FClO4": "과염소산불소",
+    "Germanes": "저메인류",
+    "H2": "수소",
+    "H2S": "황화수소",
+    "H2SO4": "황산",
+    "HBr": "브롬화수소",
+    "HCN": "시안화수소",
+    "HCl": "염화수소",
+    "HF": "불화수소",
+    "HI": "요오드화수소",
+    "HN3": "아지화수소산",
+    "HNCO": "이소시안산",
+    "HX": "할로겐화수소",
+    "Halocarbons": "할로카본류",
+    "Halogenated Amines": "할로겐화 아민류",
+    "Halogenated Organics": "할로겐화 유기물",
+    "Halosilanes": "할로실란류",
+    "Hydrocarbons": "탄화수소류",
+    "Methylisothiocyanate": "메틸이소티오시아네이트",
+    "N2": "질소",
+    "NCCN": "시아노겐",
+    "NH3": "암모니아",
+    "NOx": "질소산화물",
+    "O2": "산소",
+    "PH3": "포스핀",
+    "SO2": "이산화황",
+    "SOx": "황산화물",
+    "Silanes": "실란류",
+    "X2": "할로겐 기체",
+    "X2CO": "산할라이드",
+    "X2O": "할로겐산화물",
+    "XO2": "할로겐산화물",
+}
+
+
+def kr_group(name: str) -> str:
+    return GROUP_KR.get(name, name)
+
+
+def kr_codes(raw: str | None, table: dict) -> list[str]:
+    """콤마로 구분된 원문 코드/이름 문자열 -> 한글 풀이 리스트. 사전에 없으면 원문 유지."""
+    if not raw:
+        return []
+    return [table.get(c.strip(), c.strip()) for c in raw.split(",") if c.strip()]
