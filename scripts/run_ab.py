@@ -106,6 +106,15 @@ def prepare(gran: str, gold: list[dict], task: str, sections: set[int] | None = 
     pos = {cid: i for i, cid in enumerate(corpus.chunk_ids)}
     key = "gold_item" if gran == "item" else "gold_section"
 
+    # 2026-08-28 안전장치: pair 평가셋에 gold_evidence가 없으면 아래 로직이 조용히
+    # gold_section으로 되돌아가 **채점 기준이 느슨해진 것을 모른 채** 숫자만 나온다.
+    # (evalset_pairs.py는 gold_evidence를 만들지 않는다 - 2026-08-08 재정의는 별도
+    #  일회성 작업이었고 코드로 커밋되지 않았다. docs/HANDOFF.md §STEP 2 참고)
+    if task == "pair" and gold and not any("gold_evidence" in g for g in gold):
+        print("[경고] 이 평가셋에는 gold_evidence가 없다 -> gold_section(문서/섹션 단위)으로"
+              " 채점한다. §10 boilerplate까지 정답에 섞이므로 evidence 기준 수치와"
+              " 직접 비교할 수 없다.", file=sys.stderr)
+
     kept, gold_sets = [], []
     for g in gold:
         # Evidence-level 채점: gold_pair.jsonl(173종 재정의, 2026-08-08)에 gold_evidence가

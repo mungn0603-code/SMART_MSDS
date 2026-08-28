@@ -3,10 +3,15 @@ top-10으로 고정 저장. Generation 실험마다 재검색하지 않고 이 �
 
 고정 구성(HANDOFF §0-3/§0-5 baseline 그대로, 변경 없음):
   bge-m3-ko / section 청킹 / §2·§10 필터 / hybrid(dense+BM25 RRF, §10 전체 penalty) / top-10
+
+2026-08-28: `--corpus-tag`와 `--out`을 인자로 뺐다. 기본값은 종전 그대로
+'173' / results/frozen_retrieval_top10.jsonl 이라 인자 없이 실행하면 동작이 바뀌지
+않는다(재현 경로 보존). 서비스 기준 실행은 `--corpus-tag service`.
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -21,10 +26,10 @@ import run_ab as A  # noqa: E402
 MODEL = "bge-m3-ko"
 GRAN = "section"
 SECTIONS = {2, 10}
-CORPUS_TAG = "173"
+CORPUS_TAG_DEFAULT = "173"  # 기본값 유지 = 인자 없이 돌리면 종전 재현 경로 그대로
 CAND_K = 20  # run_ab._search와 동일한 후보 풀 크기(baseline 수치를 그대로 재현하기 위함)
 TOPK = 10
-OUT_PATH = ROOT / "results" / "frozen_retrieval_top10.jsonl"
+OUT_PATH_DEFAULT = ROOT / "results" / "frozen_retrieval_top10.jsonl"
 
 
 def rrf_fuse_scored(rank_lists, k, rrf_k=R.RRF_K, penalty=None):
@@ -49,9 +54,17 @@ def rrf_fuse_scored(rank_lists, k, rrf_k=R.RRF_K, penalty=None):
 
 
 def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--corpus-tag", default=CORPUS_TAG_DEFAULT,
+                    help="rag_corpus_membership 태그(기본: 173 = 재현용 고정 코퍼스). "
+                         "서비스 기준은 service")
+    ap.add_argument("--out", type=Path, default=OUT_PATH_DEFAULT)
+    args = ap.parse_args()
+    OUT_PATH = args.out
+
     gold = A.load_gold("pair")
     corpus, kept, gold_sets, dropped, queries, (d_ranks, b_ranks, _h), lat = A._search(
-        MODEL, GRAN, gold, "pair", CAND_K, SECTIONS, CORPUS_TAG
+        MODEL, GRAN, gold, "pair", CAND_K, SECTIONS, args.corpus_tag
     )
     penalty = R.boilerplate_penalty_vector(corpus)
     fused = rrf_fuse_scored([d_ranks, b_ranks], TOPK, penalty=penalty)

@@ -26,8 +26,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DB_PATH = ROOT / "data" / "reactivity_reference.db"
 CORE207 = ROOT / "data" / "collection" / "registry_core207.csv"
-DEFAULT_OUT = ROOT / "results" / "registry237_service_contract_recheck.csv"
-INDEX_TAGS = ("173", "core")
+DEFAULT_OUT = ROOT / "results" / "registry_service_contract_recheck.csv"
 MSDS_SECTIONS = (2, 3, 9, 10)
 
 # §10 정형문구 — 물질과 무관하게 붙는다. 물질특이 정보량을 셀 때 뺀다.
@@ -56,11 +55,13 @@ def audit(con: sqlite3.Connection) -> list[dict]:
         " group by cas_number having count(distinct section) = ?"
         % ",".join("?" * len(MSDS_SECTIONS)),
         (*MSDS_SECTIONS, len(MSDS_SECTIONS)))}
+    # 2026-08-28: 코퍼스 태그 의존을 뺐다. 태그(=service 코퍼스 소속)를 조건에 두면
+    # "태그를 만들기 위해 태그를 조건으로 쓰는" 순환이 된다. 검색 근거의 유무는
+    # 청크 존재만으로 판단한다(태그는 그 결과를 담는 그릇일 뿐).
+    # 실측: 태그 조건을 빼도 결과 동일(173종, 차이 0종).
     indexed = {r[0] for r in cur.execute(
-        "select distinct ch.cas_number from rag_chunks ch"
-        " join rag_corpus_membership m on m.cas_number = ch.cas_number"
-        " where m.corpus_tag in (%s) and ch.section in (2, 10)"
-        % ",".join("?" * len(INDEX_TAGS)), INDEX_TAGS)}
+        "select distinct cas_number from rag_chunks"
+        " where section in (2, 10) and status = 'active'")}
     cameo = {r[0] for r in cur.execute(
         "select distinct c.cas_number from chemicals c"
         " join chemical_group_membership m on m.chemical_id = c.chemical_id")}
@@ -143,7 +144,8 @@ def main() -> int:
     rows = audit(con)
     con.close()
 
-    assert len(rows) == 237, f"Registry 237종 변동: {len(rows)}"
+    # 물질 수는 하드코딩하지 않는다(2026-08-28) - Registry가 늘면 그대로 따라간다.
+    assert rows, "Registry가 비어 있음"
     assert all(r["kosha"] or r["tier_code"] == "X" for r in rows), "X 티어 판정 불일치"
 
     args.out.parent.mkdir(exist_ok=True)

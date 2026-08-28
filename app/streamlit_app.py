@@ -55,11 +55,14 @@ MODEL, GRAN = "bge-m3-ko", "section"
 SECTIONS = {2, 10}
 CAND_K, TOPK = 20, 10
 
-# 173 = 평가가 측정된 고정 코퍼스(불변), core = 기본 물질 커버리지 보강분(seed_core_corpus.py).
-# 서비스/데모 검색만 둘을 합쳐 쓰고, 평가셋·frozen retrieval·README 실측치는 173 기준 그대로다.
-# 태그별로 문서 임베딩 캐시가 따로 있어서(emb_*_173.npy) 합쳐도 173은 재인코딩되지 않는다.
-CORPUS_TAGS = ("173", "core")
-BM25_TAG = "section_s210_" + "_".join(CORPUS_TAGS)  # 합본은 문서통계가 달라 BM25는 새로 빌드
+# 2026-08-28: 서비스 검색 대상은 corpus_tag='service' 하나다(seed_service_corpus.py).
+# 이전에는 ('173','core') 합본을 썼는데, 그러면 Registry 밖 legacy 89종이 검색 후보로
+# 남아 서비스 불가 물질이 retrieval 경쟁에 끼어든다(아세트산 <- '초산 에틸' 사례).
+# '173'/'core' 태그는 평가 재현용으로 DB에 그대로 보존하되 서비스 경로에서 쓰지 않는다.
+# 물질 수는 여기에 적지 않는다 - substance_status VIEW에서 계산된다.
+SERVICE_CORPUS_TAG = "service"
+CORPUS_TAGS = (SERVICE_CORPUS_TAG,)
+BM25_TAG = "section_s210_" + SERVICE_CORPUS_TAG  # 코퍼스가 바뀌면 문서통계도 달라 BM25 재빌드
 
 QUERY_TEMPLATE = "{a}, {b} 두 물질을 함께 취급해도 되는가? 혼합 시 위험성과 유의사항은?"
 
@@ -1434,7 +1437,12 @@ if __name__ == "__main__":
         unlisted = {c for c in known if not (k.get(c) or {}).get("chem_id")}
         assert unlisted, "미등재 집합이 비어있음(캐시 미적재?)"
         assert all(msds_detail(c).empty for c in list(unlisted)[:3]), "미등재인데 상세정보가 있음"
-        assert len(reg) == 237, f"확정 Registry 237종 변동: {len(reg)}"
+        # Registry 규모도 숫자를 박지 않는다 - VIEW의 in_registry 와 일치하는지만 본다.
+        _con = sqlite3.connect(DB_PATH)
+        n_reg_view = _con.execute(
+            "select count(*) from substance_status where in_registry=1").fetchone()[0]
+        _con.close()
+        assert len(reg) == n_reg_view, f"Registry 조회와 VIEW 불일치: {len(reg)} vs {n_reg_view}"
         assert set(reg) - unlisted, "registry가 통째로 걸러짐"
         print("OK: 검색대상", len(known - unlisted), "종 / 미등재 제외", len(unlisted),
               "종 (registry 잔존", len(set(reg) - unlisted), "종)")
@@ -1450,22 +1458,33 @@ if __name__ == "__main__":
         assert ferro in {h["cas_number"] for h in expand}, "별칭 확장이 자기 청크를 못 살림"
         print("OK: 질의 별칭 확장 -", term)
 
-        # 코퍼스 규모: 173은 frozen(불변), core는 Registry 편입분. 둘을 합친 게 검색 대상.
+        # 코퍼스 규모: 서비스 검색 대상은 corpus_tag='service' 하나다.
+        # 개수를 여기에 적지 않는다 - substance_status VIEW가 계산한 값과 대조만 한다.
+        # (숫자를 박으면 물질이 하나 늘 때마다 코드가 어긋난다. docs/REGISTRY.md 1절)
         con = sqlite3.connect(DB_PATH)
         tags = dict(con.execute(
             "select corpus_tag, count(*) from rag_corpus_membership"
-            " where corpus_tag in ('173','core') group by corpus_tag"))
+            " where corpus_tag in ('173','core','service') group by corpus_tag"))
+        expect_service = con.execute(
+            "select count(*) from substance_status"
+            " where service_eligible=1 and chunks_ready=1").fetchone()[0]
+        gap = con.execute(
+            "select count(*) from substance_status where index_status='인덱스 결손'").fetchone()[0]
         con.close()
-        assert tags.get("173") == 173, f"frozen 173 코퍼스 변동: {tags}"
-        assert tags.get("core") == 89, f"core 코퍼스 변동: {tags}"
-        assert len(substances()) == 262, f"인덱스 대상 262종 변동: {len(substances())}"
-        print("OK: 코퍼스 173 + core", tags["core"], "= 인덱스 대상", len(substances()), "종")
+        assert tags.get("service") == expect_service, \
+            f"service 태그가 VIEW와 불일치: 태그 {tags.get('service')} vs VIEW {expect_service}"
+        assert len(substances()) == expect_service, \
+            f"인덱스 대상이 service와 불일치: {len(substances())} vs {expect_service}"
+        assert gap == 0, f"인덱스 결손 {gap}종 - 서비스 자격이 있는데 청크가 없다"
+        assert tags.get("173") and tags.get("core"), f"평가 재현용 태그 소실: {tags}"
+        print("OK: service 코퍼스", len(substances()), "종 (인덱스 결손 0) |",
+              "보존 태그 173:", tags["173"], "core:", tags["core"])
 
         # CAMEO 매핑: 그룹이 붙은 물질만 판정 가능하고, 없으면 무조건 Abstain이다.
         served = set(reg) - unlisted
         mapped_served = served & cameo_mapped()
-        assert len(served) == 198, f"서비스 대상 198종 변동: {len(served)}"
-        assert len(mapped_served) == 173, f"CAMEO 매핑 173종 변동: {len(mapped_served)}"
+        assert len(mapped_served) == expect_service, \
+            f"CAMEO 매핑 물질과 service 코퍼스 불일치: {len(mapped_served)} vs {expect_service}"
         eng = CompatibilityEngine(str(DB_PATH))
         pair_mapped = eng.judge_pair_by_cas("7664-93-9", "1310-73-2")   # 황산 x 수산화나트륨
         assert pair_mapped.category != "Abstain", pair_mapped.category

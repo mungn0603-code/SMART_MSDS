@@ -59,3 +59,24 @@ CREATE TABLE self_reactivity (
 CREATE INDEX idx_pairs_group_a ON compatibility_pairs(group_a_id);
 CREATE INDEX idx_pairs_group_b ON compatibility_pairs(group_b_id);
 CREATE INDEX idx_pairs_category ON compatibility_pairs(category);
+
+-- ---------------------------------------------------------------------------
+-- VIEW substance_status (2026-08-28) — 물질 상태 단일 조회 지점
+--
+-- DDL 본문은 scripts/seed_service_corpus.py 의 VIEW_DDL 상수가 단일 출처다.
+-- 여기에 복사해 두면 두 곳이 어긋나므로 정의는 옮기지 않는다.
+-- 재생성: python scripts/seed_service_corpus.py            (점검, VIEW만 갱신)
+--         python scripts/seed_service_corpus.py --write    (+ corpus_tag='service' 반영)
+--
+-- 노출 컬럼: in_registry / kosha_listed / msds_complete / cameo_matched /
+--            service_eligible / chunks_ready / n_chunks / corpus_membership /
+--            legacy_only / exclusion_reason / index_status
+--
+-- service_eligible = in_registry AND kosha_listed AND msds_complete AND cameo_matched
+--   -> '원천 데이터 자격'. chunks_ready(인덱스 생성 결과)는 조건에 넣지 않는다.
+--      넣으면 청킹 실패가 "서비스 불가 물질"로 둔갑한다.
+--      service_eligible=1 AND chunks_ready=0 인 상태는 index_status='인덱스 결손'으로
+--      드러나며, 이는 물질 문제가 아니라 파이프라인 문제라는 뜻이다.
+--
+-- 가용성 플래그를 substance_registry에 컬럼으로 저장하지 않는 이유는
+-- docs/REGISTRY.md 1절 참고(저장하면 두 곳이 어긋난다).
