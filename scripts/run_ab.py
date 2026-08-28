@@ -106,14 +106,17 @@ def prepare(gran: str, gold: list[dict], task: str, sections: set[int] | None = 
     pos = {cid: i for i, cid in enumerate(corpus.chunk_ids)}
     key = "gold_item" if gran == "item" else "gold_section"
 
-    # 2026-08-28 안전장치: pair 평가셋에 gold_evidence가 없으면 아래 로직이 조용히
-    # gold_section으로 되돌아가 **채점 기준이 느슨해진 것을 모른 채** 숫자만 나온다.
-    # (evalset_pairs.py는 gold_evidence를 만들지 않는다 - 2026-08-08 재정의는 별도
-    #  일회성 작업이었고 코드로 커밋되지 않았다. docs/HANDOFF.md §STEP 2 참고)
+    # 2026-08-28 안전장치 -> 2026-08-29 실패로 격상: pair 평가셋에 gold_evidence가 없으면
+    # 아래 로직이 조용히 gold_section으로 되돌아가 **채점 기준이 느슨해진 것을 모른 채**
+    # 숫자만 나온다(§10 boilerplate까지 정답으로 셈). 경고는 파이프 뒤에서 묻히므로
+    # 여기서 멈춘다. evalset_pairs.py가 이제 gold_evidence를 생성하므로 정상 경로에서는
+    # 발생하지 않는다 - 뜨면 평가셋이 낡은 것이다.
     if task == "pair" and gold and not any("gold_evidence" in g for g in gold):
-        print("[경고] 이 평가셋에는 gold_evidence가 없다 -> gold_section(문서/섹션 단위)으로"
-              " 채점한다. §10 boilerplate까지 정답에 섞이므로 evidence 기준 수치와"
-              " 직접 비교할 수 없다.", file=sys.stderr)
+        raise SystemExit(
+            "[중단] 이 pair 평가셋에는 gold_evidence가 없다. gold_section으로 채점하면"
+            " §10 boilerplate가 정답에 섞여 evidence 기준 수치와 비교 불가.\n"
+            "        python scripts/evalset_pairs.py --corpus-tag <tag> 로 평가셋을 재생성할 것."
+        )
 
     kept, gold_sets = [], []
     for g in gold:

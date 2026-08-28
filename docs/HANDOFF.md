@@ -1,21 +1,24 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-22 (§0-8: Registry 237종 확정 · KOSHA 상세 연동 · 물질명 일관성 ·
-인덱스 23종 편입 · 질의 별칭 확장 · **CAMEO 매핑 142→173종 · B1 39종 청킹으로 A티어 173종**)
+**최종 갱신**: 2026-08-29 (gold_evidence 생성 코드화 · 평가셋 abstain 규칙 폐기 ·
+해시 표집 전환 · **Retrieval baseline을 `corpus_tag='service'` 기준으로 재확정**)
 
-> **평가 파이프라인과 서비스 계층을 구분해서 읽는다.** §0-1~§0-7은 검색·생성·채점
-> 파이프라인의 기록이고 여기 실린 지표는 그대로 유효하다(재측정하지 않았고, 평가
-> 경로는 `corpus_tag='173'`을 계속 쓴다). 2026-08-22 작업은 **서비스 계층**
-> (물질 선정·KOSHA 연동·앱)에 한정되며, 물질 선정의 현재 단일 출처는
-> [`REGISTRY.md`](REGISTRY.md)다 — CORE 237종, 서비스 대상 198종.
-> 경위는 [`PROJECT_LOG.md`](PROJECT_LOG.md)의 2026-08-22 항목.
-**현재 단계**: Chemical Selection 173종 동결(§0-3), Retrieval baseline hybrid
-Recall@10 0.9336 / MRR 0.9169 / Hit@10 0.9884(§0-5)에 이어, Generation 단계도
-CAMEO-context 파이프라인으로 **정답률 99.9% / faithful 97.2%**까지 완료(§0-7,
-상세는 [`GENERATION.md`](GENERATION.md)). 저장소 구조도 numbered stage 폴더에서
-`src/scripts/data/results/docs/archive`로 재편했다(§0-7, [`FILE_GUIDE.md`](FILE_GUIDE.md)).
-**남은 것**: faithful 잔여 실패 2.8%(61건), N종 조합의 RAG 검색 실측(현재는 쌍
-단위까지만), 리랭커 미실행(보류 상태).
+> **§0-N은 시점 기록이다. 각 항목의 수치는 그 시점의 코퍼스 기준이며 소급 수정하지
+> 않는다.** 현재 유효한 지표는 아래 "현재 단계"와 [`RETRIEVAL.md`](RETRIEVAL.md) ·
+> [`GENERATION.md`](GENERATION.md) 상단에만 있다. 물질 선정의 단일 출처는
+> [`REGISTRY.md`](REGISTRY.md)다 — CORE 237종, 서비스 대상 198종, 서비스 코퍼스 173종.
+
+**현재 단계**: 서비스 범위가 `corpus_tag='service'` 173종으로 확정(2026-08-28)됨에 따라
+Retrieval을 재측정해 **hybrid Recall@10 0.8987 / Hit@10 0.9790 / MRR 0.8803 /
+nDCG@10 0.8065**(2,240질의, evidence 기준)로 baseline을 갈아끼웠다. 이 과정에서
+2026-08-08의 gold_evidence 재정의가 코드로 남지 않아 `run_ab.py`가 조용히 `gold_section`
+으로 되돌아가던 문제를 `evalset_pairs.py`에 코드화해 해소했고(8/17 아카이브 8,700슬롯
+전건 재현으로 검증), 평가셋의 abstain 분리 규칙(gold 규칙과 모순)과 `rng.sample` 표집
+불안정(DB 2행 변화에 유지율 7.3%)도 함께 제거했다.
+
+**남은 것**: **Generation의 service 기준 재측정**(현재 정답률 99.9%/faithful 97.2%는
+173 평가 코퍼스 값이며 service 지표가 아니다), faithful 잔여 실패 2.8%(61건),
+N종 조합의 RAG 검색 실측(현재는 쌍 단위까지만), 리랭커 미실행(보류 상태).
 
 ## 0-7. 2026-08-17 갱신: prompt v2 폐기 → CAMEO-context 전환 → 전수실행 → 문서·저장소 재편
 

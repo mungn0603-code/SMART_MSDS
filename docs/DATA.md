@@ -35,9 +35,10 @@
 ## 화학물질 선정 — 173종 최종 동결 (평가 코퍼스)
 
 > **현재 서비스 물질 선정의 단일 출처는 [`REGISTRY.md`](REGISTRY.md)다(CORE 237종).**
-> 이 절은 그 이전 단계의 기록이다 — 여기서 동결한 173종은 검색 지표
+> 이 절은 그 이전 단계의 기록이다 — 여기서 동결한 173종은 2026-08-17 검색 지표
 > (Recall@10 0.9336 등)를 낸 **평가 코퍼스**이고, 2026-08-22부터는 선정 기준이
-> 아니다. "Registry ∪ 173" 규칙도 그때 폐기됐다. 아래 "Selection은 Retrieval
+> 아니다. 현재 baseline은 `corpus_tag='service'` 기준으로 대체됐다
+> ([`RETRIEVAL.md`](RETRIEVAL.md)). "Registry ∪ 173" 규칙도 그때 폐기됐다. 아래 "Selection은 Retrieval
 > Evaluation과 독립이어야 한다"는 원칙만 그대로 Registry로 승계됐다.
 
 ### 왜 재설계했는가

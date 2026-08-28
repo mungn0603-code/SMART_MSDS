@@ -86,6 +86,11 @@ Retrieval hit rate **98.84%**(병목 아님)인데도 Generation 실패율이 �
 | Faithful(근거 밖 주장 없음) | 측정 안 됨 | **97.2%** |
 | 물질 혼동 | 관측됨 | **0/2,142** |
 
+> 이 표는 **`corpus_tag='173'` 평가 코퍼스** 기준이다(2026-08-17, 2,142건 유효 채점).
+> 그 코퍼스는 2026-08-28에 서비스 범위에서 내려왔으므로 현재 서비스 코퍼스의 지표가
+> 아니다. 구조 전환(LLM 판정 → CAMEO-context 설명)이 효과가 있었다는 근거로는 그대로
+> 유효하지만, service 기준 값은 아직 없다 — 아래 로드맵 참고.
+
 전체 경위(prompt v2 시도 → 실패 → CAMEO-context 전환 → judge 채점버그 발견·수정 →
 전수실행 429 재시도 강화 → 잔여 실패 표적 재시도)는 [`docs/GENERATION.md`](docs/GENERATION.md).
 
@@ -93,18 +98,21 @@ Retrieval hit rate **98.84%**(병목 아님)인데도 Generation 실패율이 �
 
 ## 검색 계층 실측 결과
 
-물질 쌍 2,160질의(평가 코퍼스 173종, 5개 질의 템플릿) 기준. 이 수치는 Registry 확장
-(207→237)과 무관하다 — 평가 경로(`run_ab.py` / `freeze_retrieval.py`)는 `corpus_tag='173'`
-을 그대로 쓰며 재측정하지 않았다.
+서비스 코퍼스(`corpus_tag='service'`, 173종 / 371청크) 기준. 물질 쌍 450쌍 × 5개 질의
+템플릿 = 2,250질의 중 gold_evidence가 없는 10건을 제외한 2,240질의.
 
 | 지표 | 실측 |
 |---|---:|
-| Recall@10 | **0.9336** |
-| Hit@10 | 0.9884 |
-| MRR | 0.9169 |
-| nDCG@10 | 0.8500 |
-| 질의 임베딩 지연 | 368ms(목표 500ms 충족) |
-| 검색 지연 | 6.3ms |
+| Recall@10 | **0.8987** |
+| Hit@10 | 0.9790 |
+| MRR | 0.8803 |
+| nDCG@10 | 0.8065 |
+| 질의 임베딩 지연 | 444ms(목표 500ms 충족) |
+| 검색 지연 | 4.9ms |
+
+채점은 **evidence 기준**이다 — 정답은 §2 GHS 분류 청크뿐이고, §10은 boilerplate라
+"같은 문서의 무관한 청크가 검색돼도 Hit"으로 세지 않는다. 문서/섹션 단위(gold_section)
+기준 수치와는 정의가 달라 직접 비교할 수 없다.
 
 3종 이상 조합의 판정(매트릭스 조회)은 지원되지만, RAG 검색 자체의 실측 지표는
 쌍(2종) 질의 기준까지만이다. 상세·실험 이력은 [`docs/RETRIEVAL.md`](docs/RETRIEVAL.md).
@@ -211,12 +219,16 @@ streamlit run app/streamlit_app.py
 - [x] KOSHA MSDS §2/§3/§9/§10 상세 연동 — Registry 198종 전량 수집, 앱에서 물질별 조회
 - [x] KOSHA MSDS 173종 평가 코퍼스(수집 자체는 더 넓은 풀에서 진행, 평가셋은 173종 확정)
 - [x] CAMEO 68그룹 · 양립성 매트릭스 2,278쌍, PubChem 경로로 94% 재검증
-- [x] RAG 검색 계층 — hybrid, Recall@10 0.9336 / Hit@10 0.9884
+- [x] RAG 검색 계층 — hybrid, service 코퍼스 기준 Recall@10 0.8987 / Hit@10 0.9790
 - [x] Generation 계층 — CAMEO-context 파이프라인, 정답률 99.9% / faithful 97.2%
+      (**173 평가 코퍼스 기준**, service 기준 재측정 전)
 - [x] N종(3종 이상) 물질 조합 판정(`judge_combination_by_cas`/`full_report`)
 - [x] 자체 Judge 채점 파이프라인(rule + LLM, faithful/predicted_verdict/substance_confused)
 
 **미완성 (감추지 않고 그대로 남김)**
+- [ ] **Generation의 service 기준 재측정 미실행** — 현재 정답률·faithful 수치는 서비스
+      범위에서 내려온 173 평가 코퍼스에서 나온 값이다. Retrieval은 2026-08-29에 service로
+      갈아끼웠지만 Generation(`run_cameo_full.py`)은 아직 안 돌렸다
 - [ ] Reranker 미실행 — 저비용 대안(boilerplate penalty)으로 이미 목표 충족해 보류 중
 - [ ] 잔여 faithful 실패 2.8%(61건) — 패턴은 파악됐으나(그룹 분류를 확인된 반응처럼
       단정) 완전히 해소되진 않음

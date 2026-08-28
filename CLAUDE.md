@@ -32,11 +32,19 @@
 
 SQLite · 임베딩 `dragonkue/BGE-m3-ko` · FAISS(dense) + BM25(kiwipiepy) 하이브리드 + RRF + §10 boilerplate penalty · LLM은 DeepSeek `deepseek-v4-flash`(thinking mode, Generation과 Judge 겸용 — 실제 값은 `src/llm.py`의 `MODEL`) · 평가는 자체 rule + LLM Judge (RAGAS는 n=7 파일럿 후 폐기, 재개하지 않음)
 
-## 확정 지표 (쌍 질의 2,160건 기준, 2026-08-17)
+## 확정 지표
 
-Recall@10 0.9336 · Hit@10 0.9884 · MRR 0.9169 · nDCG@10 0.8500 · 정답률 99.9% · faithful 97.2% · 물질혼동 0/2,142
+**Retrieval — service 기준 (쌍 질의 2,240건, 2026-08-29)**
 
-숫자를 인용할 때는 이 조건(쌍 단위, 2,160건)을 반드시 함께 적는다. N종 조합 판정은 `compatibility_engine.py`의 `judge_combination_by_cas`로 구현돼 있지만 **검색 실측 지표는 쌍 단위까지만** 있다.
+Recall@10 0.8987 · Hit@10 0.9790 · MRR 0.8803 · nDCG@10 0.8065
+
+조건: `corpus_tag='service'` 173종 / 371청크(§2·§10) / 450쌍 × 템플릿 5 = 2,250질의 중 gold_evidence 없는 10건 제외. 채점은 evidence 기준(gold_evidence = §2 100%)이고, gold_section 기준 수치와 섞어 쓰지 않는다. 숫자를 인용할 때는 이 조건을 반드시 함께 적는다.
+
+**Generation — service 기준 미측정.**
+
+정답률 99.9% / faithful 97.2% / 물질혼동 0/2,142는 `corpus_tag='173'` 코퍼스에서 낸 값이다. 그 코퍼스는 2026-08-28에 서비스 범위에서 내려왔으므로 **service의 지표가 아니다.** 인용하려면 "173 평가 코퍼스 기준"을 반드시 붙인다. service 기준 값을 얻으려면 `run_cameo_full.py`를 새 평가셋으로 재실행해야 한다(미실행).
+
+N종 조합 판정은 `compatibility_engine.py`의 `judge_combination_by_cas`로 구현돼 있지만 **검색 실측 지표는 쌍 단위까지만** 있다.
 
 ## 미완성 (README에 명시된 것)
 

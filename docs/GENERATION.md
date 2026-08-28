@@ -1,6 +1,15 @@
 # GENERATION — 답변 생성과 평가를 어떻게 했는가?
 
-## 최종 결과 (2,160건 전수, 2,142건 유효 채점)
+> **이 문서의 수치는 전부 `corpus_tag='173'` 평가 코퍼스 기준이다(2026-08-17).**
+> 그 코퍼스는 2026-08-28에 서비스 범위에서 내려왔고, Retrieval은 2026-08-29에
+> `corpus_tag='service'`로 재측정됐다([`RETRIEVAL.md`](RETRIEVAL.md)). Generation은
+> **아직 service 기준으로 재실행하지 않았다** — 아래 정답률·faithful은 service의
+> 지표가 아니다. 구조 전환(LLM 판정 → CAMEO-context 설명)의 효과를 보여주는 근거로는
+> 유효하며, 인용할 때는 "173 평가 코퍼스 기준"을 반드시 함께 적는다.
+> service 값을 얻으려면 새 평가셋(`data/evalset/gold_pair.jsonl`, 450쌍/2,250질의)으로
+> `run_cameo_full.py`를 재실행해야 한다.
+
+## 최종 결과 — 173 평가 코퍼스 (2,160건 전수, 2,142건 유효 채점)
 
 | 지표 | STEP1~5 baseline(LLM이 직접 판정) | 최종(CAMEO-context, v4+v5) |
 |---|---:|---:|
