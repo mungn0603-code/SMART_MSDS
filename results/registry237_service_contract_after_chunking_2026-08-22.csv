@@ -1,0 +1,238 @@
+﻿cas_number,name_ko,core_axis,origin,kosha,msds,indexed,cameo,cameo_groups,cameo_source,s10_specific_chars,s10_thin,tier,tier_code
+100-21-0,테레프탈산,practical,CORE207,True,True,True,True,"Acids, Carboxylic | Hydrocarbons, Aromatic",CAMEO_scrape,171,False,A · 계약 4조건 전부 충족,A
+100-51-6,벤질알코올,educational,CORE207,True,True,True,True,Alcohols and Polyols,CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+100-64-1,사이클로헥사논 옥심,representative,add_2026-08-22,True,True,True,True,Oximes,CAMEO_scrape,404,False,A · 계약 4조건 전부 충족,A
+10028-14-5,노벨륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+10043-01-3,황산알루미늄,practical,CORE207,True,True,True,True,"Salts, Acidic | Water and Aqueous Solutions",CAMEO_scrape,167,False,A · 계약 4조건 전부 충족,A
+10043-92-2,라돈,periodic_element,CORE207,True,True,False,False,,,24,True,C · CAMEO 매핑 결여,C
+10099-74-8,질산납(II),educational,CORE207,True,True,True,True,"Nitrate and Nitrite Compounds, Inorganic",CAMEO_scrape,0,True,A · 계약 4조건 전부 충족,A
+101-68-8,다이페닐메테인-4-4'-다이아이소사이아네이트,practical,CORE207,True,True,True,True,Isocyanates and Isothiocyanates,CAMEO_scrape,9,True,A · 계약 4조건 전부 충족,A
+102-54-5,페로센,educational,CORE207,True,True,True,True,"Hydrocarbons, Aromatic | Organometallics",CAMEO_scrape,303,False,A · 계약 4조건 전부 충족,A
+102-71-6,트라이에탄올아민,practical,CORE207,True,True,True,True,"Alcohols and Polyols | Amines, Phosphines, and Pyridines",CAMEO_scrape,156,False,A · 계약 4조건 전부 충족,A
+10361-37-2,염화바륨,educational,CORE207,True,True,True,True,Non-Redox-Active Inorganic Compounds,CAMEO_scrape,248,False,A · 계약 4조건 전부 충족,A
+104-15-4,p-톨루엔설폰산,educational,add_2026-08-22,True,True,True,True,"Acids, Strong Oxidizing",CAMEO_scrape,248,False,A · 계약 4조건 전부 충족,A
+105-60-2,카프로락탐,practical,CORE207,True,True,True,True,Amides and Imides | Polymerizable Compounds,CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+106-89-8,에피클로로하이드린,representative,add_2026-08-22,True,True,True,True,Epoxides | Halogenated Organic Compounds | Polymerizable Compounds,pubchem_cameo_2026-08-22,349,False,A · 계약 4조건 전부 충족,A
+107-21-1,에틸렌글라이콜,practical,add_2026-08-22,True,True,True,True,Alcohols and Polyols,CAMEO_scrape,160,False,A · 계약 4조건 전부 충족,A
+108-24-7,무수아세트산,educational,CORE207,True,True,True,True,Anhydrides,manual_classification_verified,434,False,A · 계약 4조건 전부 충족,A
+108-88-3,톨루엔,fundamental,CORE207,True,True,True,True,"Hydrocarbons, Aromatic",manual_classification_verified,334,False,A · 계약 4조건 전부 충족,A
+108-95-2,페놀,representative,CORE207,True,True,True,True,"Acids, Weak | Phenols and Cresols | Water and Aqueous Solutions",CAMEO_scrape,243,False,A · 계약 4조건 전부 충족,A
+109-99-9,테트라하이드로퓨란,fundamental,add_2026-08-22,True,True,True,True,Ethers,pubchem_cameo_2026-08-22,323,False,A · 계약 4조건 전부 충족,A
+110-54-3,헥세인,representative,CORE207,True,True,True,True,"Hydrocarbons, Aliphatic Saturated",manual_classification_verified,288,False,A · 계약 4조건 전부 충족,A
+112-02-7,염화 헥사데실트라이메틸암모늄,representative,add_2026-08-22,True,True,True,True,Non-Redox-Active Inorganic Compounds | Quaternary Ammonium and Phosphonium Salts,CAMEO_scrape,175,False,A · 계약 4조건 전부 충족,A
+124-09-4,헥사메틸렌다이아민,practical,CORE207,True,True,True,True,"Amines, Phosphines, and Pyridines | Water and Aqueous Solutions",CAMEO_scrape,248,False,A · 계약 4조건 전부 충족,A
+124-38-9,이산화탄소,fundamental,CORE207,True,True,True,True,"Acids, Weak | Not Chemically Reactive agents",pubchem_verified,71,False,A · 계약 4조건 전부 충족,A
+1305-62-0,수산화칼슘,representative,CORE207,True,True,True,True,"Bases, Weak",CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+1305-78-8,산화칼슘,representative,CORE207,True,True,True,True,"Bases, Strong",CAMEO_scrape,241,False,A · 계약 4조건 전부 충족,A
+1309-37-1,삼산화이철,representative,CORE207,True,True,True,True,Non-Redox-Active Inorganic Compounds,pubchem_cameo_2026-08-22,273,False,A · 계약 4조건 전부 충족,A
+1310-58-3,수산화칼륨,fundamental,CORE207,True,True,True,True,"Bases, Strong | Water and Aqueous Solutions",CAMEO_scrape,253,False,A · 계약 4조건 전부 충족,A
+1310-65-2,수산화리튬 용액,practical,CORE207,True,True,True,True,"Bases, Strong | Water and Aqueous Solutions",CAMEO_scrape,248,False,A · 계약 4조건 전부 충족,A
+1310-73-2,수산화나트륨,fundamental,CORE207,True,True,True,True,"Bases, Strong | Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes | Water and Aqueous Solutions","CAMEO_scrape,pubchem_verified",267,False,A · 계약 4조건 전부 충족,A
+1313-60-6,과산화나트륨,practical,CORE207,True,True,True,True,"Bases, Strong | Oxidizing Agents, Strong",CAMEO_scrape,0,True,A · 계약 4조건 전부 충족,A
+1313-82-2,황화나트륨,practical,CORE207,True,True,True,True,"Bases, Weak | Sulfides, Inorganic | Water and Aqueous Solutions",CAMEO_scrape,263,False,A · 계약 4조건 전부 충족,A
+1330-20-7,자일렌,practical,add_2026-08-22,True,True,True,True,"Hydrocarbons, Aromatic",pubchem_cameo_2026-08-22,0,True,A · 계약 4조건 전부 충족,A
+1333-74-0,수소,periodic_element,CORE207,True,True,True,True,"Reducing Agents, Weak",pubchem_verified,384,False,A · 계약 4조건 전부 충족,A
+1333-82-0,삼산화크로뮴,practical,CORE207,True,True,True,True,"Anhydrides | Oxidizing Agents, Strong",CAMEO_scrape,0,True,A · 계약 4조건 전부 충족,A
+1333-86-4,카본블랙,practical,CORE207,True,True,True,True,"Hydrocarbons, Aliphatic Saturated | Reducing Agents, Weak",CAMEO_scrape,313,False,A · 계약 4조건 전부 충족,A
+1336-21-6,수산화암모늄,educational,CORE207,True,True,True,True,"Bases, Weak | Water and Aqueous Solutions",CAMEO_scrape,17,True,A · 계약 4조건 전부 충족,A
+13494-80-9,텔루륨,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,141,False,A · 계약 4조건 전부 충족,A
+141-78-6,아세트산에틸,fundamental,add_2026-08-22,True,True,True,True,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters",pubchem_cameo_2026-08-22,319,False,A · 계약 4조건 전부 충족,A
+143-33-9,사이안화나트륨,representative,CORE207,True,True,True,True,"Bases, Weak | Cyanides, Inorganic | Water and Aqueous Solutions",CAMEO_scrape,256,False,A · 계약 4조건 전부 충족,A
+144-55-8,탄산수소나트륨,educational,CORE207,True,True,True,True,Carbonate Salts,CAMEO_scrape,161,False,A · 계약 4조건 전부 충족,A
+151-21-3,도데실황산나트륨,practical,CORE207,True,True,True,True,"Hydrocarbons, Aliphatic Saturated | Salts, Basic",CAMEO_scrape,162,False,A · 계약 4조건 전부 충족,A
+151-50-8,사이안화칼륨,practical,CORE207,True,True,True,True,"Bases, Weak | Cyanides, Inorganic | Water and Aqueous Solutions",CAMEO_scrape,297,False,A · 계약 4조건 전부 충족,A
+15630-89-4,과탄산나트륨,practical,CORE207,True,True,True,True,"Carbonate Salts | Oxidizing Agents, Strong | Salts, Basic",CAMEO_scrape,180,False,A · 계약 4조건 전부 충족,A
+16940-66-2,수소화붕소나트륨,representative,CORE207,True,True,True,True,"Bases, Strong | Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes | Water and Aqueous Solutions","pubchem_verified,CAMEO_scrape",401,False,A · 계약 4조건 전부 충족,A
+1762-95-4,싸이오사이안산암모늄,educational,CORE207,True,True,True,True,"Reducing Agents, Strong | Salts, Acidic | Water and Aqueous Solutions",CAMEO_scrape,171,False,A · 계약 4조건 전부 충족,A
+20859-73-8,인화알루미늄,representative,add_2026-08-22,True,True,True,True,"Nitrides, Phosphides, Carbides, and Silicides",CAMEO_scrape,34,False,A · 계약 4조건 전부 충족,A
+22537-19-5,로렌슘,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+26628-22-8,아자이드화나트륨,representative,CORE207,True,True,True,True,"Azo, Diazo, Azido, Hydrazine, and Azide Compounds",CAMEO_scrape,258,False,A · 계약 4조건 전부 충족,A
+27176-87-0,도데실벤젠술폰산,practical,CORE207,True,True,True,True,"Acids, Strong Oxidizing",CAMEO_scrape,207,False,A · 계약 4조건 전부 충족,A
+302-01-2,하이드라진,practical,add_2026-08-22,True,True,True,True,"Azo, Diazo, Azido, Hydrazine, and Azide Compounds | Bases, Strong | Bases, Weak | Water and Aqueous Solutions",pubchem_cameo_2026-08-22,348,False,A · 계약 4조건 전부 충족,A
+3811-04-9,염소산칼륨,educational,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Water and Aqueous Solutions",CAMEO_scrape,471,False,A · 계약 4조건 전부 충족,A
+471-34-1,탄산칼슘,educational,CORE207,True,True,True,True,Carbonate Salts,CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+497-19-8,탄산나트륨,representative,CORE207,True,True,False,False,,,156,False,C · CAMEO 매핑 결여,C
+50-00-0,폼알데하이드,representative,CORE207,True,True,True,True,Aldehydes | Polymerizable Compounds | Water and Aqueous Solutions,CAMEO_scrape,332,False,A · 계약 4조건 전부 충족,A
+53850-35-4,더브늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+53850-36-5,러더포듐,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+540-72-7,싸이오사이안산나트륨,educational,CORE207,True,True,True,True,"Reducing Agents, Strong | Salts, Basic | Water and Aqueous Solutions",CAMEO_scrape,171,False,A · 계약 4조건 전부 충족,A
+54037-14-8,보륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54037-57-9,하슘,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54038-01-6,마이트너륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54038-81-2,시보귬,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54083-77-1,다름슈타튬,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54084-26-3,코페르니슘,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54084-70-7,니호늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54085-16-4,플레로븀,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54085-64-2,모스코븀,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54100-71-9,리버모륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54144-19-3,오가네손,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+54386-24-2,뢴트게늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+547-58-0,메틸오렌지,educational,add_2026-08-22,True,True,True,True,"Azo, Diazo, Azido, Hydrazine, and Azide Compounds | Salts, Acidic | Sulfonates, Phosphonates, and Thiophosphonates, Organic",CAMEO_scrape,156,False,A · 계약 4조건 전부 충족,A
+5470-11-1,하이드록실아민 염산염,educational,add_2026-08-22,True,True,True,True,"Reducing Agents, Strong | Salts, Acidic",CAMEO_scrape,27,False,A · 계약 4조건 전부 충족,A
+57-13-6,요소,educational,CORE207,True,True,True,True,Amides and Imides,CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+60-00-4,에틸렌다이아민테트라아세트산,educational,CORE207,True,True,True,True,"Acids, Carboxylic | Amines, Phosphines, and Pyridines",CAMEO_scrape,200,False,A · 계약 4조건 전부 충족,A
+60-29-7,다이에틸에터,representative,CORE207,True,True,True,True,Ethers,manual_classification_verified,354,False,A · 계약 4조건 전부 충족,A
+62-53-3,아닐린,representative,add_2026-08-22,True,True,True,True,"Amines, Aromatic",pubchem_cameo_2026-08-22,243,False,A · 계약 4조건 전부 충족,A
+62-76-0,옥살산나트륨,educational,CORE207,True,True,True,True,"Reducing Agents, Weak | Salts, Basic",CAMEO_scrape,161,False,A · 계약 4조건 전부 충족,A
+630-08-0,일산화탄소,fundamental,CORE207,True,True,True,True,"Reducing Agents, Weak",pubchem_cameo_2026-08-22,333,False,A · 계약 4조건 전부 충족,A
+64-17-5,에탄올,fundamental,CORE207,True,True,True,True,"Acids, Weak | Alcohols and Polyols | Cyanides, Inorganic | Polymerizable Compounds","pubchem_verified,manual_classification_verified",309,False,A · 계약 4조건 전부 충족,A
+64-19-7,아세트산,representative,CORE207,True,True,True,True,"Acids, Carboxylic | Water and Aqueous Solutions","manual_classification_verified,pubchem_verified",362,False,A · 계약 4조건 전부 충족,A
+6484-52-2,질산암모늄,practical,CORE207,True,True,True,True,"Nitrate and Nitrite Compounds, Inorganic | Salts, Acidic | Water and Aqueous Solutions",CAMEO_scrape,415,False,A · 계약 4조건 전부 충족,A
+67-56-1,메탄올,fundamental,CORE207,True,True,True,True,Alcohols and Polyols,pubchem_cameo_2026-08-22,365,False,A · 계약 4조건 전부 충족,A
+67-63-0,아이소프로필알코올,fundamental,add_2026-08-22,True,True,True,True,Alcohols and Polyols,pubchem_cameo_2026-08-22,304,False,A · 계약 4조건 전부 충족,A
+67-64-1,아세톤,fundamental,CORE207,True,True,True,True,Ketones,manual_classification_verified,323,False,A · 계약 4조건 전부 충족,A
+68-12-2,"N,N-다이메틸폼아마이드",fundamental,add_2026-08-22,True,True,True,True,Amides and Imides,pubchem_cameo_2026-08-22,287,False,A · 계약 4조건 전부 충족,A
+69-72-7,살리실산,educational,add_2026-08-22,True,True,True,True,"Acids, Carboxylic | Phenols and Cresols",CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+71-43-2,벤젠,fundamental,CORE207,True,True,True,True,"Hydrocarbons, Aromatic",pubchem_cameo_2026-08-22,348,False,A · 계약 4조건 전부 충족,A
+7220-79-3,메틸렌 블루,educational,add_2026-08-22,True,True,True,True,"Amines, Phosphines, and Pyridines | Hydrocarbons, Aromatic | Quaternary Ammonium and Phosphonium Salts | Sulfides, Organic",CAMEO_scrape,242,False,A · 계약 4조건 전부 충족,A
+74-82-8,메탄,fundamental,CORE207,True,True,True,True,"Hydrocarbons, Aliphatic Saturated",pubchem_cameo_2026-08-22,313,False,A · 계약 4조건 전부 충족,A
+74-85-1,에틸렌,representative,CORE207,True,True,True,True,"Hydrocarbons, Aliphatic Unsaturated | Polymerizable Compounds",pubchem_cameo_2026-08-22,334,False,A · 계약 4조건 전부 충족,A
+74-86-2,아세틸렌,representative,CORE207,True,True,True,True,"Alkynes, with Acetylenic Hydrogen",pubchem_cameo_2026-08-22,345,False,A · 계약 4조건 전부 충족,A
+74-98-6,프로페인,practical,add_2026-08-22,True,True,True,True,"Hydrocarbons, Aliphatic Saturated",pubchem_cameo_2026-08-22,298,False,A · 계약 4조건 전부 충족,A
+7429-90-5,알루미늄,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,220,False,A · 계약 4조건 전부 충족,A
+7429-91-6,디스프로슘,periodic_element,CORE207,True,True,False,False,,,273,False,C · CAMEO 매핑 결여,C
+7429-92-7,아인슈타이늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7439-88-5,이리듐,periodic_element,CORE207,True,True,False,False,,,156,False,C · CAMEO 매핑 결여,C
+7439-89-6,철,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,409,False,A · 계약 4조건 전부 충족,A
+7439-90-9,크립톤,periodic_element,CORE207,True,True,True,True,Not Chemically Reactive agents,CAMEO_scrape,76,False,A · 계약 4조건 전부 충족,A
+7439-91-0,란타넘,periodic_element,CORE207,True,True,False,False,,,235,False,C · CAMEO 매핑 결여,C
+7439-92-1,납,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,171,False,A · 계약 4조건 전부 충족,A
+7439-93-2,리튬,periodic_element,CORE207,True,True,True,True,"Metals, Alkali, Very Active",CAMEO_scrape,401,False,A · 계약 4조건 전부 충족,A
+7439-94-3,루테튬,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7439-95-4,마그네슘,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,537,False,A · 계약 4조건 전부 충족,A
+7439-96-5,망가니즈,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,254,False,A · 계약 4조건 전부 충족,A
+7439-97-6,수은,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",pubchem_cameo_2026-08-22,1,True,A · 계약 4조건 전부 충족,A
+7439-98-7,몰리브데넘,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,318,False,A · 계약 4조건 전부 충족,A
+7439-99-8,넵투늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-00-8,네오디뮴,periodic_element,CORE207,True,True,False,False,,,156,False,C · CAMEO 매핑 결여,C
+7440-01-9,네온,periodic_element,CORE207,True,True,True,True,Not Chemically Reactive agents,CAMEO_scrape,71,False,A · 계약 4조건 전부 충족,A
+7440-02-0,니켈,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,254,False,A · 계약 4조건 전부 충족,A
+7440-03-1,나이오븀,periodic_element,CORE207,True,True,False,False,,,161,False,C · CAMEO 매핑 결여,C
+7440-04-2,오스뮴,periodic_element,CORE207,True,True,False,False,,,161,False,C · CAMEO 매핑 결여,C
+7440-05-3,팔라듐,periodic_element,CORE207,True,True,False,False,,,259,False,C · CAMEO 매핑 결여,C
+7440-06-4,백금,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,244,False,A · 계약 4조건 전부 충족,A
+7440-07-5,플루토늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-08-6,폴로늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-09-7,칼륨,periodic_element,CORE207,True,True,True,True,"Metals, Alkali, Very Active",CAMEO_scrape,19,True,A · 계약 4조건 전부 충족,A
+7440-10-0,프라세오디뮴,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-11-1,멘델레븀,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-12-2,프로메튬,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-13-3,프로트악티늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-14-4,라듐,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-15-5,레늄,periodic_element,CORE207,True,True,False,False,,,161,False,C · CAMEO 매핑 결여,C
+7440-16-6,로듐,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,259,False,A · 계약 4조건 전부 충족,A
+7440-17-7,루비듐,periodic_element,CORE207,True,True,True,True,"Metals, Alkali, Very Active",CAMEO_scrape,371,False,A · 계약 4조건 전부 충족,A
+7440-18-8,루테늄,periodic_element,CORE207,True,True,False,False,,,239,False,C · CAMEO 매핑 결여,C
+7440-19-9,사마륨,periodic_element,CORE207,True,True,False,False,,,244,False,C · CAMEO 매핑 결여,C
+7440-20-2,스칸듐,periodic_element,CORE207,True,True,False,False,,,319,False,C · CAMEO 매핑 결여,C
+7440-21-3,규소,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,319,False,A · 계약 4조건 전부 충족,A
+7440-22-4,은,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,182,False,A · 계약 4조건 전부 충족,A
+7440-23-5,나트륨,periodic_element,CORE207,True,True,True,True,"Metals, Alkali, Very Active",CAMEO_scrape,19,True,A · 계약 4조건 전부 충족,A
+7440-24-6,스트론튬,periodic_element,CORE207,True,True,False,False,,,706,False,C · CAMEO 매핑 결여,C
+7440-25-7,탄탈럼,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,259,False,A · 계약 4조건 전부 충족,A
+7440-26-8,테크네튬,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-27-9,터븀,periodic_element,CORE207,True,True,False,False,,,189,False,C · CAMEO 매핑 결여,C
+7440-28-0,탈륨,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,126,False,A · 계약 4조건 전부 충족,A
+7440-29-1,토륨,periodic_element,CORE207,True,True,False,False,,,24,True,C · CAMEO 매핑 결여,C
+7440-30-4,툴륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-31-5,주석,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,171,False,A · 계약 4조건 전부 충족,A
+7440-32-6,티타늄,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active | Water and Aqueous Solutions",CAMEO_scrape,350,False,A · 계약 4조건 전부 충족,A
+7440-33-7,텅스텐,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,346,False,A · 계약 4조건 전부 충족,A
+7440-34-8,악티늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-35-9,아메리슘,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-36-0,안티모니,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,259,False,A · 계약 4조건 전부 충족,A
+7440-37-1,아르곤,periodic_element,CORE207,True,True,True,True,Not Chemically Reactive agents,CAMEO_scrape,76,False,A · 계약 4조건 전부 충족,A
+7440-38-2,비소,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,126,False,A · 계약 4조건 전부 충족,A
+7440-39-3,바륨,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,346,False,A · 계약 4조건 전부 충족,A
+7440-40-6,버클륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-41-7,베릴륨,periodic_element,CORE207,True,True,True,True,"Insufficient Information for Classification | Metals, Elemental and Powder, Active",CAMEO_scrape,222,False,A · 계약 4조건 전부 충족,A
+7440-42-8,붕소,periodic_element,CORE207,True,True,False,False,,,278,False,C · CAMEO 매핑 결여,C
+7440-43-9,카드뮴,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,24,True,A · 계약 4조건 전부 충족,A
+7440-44-0,탄소,periodic_element,CORE207,True,True,True,True,"Hydrocarbons, Aliphatic Saturated | Reducing Agents, Weak",pubchem_cameo_2026-08-22,288,False,A · 계약 4조건 전부 충족,A
+7440-45-1,세륨,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,461,False,A · 계약 4조건 전부 충족,A
+7440-46-2,세슘,periodic_element,CORE207,True,True,True,True,"Metals, Alkali, Very Active",CAMEO_scrape,401,False,A · 계약 4조건 전부 충족,A
+7440-47-3,크로뮴,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,182,False,A · 계약 4조건 전부 충족,A
+7440-48-4,코발트,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,239,False,A · 계약 4조건 전부 충족,A
+7440-50-8,구리,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,259,False,A · 계약 4조건 전부 충족,A
+7440-51-9,퀴륨,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-52-0,어븀,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-53-1,유로퓸,periodic_element,CORE207,True,True,False,False,,,244,False,C · CAMEO 매핑 결여,C
+7440-54-2,가돌리늄,periodic_element,CORE207,True,True,False,False,,,250,False,C · CAMEO 매핑 결여,C
+7440-55-3,갈륨,periodic_element,CORE207,True,True,True,True,"Metals, Less Reactive agents",CAMEO_scrape,118,False,A · 계약 4조건 전부 충족,A
+7440-56-4,저마늄,periodic_element,CORE207,True,True,False,False,,,319,False,C · CAMEO 매핑 결여,C
+7440-57-5,금,periodic_element,CORE207,True,True,False,False,,,161,False,C · CAMEO 매핑 결여,C
+7440-58-6,하프늄,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active | Water and Aqueous Solutions",CAMEO_scrape,409,False,A · 계약 4조건 전부 충족,A
+7440-59-7,헬륨,periodic_element,CORE207,True,True,True,True,Not Chemically Reactive agents,CAMEO_scrape,76,False,A · 계약 4조건 전부 충족,A
+7440-60-0,홀뮴,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-61-1,우라늄,periodic_element,CORE207,True,True,False,False,,,24,True,C · CAMEO 매핑 결여,C
+7440-62-2,바나듐,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,279,False,A · 계약 4조건 전부 충족,A
+7440-63-3,제논,periodic_element,CORE207,True,True,True,True,Not Chemically Reactive agents,CAMEO_scrape,76,False,A · 계약 4조건 전부 충족,A
+7440-64-4,이터븀,periodic_element,CORE207,True,True,False,False,,,254,False,C · CAMEO 매핑 결여,C
+7440-65-5,이트륨,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,319,False,A · 계약 4조건 전부 충족,A
+7440-66-6,아연,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,506,False,A · 계약 4조건 전부 충족,A
+7440-67-7,지르코늄,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active | Water and Aqueous Solutions",CAMEO_scrape,521,False,A · 계약 4조건 전부 충족,A
+7440-68-8,아스타틴,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-69-9,비스무트,periodic_element,CORE207,True,True,False,False,,,166,False,C · CAMEO 매핑 결여,C
+7440-70-2,칼슘,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,528,False,A · 계약 4조건 전부 충족,A
+7440-71-3,캘리포늄,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-72-4,페르뮴,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-73-5,프랑슘,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+7440-74-6,인듐,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,319,False,A · 계약 4조건 전부 충족,A
+7446-70-0,염화알루미늄(무수),practical,CORE207,True,True,True,True,"Acids, Strong Non-oxidizing | Halogenating Agents | Water and Aqueous Solutions",CAMEO_scrape,339,False,A · 계약 4조건 전부 충족,A
+7447-40-7,염화칼륨,educational,CORE207,True,True,True,True,Non-Redox-Active Inorganic Compounds,CAMEO_scrape,156,False,A · 계약 4조건 전부 충족,A
+7487-94-7,염화수은(II),practical,add_2026-08-22,True,True,True,True,"Metals, Less Reactive agents | Salts, Acidic",CAMEO_scrape,248,False,A · 계약 4조건 전부 충족,A
+75-05-8,아세토나이트릴,fundamental,add_2026-08-22,True,True,True,True,Nitriles,pubchem_cameo_2026-08-22,355,False,A · 계약 4조건 전부 충족,A
+75-09-2,다이클로로메테인,fundamental,add_2026-08-22,True,True,True,True,Halogenated Organic Compounds,pubchem_cameo_2026-08-22,201,False,A · 계약 4조건 전부 충족,A
+75-78-5,다이메틸다이클로로실란,representative,add_2026-08-22,True,True,True,True,Chlorosilanes,pubchem_cameo_2026-08-22,463,False,A · 계약 4조건 전부 충족,A
+7553-56-2,아이오딘,periodic_element,CORE207,True,True,True,True,"Oxidizing Agents, Weak",CAMEO_scrape,24,True,A · 계약 4조건 전부 충족,A
+7601-90-3,과염소산,fundamental,add_2026-08-22,True,True,True,True,"Acids, Strong Oxidizing | Water and Aqueous Solutions",pubchem_cameo_2026-08-22,521,False,A · 계약 4조건 전부 충족,A
+7631-90-5,아황산수소나트륨,practical,CORE207,True,True,True,True,Sulfite and Thiosulfate Salts | Water and Aqueous Solutions,CAMEO_scrape,253,False,A · 계약 4조건 전부 충족,A
+7632-00-0,아질산나트륨,representative,CORE207,True,True,True,True,"Nitrate and Nitrite Compounds, Inorganic | Water and Aqueous Solutions",CAMEO_scrape,415,False,A · 계약 4조건 전부 충족,A
+7646-69-7,수소화나트륨,representative,add_2026-08-22,True,True,True,True,"Metal Hydrides, Metal Alkyls, Metal Aryls, and Silanes",CAMEO_scrape,401,False,A · 계약 4조건 전부 충족,A
+7646-85-7,염화아연,practical,CORE207,True,True,True,True,"Acids, Strong Non-oxidizing | Water and Aqueous Solutions",CAMEO_scrape,253,False,A · 계약 4조건 전부 충족,A
+7647-01-0,염화수소,fundamental,CORE207,True,True,True,True,"Acids, Strong Non-oxidizing | Water and Aqueous Solutions","manual_classification_verified,pubchem_verified",194,False,A · 계약 4조건 전부 충족,A
+7647-14-5,염화나트륨,representative,CORE207,True,True,False,False,,,177,False,C · CAMEO 매핑 결여,C
+7664-38-2,인산,fundamental,add_2026-08-22,True,True,True,True,"Acids, Weak",CAMEO_scrape,0,True,A · 계약 4조건 전부 충족,A
+7664-39-3,불화수소,fundamental,CORE207,True,True,True,True,"Acids, Weak | Fluoride Salts, Soluble | Water and Aqueous Solutions",pubchem_cameo_2026-08-22,184,False,A · 계약 4조건 전부 충족,A
+7664-41-7,암모니아,fundamental,CORE207,True,True,True,True,"Bases, Weak | Water and Aqueous Solutions",pubchem_verified,269,False,A · 계약 4조건 전부 충족,A
+7664-93-9,황산,fundamental,CORE207,True,True,True,True,"Acids, Strong Oxidizing",CAMEO_scrape,348,False,A · 계약 4조건 전부 충족,A
+7681-11-0,아이오딘화칼륨,educational,CORE207,True,True,True,True,"Reducing Agents, Weak | Salts, Basic",CAMEO_scrape,151,False,A · 계약 4조건 전부 충족,A
+7681-38-1,황산수소나트륨,practical,CORE207,True,True,True,True,"Salts, Acidic | Water and Aqueous Solutions",CAMEO_scrape,253,False,A · 계약 4조건 전부 충족,A
+7681-49-4,불화나트륨,practical,CORE207,True,True,True,True,"Salts, Basic | Water and Aqueous Solutions",CAMEO_scrape,268,False,A · 계약 4조건 전부 충족,A
+7697-37-2,질산,fundamental,CORE207,True,True,True,True,"Acids, Strong Oxidizing",manual_classification_verified,411,False,A · 계약 4조건 전부 충족,A
+77-09-8,페놀프탈레인,educational,add_2026-08-22,True,True,True,True,"Esters, Sulfate Esters, Phosphate Esters, Thiophosphate Esters, and Borate Esters | Phenols and Cresols",pubchem_cameo_2026-08-22,191,False,A · 계약 4조건 전부 충족,A
+7704-34-9,황,periodic_element,CORE207,True,True,True,True,"Reducing Agents, Strong",CAMEO_scrape,279,False,A · 계약 4조건 전부 충족,A
+7705-08-0,염화철(III),educational,CORE207,True,True,True,True,"Acids, Strong Non-oxidizing | Water and Aqueous Solutions",CAMEO_scrape,255,False,A · 계약 4조건 전부 충족,A
+7722-64-7,과망가니즈산칼륨,representative,CORE207,True,True,True,True,"Oxidizing Agents, Strong",CAMEO_scrape,0,True,A · 계약 4조건 전부 충족,A
+7722-84-1,과산화수소,fundamental,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Water and Aqueous Solutions","manual_classification_verified,pubchem_verified",0,True,A · 계약 4조건 전부 충족,A
+7723-14-0,인,periodic_element,CORE207,True,True,True,True,"Reducing Agents, Strong | Reducing Agents, Weak | Water and Aqueous Solutions",pubchem_cameo_2026-08-22,487,False,A · 계약 4조건 전부 충족,A
+7726-95-6,브로민,periodic_element,CORE207,True,True,True,True,"Halogenating Agents | Oxidizing Agents, Strong | Water and Aqueous Solutions",pubchem_cameo_2026-08-22,248,False,A · 계약 4조건 전부 충족,A
+7727-21-1,과황산칼륨,practical,CORE207,True,True,True,True,"Oxidizing Agents, Strong",CAMEO_scrape,27,False,A · 계약 4조건 전부 충족,A
+7727-37-9,질소,periodic_element,CORE207,True,True,True,True,Not Chemically Reactive agents,CAMEO_scrape,76,False,A · 계약 4조건 전부 충족,A
+7727-54-0,과황산암모늄,practical,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Salts, Acidic",CAMEO_scrape,447,False,A · 계약 4조건 전부 충족,A
+7732-18-5,물,fundamental,CORE207,True,True,True,True,Water and Aqueous Solutions,CAMEO_scrape,41,False,A · 계약 4조건 전부 충족,A
+7757-79-1,질산칼륨,representative,CORE207,True,True,True,True,"Nitrate and Nitrite Compounds, Inorganic",CAMEO_scrape,415,False,A · 계약 4조건 전부 충족,A
+7758-19-2,아염소산나트륨,practical,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Salts, Basic",CAMEO_scrape,466,False,A · 계약 4조건 전부 충족,A
+7758-94-3,염화철(II),practical,CORE207,True,True,True,True,"Reducing Agents, Strong | Water and Aqueous Solutions",CAMEO_scrape,253,False,A · 계약 4조건 전부 충족,A
+7758-98-7,황산구리,representative,CORE207,True,True,True,True,"Salts, Acidic",CAMEO_scrape,12,True,A · 계약 4조건 전부 충족,A
+7761-88-8,질산은,representative,CORE207,True,True,True,True,"Nitrate and Nitrite Compounds, Inorganic",CAMEO_scrape,430,False,A · 계약 4조건 전부 충족,A
+7772-98-7,싸이오황산나트륨,educational,CORE207,True,True,True,True,Sulfite and Thiosulfate Salts,manual_classification_verified,156,False,A · 계약 4조건 전부 충족,A
+7772-99-8,염화주석(II),practical,CORE207,True,True,True,True,"Reducing Agents, Strong | Salts, Acidic",CAMEO_scrape,253,False,A · 계약 4조건 전부 충족,A
+7775-09-9,염소산나트륨,practical,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Water and Aqueous Solutions",CAMEO_scrape,471,False,A · 계약 4조건 전부 충족,A
+7778-50-9,중크롬산칼륨,representative,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Salts, Basic",CAMEO_scrape,0,True,A · 계약 4조건 전부 충족,A
+7778-54-3,차아염소산칼슘,practical,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Salts, Basic | Water and Aqueous Solutions",CAMEO_scrape,405,False,A · 계약 4조건 전부 충족,A
+7778-66-7,차아염소산칼륨 용액,practical,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Salts, Basic | Water and Aqueous Solutions",CAMEO_scrape,268,False,A · 계약 4조건 전부 충족,A
+7782-41-4,불소,periodic_element,CORE207,True,True,True,True,"Halogenating Agents | Oxidizing Agents, Strong",pubchem_cameo_2026-08-22,10,True,A · 계약 4조건 전부 충족,A
+7782-44-7,산소,periodic_element,CORE207,True,True,True,True,"Oxidizing Agents, Strong",CAMEO_scrape,303,False,A · 계약 4조건 전부 충족,A
+7782-49-2,셀레늄,periodic_element,CORE207,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,199,False,A · 계약 4조건 전부 충족,A
+7782-50-5,염소,periodic_element,CORE207,True,True,True,True,"Halogenating Agents | Oxidizing Agents, Strong",pubchem_cameo_2026-08-22,439,False,A · 계약 4조건 전부 충족,A
+7786-81-4,황산니켈(II),educational,CORE207,True,True,True,True,"Salts, Acidic",CAMEO_scrape,248,False,A · 계약 4조건 전부 충족,A
+7789-00-6,크로뮴산칼륨,educational,CORE207,True,True,True,True,"Oxidizing Agents, Strong | Salts, Basic",CAMEO_scrape,200,False,A · 계약 4조건 전부 충족,A
+78-93-3,메틸에틸케톤,practical,add_2026-08-22,True,True,True,True,Ketones,pubchem_cameo_2026-08-22,339,False,A · 계약 4조건 전부 충족,A
+79-06-1,아크릴아마이드,practical,CORE207,True,True,True,True,Acrylates and Acrylic Acids | Amides and Imides | Polymerizable Compounds | Water and Aqueous Solutions,CAMEO_scrape,243,False,A · 계약 4조건 전부 충족,A
+8049-17-0,페로실리콘,practical,add_2026-08-22,True,True,True,True,"Metals, Elemental and Powder, Active",CAMEO_scrape,388,False,A · 계약 4조건 전부 충족,A
+87658-56-8,테네신,periodic_element,CORE207,False,False,False,False,,,0,True,X · KOSHA 미등재,X
+94-36-0,과산화벤조일,representative,CORE207,True,True,True,True,"Peroxides, Organic",CAMEO_scrape,412,False,A · 계약 4조건 전부 충족,A
+98-88-4,벤조일 클로라이드,representative,add_2026-08-22,True,True,True,True,"Acyl Halides, Sulfonyl Halides, and Chloroformates",pubchem_cameo_2026-08-22,334,False,A · 계약 4조건 전부 충족,A
+98-95-3,나이트로벤젠,representative,add_2026-08-22,True,True,True,True,"Nitro, Nitroso, Nitrate, and Nitrite Compounds, Organic",pubchem_cameo_2026-08-22,141,False,A · 계약 4조건 전부 충족,A

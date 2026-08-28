@@ -1,0 +1,281 @@
+﻿cas_number,registry_name_ko,registry_name_en,rag_chunk_name,kosha_name,chem_id,kosha_last_date,status,detail,name_differs
+100-01-6,p-니트로아닐린,"P-NITROANILINE, [SOLID]",p-니트로아닐린,p-니트로아닐린,001163,2025-08-08,matched,cache,False
+100-02-7,p-나이트로페놀,4-NITROPHENOL,p-나이트로페놀,p-나이트로페놀,000198,2025-08-08,matched,cache,False
+100-15-2,N-methyl-4-nitroaniline,N-METHYL-4-NITROANILINE,N-methyl-4-nitroaniline,N-methyl-4-nitroaniline,427870,2023-10-12,matched,cache,False
+100-22-1,"N,N,N'',N''-테트라메틸-1,4-페닐렌다이아민","N,N,N&#39;,N&#39;-TETRAMETHYL-P-PHENYLENEDIAMINE","N,N,N'',N''-테트라메틸-1,4-페닐렌다이아민","N,N,N'',N''-테트라메틸-1,4-페닐렌다이아민",001210,,matched,cache,False
+100-64-1,사이클로헥사논 옥심,CYCLOHEXANONE OXIME,사이클로헥사논 옥심,사이클로헥사논 옥심,365793,2018-12-28,matched,cache,False
+10025-91-9,삼염화 안티모니(삼염화 안티몬)(ANTIMONY TRICHLORIDE),ANTIMONY TRICHLORIDE,삼염화 안티모니(삼염화 안티몬)(ANTIMONY TRICHLORIDE),삼염화 안티모니(삼염화 안티몬)(ANTIMONY TRICHLORIDE),001232,2025-08-08,matched,cache,False
+10026-06-9,"주석 염화물, 펜타수화물(STANNIC CHLORIDE, PENTAHYDRATE)","STANNIC CHLORIDE, PENTAHYDRATE","주석 염화물, 펜타수화물(STANNIC CHLORIDE, PENTAHYDRATE)","주석 염화물, 펜타수화물(STANNIC CHLORIDE, PENTAHYDRATE)",001240,2025-08-08,matched,cache,False
+10026-11-6,"사염화 지르코늄, 고체",ZIRCONIUM TETRACHLORIDE,"사염화 지르코늄, 고체","사염화 지르코늄, 고체",001243,2025-08-08,matched,cache,False
+10026-13-8,포스포러스 펜타클로라이드,PHOSPHORUS PENTACHLORIDE,포스포러스 펜타클로라이드,포스포러스 펜타클로라이드,000769,2025-08-08,matched,cache,False
+10026-17-2,플루오린화 아코발트(플루오르화 아코발트)(COBALTOUS FLUORIDE),COBALT FLUORIDE,플루오린화 아코발트(플루오르화 아코발트)(COBALTOUS FLUORIDE),플루오린화 아코발트(플루오르화 아코발트)(COBALTOUS FLUORIDE),001246,2025-08-08,matched,cache,False
+10028-14-5,노벨륨,Nobelium,,,,,not_found,cache,False
+10039-54-0,황산 하이드록실아민(HYDROXYLAMINE SULFATE),HYDROXYLAMINE SULFATE,황산 하이드록실아민(HYDROXYLAMINE SULFATE),황산 하이드록실아민(HYDROXYLAMINE SULFATE),000772,2025-08-08,matched,cache,False
+10043-92-2,라돈,Radon,,라돈-220,001310,2025-08-11,matched,cache,True
+10099-74-8,질산 납(Ⅱ),LEAD NITRATE,질산 납(Ⅱ),질산 납(Ⅱ),000777,2025-08-08,matched,cache,False
+101-21-3,클로르프로팜,ISOPROPYL-N-(3-CHLOROPHENYL)CARBAMATE,클로르프로팜,클로르프로팜,001456,2025-08-08,matched,cache,False
+101-27-9,Barban,BARBAN,Barban,Barban,001472,2026-03-25,matched,cache,False
+101-68-8,"4,4&#39;-메틸렌 디(비스)페닐 디이소시아네이트","DIPHENYLMETHANE-4,4&#39;-DIISOCYANATE","4,4&#39;-메틸렌 디(비스)페닐 디이소시아네이트","4,4&#39;-메틸렌 디(비스)페닐 디이소시아네이트",001116,2025-08-08,matched,cache,False
+10112-91-1,염화 수은(사이클로산),MERCUROUS CHLORIDE,염화 수은(사이클로산),염화 수은(사이클로산),000782,2025-08-08,matched,cache,False
+10192-30-0,"이아황산 암모늄, 고체(AMMONIUM BISULFITE, SOLID)","AMMONIUM BISULFITE, SOLID","이아황산 암모늄, 고체(AMMONIUM BISULFITE, SOLID)","이아황산 암모늄, 고체(AMMONIUM BISULFITE, SOLID)",001518,2025-08-08,matched,cache,False
+102-08-9,티오카르브아닐리드,THIOCARBANILIDE,티오카르브아닐리드,티오카르브아닐리드,001533,2025-08-08,matched,cache,False
+10241-05-1,오염화 몰리브덴,MOLYBDENUM PENTACHLORIDE,오염화 몰리브덴,오염화 몰리브덴,001556,2025-08-08,matched,cache,False
+1025-15-6,트리알릴 아이소시아누르산염,TRIALLYL ISOCYANURATE,트리알릴 아이소시아누르산염,트리알릴 아이소시아누르산염,001560,2025-08-08,matched,cache,False
+103-80-0,페닐아세틸 염화물,PHENYLACETYL CHLORIDE,페닐아세틸 염화물,페닐아세틸 염화물,001682,2025-08-08,matched,cache,False
+10361-37-2,염화 바륨,BARIUM CHLORIDE,염화 바륨,염화 바륨,000794,2025-08-08,matched,cache,False
+104-15-4,P-톨루엔설폰 산,"TOLUENE SULFONIC ACID, LIQUID, WITH MORE THAN 5% FREE SULFURIC ACID",P-톨루엔설폰 산,P-톨루엔설폰 산,000224,2026-07-01,matched,cache,False
+105-48-6,Isopropyl chloroacetate,ISOPROPYL CHLOROACETATE,Isopropyl chloroacetate,Isopropyl chloroacetate,001788,2025-08-08,matched,cache,False
+106-31-0,butyric anhydride,BUTYRIC ANHYDRIDE,butyric anhydride,butyric anhydride,001846,2025-08-08,matched,cache,False
+106-51-4,퀴논,BENZOQUINONE,퀴논,퀴논,000241,2025-12-02,matched,cache,False
+106-87-6,비닐 시클로헥센디옥사이드,1-VINYL-3-CYCLOHEXENE DIOXIDE,비닐 시클로헥센디옥사이드,비닐 시클로헥센디옥사이드,000242,2026-03-25,matched,cache,False
+107-04-0,1-브로모-2-클로로에탄,1-CHLORO-2-BROMOETHANE,1-브로모-2-클로로에탄,1-브로모-2-클로로에탄,001915,2025-08-08,matched,cache,False
+108-24-7,무수초산,ACETIC ANHYDRIDE,무수초산,무수초산,001063,2025-08-08,matched,cache,False
+108-60-1,비스(2-클로로아이소프로필)에테르,BIS(2-CHLORO-1-METHYLETHYL)ETHER,비스(2-클로로아이소프로필)에테르,비스(2-클로로아이소프로필)에테르,002046,2025-08-08,matched,cache,False
+108-88-3,톨루엔,Toluene,톨루엔,톨루엔,001032,2025-08-08,matched,cache,False
+108-95-2,페놀,Phenol,페놀,페놀,001037,2025-09-24,matched,cache,False
+109-52-4,발레르 산,PENTANOIC ACID,발레르 산,발레르 산,002102,2025-08-08,matched,cache,False
+110-16-7,말레인 산,MALEIC ACID,말레인 산,말레인 산,000295,2025-08-08,matched,cache,False
+110-54-3,헥세인,Hexane,헥산,헥산,001044,2025-08-08,matched,cache,True
+112-02-7,염화 헥사데실트라이메틸암모늄(염화 헥사데실트리메틸암모늄),HEXADECYLTRIMETHYLAMMONIUM CHLORIDE,염화 헥사데실트라이메틸암모늄(염화 헥사데실트리메틸암모늄),염화 헥사데실트라이메틸암모늄(염화 헥사데실트리메틸암모늄),000315,2025-12-16,matched,cache,False
+1120-71-4,프로판 설톤,PROPANE SULTONE,프로판 설톤,프로판 설톤,000513,2025-12-02,matched,cache,False
+115-19-5,2-메틸-3-부틴-2-올,2-METHYL-2-HYDROXY-3-BUTYNE,2-메틸-3-부틴-2-올,2-메틸-3-부틴-2-올,002530,2025-08-08,matched,cache,False
+117-39-5,케르세틴(QUERCETIN),QUERCETIN,케르세틴(QUERCETIN),케르세틴(QUERCETIN),002597,2018-04-02,matched,cache,False
+117-80-6,디클론(DICHLONE),DICHLONE,디클론(DICHLONE),디클론(DICHLONE),002609,2025-08-08,matched,cache,False
+12030-88-5,칼륨 슈퍼산화물,POTASSIUM SUPEROXIDE,칼륨 슈퍼산화물,칼륨 슈퍼산화물,002768,2025-08-08,matched,cache,False
+12031-80-0,리튬 퍼옥시드,LITHIUM PEROXIDE,리튬 퍼옥시드,리튬 퍼옥시드,002771,2025-08-08,matched,cache,False
+12035-72-2,아황화니켈,NICKEL SUBSULFIDE,아황화니켈,아황화니켈,002785,2025-08-08,matched,cache,False
+12057-74-8,Magnesium phosphide,MAGNESIUM PHOSPHIDE,Magnesium phosphide,Magnesium phosphide,002831,2025-08-08,matched,cache,False
+121-17-5,4-클로로-3-나이트로벤조트리플루오르화물,3-NITRO-4-CHLOROBENZOTRIFLUORIDE,4-클로로-3-나이트로벤조트리플루오르화물,4-클로로-3-나이트로벤조트리플루오르화물,002899,2025-08-08,matched,cache,False
+12125-01-8,플루오르화 암모늄,AMMONIUM FLUORIDE,플루오르화 암모늄,플루오르화 암모늄,000807,2025-08-08,matched,cache,False
+12136-45-7,산화 칼륨,POTASSIUM MONOXIDE,산화 칼륨,산화 칼륨,002918,2025-08-08,matched,cache,False
+122-66-7,"1,2-다이페닐하이드라진","1,2-DIPHENYLHYDRAZINE","1,2-다이페닐하이드라진","1,2-다이페닐하이드라진",003018,2026-03-26,matched,cache,False
+124-09-4,헥사메틸렌디아민,"HEXAMETHYLENEDIAMINE, SOLID",헥사메틸렌디아민,헥사메틸렌디아민,000366,2026-07-01,matched,cache,False
+124-38-9,이산화탄소,Carbon dioxide,이산화탄소,이산화탄소,003134,2025-08-08,matched,cache,False
+1305-62-0,수산화칼슘,Calcium hydroxide,수산화 칼슘,수산화 칼슘,000526,2025-08-08,matched,cache,True
+1305-78-8,산화칼슘,Calcium oxide,산화칼슘,산화칼슘,000527,2025-08-08,matched,cache,False
+1309-37-1,삼산화이철,Iron(III) oxide,,산화철,001099,2025-08-08,matched,cache,True
+131-52-2,Pentachlorophenol sodium salt; sodium pentachlorophenolate; NaPCP,SODIUM PENTACHLOROPHENATE,Pentachlorophenol sodium salt; sodium pentachlorophenolate; NaPCP,Pentachlorophenol sodium salt; sodium pentachlorophenolate; NaPCP,003488,2025-08-08,matched,cache,False
+1310-58-3,수산화칼륨,Potassium hydroxide,수산화 칼륨,수산화 칼륨,001092,2026-07-29,matched,cache,True
+1310-61-8,칼륨 히드로황화물,POTASSIUM HYDROSULFIDE,칼륨 히드로황화물,칼륨 히드로황화물,003412,2025-08-08,matched,cache,False
+1310-65-2,하이드록시 리튬,"LITHIUM HYDROXIDE, SOLUTION",하이드록시 리튬,하이드록시 리튬,003413,2025-08-08,matched,cache,False
+1310-73-2,수산화나트륨,Sodium hydroxide,수산화나트륨,수산화나트륨,001100,2025-08-08,matched,cache,False
+1310-82-3,루비듐 수산화물,RUBIDIUM HYDROXIDE,루비듐 수산화물,루비듐 수산화물,003417,2025-08-08,matched,cache,False
+1312-73-8,칼륨 황화물,"POTASSIUM SULFIDE, HYDRATED, WITH NOT LESS THAN 30% WATER OF CRYSTALLIZATION",칼륨 황화물,칼륨 황화물,003433,2025-08-08,matched,cache,False
+1313-82-2,"황화 나트륨, 무수","SODIUM SULFIDE, ANHYDROUS","황화 나트륨, 무수","황화 나트륨, 무수",000539,2025-08-08,matched,cache,False
+1314-18-7,스트론튬 과산화물,STRONTIUM PEROXIDE,스트론튬 과산화물,스트론튬 과산화물,003460,2025-08-08,matched,cache,False
+1314-22-3,아연 과산화물,ZINC PEROXIDE,아연 과산화물,아연 과산화물,003462,2025-08-08,matched,cache,False
+1333-74-0,수소,Hydrogen,수소,수소,000557,2025-08-08,matched,cache,False
+1333-83-1,이불화 나트륨(SODIUM BIFLUORIDE),"SODIUM BIFLUORIDE, SOLID",이불화 나트륨(SODIUM BIFLUORIDE),이불화 나트륨(SODIUM BIFLUORIDE),003626,2025-08-08,matched,cache,False
+1336-21-6,암모니아 용액,AMMONIUM HYDROXIDE,암모니아 용액,암모니아 용액,000561,2025-12-02,matched,cache,False
+1341-49-7,이플루오르화 암모늄,"AMMONIUM BIFLUORIDE, SOLID",이플루오르화 암모늄,이플루오르화 암모늄,000564,2025-08-08,matched,cache,False
+1344-00-9,규화알루미늄산 나트륨(SODIUM SILICOALUMINATE),SODIUM ALUMINOSILICATE,규화알루미늄산 나트륨(SODIUM SILICOALUMINATE),규화알루미늄산 나트륨(SODIUM SILICOALUMINATE),003697,2025-08-08,matched,cache,False
+13494-80-9,텔루륨,Tellurium,텔레늄,텔레늄,000825,2026-03-27,matched,cache,True
+13718-26-8,나트륨 바나드산염(SODIUM VANADATE),SODIUM VANADATE,나트륨 바나드산염(SODIUM VANADATE),나트륨 바나드산염(SODIUM VANADATE),003933,2025-08-08,matched,cache,False
+13718-59-7,아셀레늄산 바륨(아셀렌산 바륨)(BARIUM SELENITE),BARIUM SELENITE,아셀레늄산 바륨(아셀렌산 바륨)(BARIUM SELENITE),아셀레늄산 바륨(아셀렌산 바륨)(BARIUM SELENITE),003935,2025-08-08,matched,cache,False
+13774-25-9,magnesium dihydrogen disulphite,MAGNESIUM BISULFITE SOLUTION,magnesium dihydrogen disulphite,magnesium dihydrogen disulphite,035672,2025-08-08,matched,cache,False
+13814-96-5,불화붕산 납,LEAD FLUOBORATE,불화붕산 납,불화붕산 납,003981,2025-08-08,matched,cache,False
+13826-88-5,아연 테트라플루오로붕산염(ZINC TETRAFLUOROBORATE),ZINC FLUOROBORATE,아연 테트라플루오로붕산염(ZINC TETRAFLUOROBORATE),아연 테트라플루오로붕산염(ZINC TETRAFLUOROBORATE),003999,2025-08-08,matched,cache,False
+13983-17-0,울라스토니트,WOLLASTONITE,울라스토니트,울라스토니트,004066,2025-08-08,matched,cache,False
+14018-95-2,크롬산 아연,ZINC DICHROMATE,크롬산 아연,크롬산 아연,044893,2025-08-08,matched,cache,False
+143-33-9,사이안화나트륨,Sodium cyanide,시안화나트륨,시안화나트륨,001146,2025-08-08,matched,cache,True
+14486-19-2,카드뮴 플루오로붕산 용액,CADMIUM FLUOROBORATE,카드뮴 플루오로붕산 용액,카드뮴 플루오로붕산 용액,004313,2025-08-08,matched,cache,False
+14708-14-6,니켈 플루우르화붕산,NICKEL FLUOROBORATE,니켈 플루우르화붕산,니켈 플루우르화붕산,004365,2025-08-08,matched,cache,False
+14977-61-8,크로밀 클로라이드,CHROMIUM OXYCHLORIDE,크로밀 클로라이드,크로밀 클로라이드,004442,2025-08-08,matched,cache,False
+151-50-8,시안화칼륨,POTASSIUM CYANIDE,시안화칼륨,시안화칼륨,001147,2025-08-08,matched,cache,False
+15385-58-7,Mercury bromide,MERCUROUS BROMIDE,Mercury bromide,Mercury bromide,045595,2025-08-08,matched,cache,False
+1558-25-4,트리클로로(클로로메틸)실란(TRICHLORO(CHLOROMETHYL)SILANE),TRICHLORO(CHLOROMETHYL)SILANE,트리클로로(클로로메틸)실란(TRICHLORO(CHLOROMETHYL)SILANE),트리클로로(클로로메틸)실란(TRICHLORO(CHLOROMETHYL)SILANE),004580,2018-04-02,matched,cache,False
+16721-80-5,히드로황화 나트륨,"SODIUM HYDROSULFIDE, SOLID, WITH LESS THAN 25% WATER OF CRYSTALLIZATION",히드로황화 나트륨,히드로황화 나트륨,004801,2025-08-08,matched,cache,False
+16940-66-2,수소화붕소나트륨,Sodium borohydride,Sodium tetrahydroborate,Sodium tetrahydroborate,004878,2025-08-08,matched,cache,True
+16940-81-1,헥사플루오로인산,HEXAFLUOROPHOSPHORIC ACID,헥사플루오로인산,헥사플루오로인산,004879,2025-08-08,matched,cache,False
+16961-83-4,플루오로규산,FLUOROSILICIC ACID,플루오로규산,플루오로규산,000859,2026-07-16,matched,cache,False
+17014-71-0,과산화칼륨,POTASSIUM PEROXIDE,과산화칼륨,과산화칼륨,000860,2025-08-08,matched,cache,False
+1758-73-2,아미노이미노메탄술핀 산,THIOUREA DIOXIDE,아미노이미노메탄술핀 산,아미노이미노메탄술핀 산,005093,2025-08-08,matched,cache,False
+1762-95-4,티오시안산 암모늄(AMMONIUM THIOCYANATE),AMMONIUM THIOCYANATE,티오시안산 암모늄(AMMONIUM THIOCYANATE),티오시안산 암모늄(AMMONIUM THIOCYANATE),005107,2025-08-08,matched,cache,False
+20816-12-0,사산화 오스뮴,OSMIUM TETROXIDE,사산화 오스뮴,사산화 오스뮴,000868,2025-08-08,matched,cache,False
+21351-79-1,세슘하이드록시드,CESIUM HYDROXIDE,세슘하이드록시드,세슘하이드록시드,000872,2025-08-08,matched,cache,False
+22537-19-5,로렌슘,Lawrencium,,,,,not_found,cache,False
+26628-22-8,아자이드화나트륨,Sodium azide,소디움 아지이드,소디움 아지이드,000892,2025-08-08,matched,cache,True
+27176-87-0,도데실벤젠설폰산,DODECYLBENZENESULFONIC ACID,도데실벤젠설폰산,도데실벤젠설폰산,000893,,matched,cache,False
+298-12-4,글리옥실릭 산,GLYOXYLIC ACID (50% OR LESS),글리옥실릭 산,글리옥실릭 산,007742,2026-05-29,matched,cache,False
+38465-60-0,구리 플루오린붕산(구리 플루오르붕산)(COPPER FLUOBORATE),COPPER FLUOROBORATE,구리 플루오린붕산(구리 플루오르붕산)(COPPER FLUOBORATE),구리 플루오린붕산(구리 플루오르붕산)(COPPER FLUOBORATE),009174,2025-08-08,matched,cache,False
+497-19-8,탄산나트륨,Sodium carbonate,,탄산 나트륨,009983,2026-07-02,matched,cache,True
+50-00-0,폼알데하이드,Formaldehyde,포름알데히드,포름알데히드,001097,2026-07-16,matched,cache,True
+53850-35-4,더브늄,Dubnium,,,,,not_found,cache,False
+53850-36-5,러더포듐,Rutherfordium,,,,,not_found,cache,False
+54037-14-8,보륨,Bohrium,,,,,not_found,cache,False
+54037-57-9,하슘,Hassium,,,,,not_found,cache,False
+54038-01-6,마이트너륨,Meitnerium,,,,,not_found,cache,False
+54038-81-2,시보귬,Seaborgium,,,,,not_found,cache,False
+54083-77-1,다름슈타튬,Darmstadtium,,,,,not_found,cache,False
+54084-26-3,코페르니슘,Copernicium,,,,,not_found,cache,False
+54084-70-7,니호늄,Nihonium,,,,,not_found,cache,False
+54085-16-4,플레로븀,Flerovium,,,,,not_found,cache,False
+54085-64-2,모스코븀,Moscovium,,,,,not_found,cache,False
+54100-71-9,리버모륨,Livermorium,,,,,not_found,cache,False
+54144-19-3,오가네손,Oganesson,,,,,not_found,cache,False
+54386-24-2,뢴트게늄,Roentgenium,,,,,not_found,cache,False
+5470-11-1,히드록실아민 수화염화물,HYDROXYLAMINE HYDROCHLORIDE,히드록실아민 수화염화물,히드록실아민 수화염화물,000630,2025-11-13,matched,cache,False
+57-13-6,요소,UREA,요소,요소,011509,2025-08-08,matched,cache,False
+591-08-2,1-아세틸-2-티오요소,1-ACETYL-2-THIOUREA,1-아세틸-2-티오요소,1-아세틸-2-티오요소,011881,2025-08-08,matched,cache,False
+60-00-4,에틸렌다이아민테트라아세트산,EDTA,에틸렌다이아민테트라아세트산,에틸렌다이아민테트라아세트산,000021,2025-08-08,matched,cache,False
+60-29-7,다이에틸에터,Diethyl ether,디에틸 에테르,디에틸 에테르,001064,2025-08-08,matched,cache,True
+630-08-0,일산화탄소,Carbon monoxide,,일산화탄소,001176,2025-08-08,matched,cache,False
+6303-21-5,하이포아인산 용액(HYPOPHOSPHOROUS ACID SOLUTION),HYPOPHOSPHOROUS ACID,하이포아인산 용액(HYPOPHOSPHOROUS ACID SOLUTION),하이포아인산 용액(HYPOPHOSPHOROUS ACID SOLUTION),012916,2025-08-08,matched,cache,False
+64-17-5,에탄올,Ethanol,에탄올,에탄올,000034,2025-08-08,matched,cache,False
+64-19-7,아세트산,Acetic acid,초산,초산,001150,2025-08-08,matched,cache,True
+6487-48-5,칼륨 옥살산염 모노수화물(POTASSIUM OXALATE MONOHYDRATE),POTASSIUM OXALATE MONOHYDRATE,칼륨 옥살산염 모노수화물(POTASSIUM OXALATE MONOHYDRATE),칼륨 옥살산염 모노수화물(POTASSIUM OXALATE MONOHYDRATE),013360,2018-04-02,matched,cache,False
+67-56-1,메탄올,Methanol,,메틸 알코올,001151,2025-08-08,matched,cache,True
+67-64-1,아세톤,Acetone,아세톤,아세톤,001067,2026-04-17,matched,cache,False
+71-43-2,벤젠,Benzene,,벤젠,001008,2025-09-17,matched,cache,False
+7220-79-3,"메틸렌 블루, 트리수화물(METHYLENE BLUE, TRIHYDRATE)",METHYLENE BLUE TRIHYDRATE,"메틸렌 블루, 트리수화물(METHYLENE BLUE, TRIHYDRATE)","메틸렌 블루, 트리수화물(METHYLENE BLUE, TRIHYDRATE)",015033,2018-04-02,matched,cache,False
+74-82-8,메탄,Methane,,메테인,015390,2025-08-08,matched,cache,True
+74-85-1,에틸렌,Ethylene,,에틸렌,000045,2025-08-08,matched,cache,False
+74-86-2,아세틸렌,Acetylene,,아세틸렌,000046,2025-08-08,matched,cache,False
+7429-90-5,알루미늄,Aluminium,Aluminum,Aluminum,001101,2025-08-08,matched,cache,True
+7429-91-6,디스프로슘,Dysprosium,,Dysprosium,428303,2023-10-12,matched,cache,True
+7429-92-7,아인슈타이늄,Einsteinium,,,,,not_found,cache,False
+7439-88-5,이리듐,Iridium,,이리듐(IRIDIUM),015269,2025-08-08,matched,cache,True
+7439-89-6,철,Iron,철,철,015270,2025-08-08,matched,cache,False
+7439-90-9,크립톤,Krypton,,크립톤,015271,2025-08-08,matched,cache,False
+7439-91-0,란타넘,Lanthanum,,란타넘,015272,2025-08-08,matched,cache,False
+7439-92-1,납,Lead,납,납,001086,2025-09-15,matched,cache,False
+7439-93-2,리튬,Lithium,Lithium,Lithium,000642,2025-08-08,matched,cache,True
+7439-94-3,루테튬,Lutetium,,,,,not_found,cache,False
+7439-95-4,마그네슘,Magnesium,Magnesium,Magnesium,000643,2025-08-08,matched,cache,True
+7439-96-5,망가니즈,Manganese,망간,망간,001130,2025-08-08,matched,cache,True
+7439-97-6,수은,Mercury,,수은,000644,2025-08-08,matched,cache,False
+7439-98-7,몰리브데넘,Molybdenum,몰리브덴,몰리브덴,000645,2025-08-08,matched,cache,True
+7439-99-8,넵투늄,Neptunium,,,,,not_found,cache,False
+7440-00-8,네오디뮴,Neodymium,,네오디뮴(NEODYMIUM),015280,2025-08-08,matched,cache,True
+7440-01-9,네온,Neon,,네온,015281,2025-08-08,matched,cache,False
+7440-02-0,니켈,Nickel,니켈,니켈,001111,2026-03-27,matched,cache,False
+7440-03-1,나이오븀,Niobium,,니오븀(NIOBIUM),015283,2025-08-08,matched,cache,True
+7440-04-2,오스뮴,Osmium,,오스뮴(OSMIUM),015284,2025-08-08,matched,cache,True
+7440-05-3,팔라듐,Palladium,,팔라듐(PALLADIUM),015285,2025-08-08,matched,cache,True
+7440-06-4,백금,Platinum,백금,백금,000646,2025-08-08,matched,cache,False
+7440-07-5,플루토늄,Plutonium,,,,,not_found,cache,False
+7440-08-6,폴로늄,Polonium,,,,,not_found,cache,False
+7440-09-7,칼륨,Potassium,Potassium,Potassium,015287,2026-03-20,matched,cache,True
+7440-10-0,프라세오디뮴,Praseodymium,,,,,not_found,cache,False
+7440-11-1,멘델레븀,Mendelevium,,,,,not_found,cache,False
+7440-12-2,프로메튬,Promethium,,,,,not_found,cache,False
+7440-13-3,프로트악티늄,Protactinium,,,,,not_found,cache,False
+7440-14-4,라듐,Radium,,,,,not_found,cache,False
+7440-15-5,레늄,Rhenium,,레늄,015289,2025-08-08,matched,cache,False
+7440-16-6,로듐,Rhodium,"로듐(금속,불가용성화합물)","로듐(금속,불가용성화합물)",000647,2025-08-08,matched,cache,True
+7440-17-7,루비듐,Rubidium,Rubidium,Rubidium,015291,2025-08-08,matched,cache,True
+7440-18-8,루테늄,Ruthenium,,루테늄,015292,2025-08-08,matched,cache,False
+7440-19-9,사마륨,Samarium,,사마륨,015293,2025-08-08,matched,cache,False
+7440-20-2,스칸듐,Scandium,,스칸듐(SCANDIUM),015294,2025-08-08,matched,cache,True
+7440-21-3,규소,Silicon,실리콘,실리콘,015295,2025-08-08,matched,cache,True
+7440-22-4,은,Silver,은,은,001088,2025-08-08,matched,cache,False
+7440-23-5,나트륨,Sodium,Sodium,Sodium,000648,2026-03-20,matched,cache,True
+7440-24-6,스트론튬,Strontium,,"스트론튬, 분말(STRONTIUM, POWDER)",015298,2025-08-08,matched,cache,True
+7440-25-7,탄탈럼,Tantalum,탄탈럼(탄탈),탄탈럼(탄탈),000649,2025-08-08,matched,cache,True
+7440-26-8,테크네튬,Technetium,,,,,not_found,cache,False
+7440-27-9,터븀,Terbium,,터븀(테르븀)(TERBIUM),015300,2025-08-08,matched,cache,True
+7440-28-0,탈륨,Thallium,탈륨,탈륨,000650,2025-08-08,matched,cache,False
+7440-29-1,토륨,Thorium,,Thorium-232 and its decay products,432357,2025-08-11,matched,cache,True
+7440-30-4,툴륨,Thulium,,,,,not_found,cache,False
+7440-31-5,주석,Tin,주석,주석,001090,2025-08-08,matched,cache,False
+7440-32-6,티타늄,Titanium,타이타늄(티타늄)(TITANIUM),타이타늄(티타늄)(TITANIUM),015305,2025-08-08,matched,cache,True
+7440-33-7,텅스텐,Tungsten,텅스텐,텅스텐,000651,2025-08-08,matched,cache,False
+7440-34-8,악티늄,Actinium,,,,,not_found,cache,False
+7440-35-9,아메리슘,Americium,,,,,not_found,cache,False
+7440-36-0,안티모니,Antimony,안티몬,안티몬,000652,2025-08-08,matched,cache,True
+7440-37-1,아르곤,Argon,아르곤,아르곤,015309,2025-08-08,matched,cache,False
+7440-38-2,비소,Arsenic,비소,비소,000653,2025-08-08,matched,cache,False
+7440-39-3,바륨,Barium,Barium,Barium,000654,2025-08-08,matched,cache,True
+7440-40-6,버클륨,Berkelium,,,,,not_found,cache,False
+7440-41-7,베릴륨,Beryllium,베릴륨,베릴륨,000655,2025-08-08,matched,cache,False
+7440-42-8,붕소,Boron,,붕소,000656,2025-08-08,matched,cache,False
+7440-43-9,카드뮴,Cadmium,카드뮴,카드뮴,001075,2025-08-08,matched,cache,False
+7440-44-0,탄소,Carbon,,탄소,015315,2025-08-08,matched,cache,False
+7440-45-1,세륨,Cerium,Cerium,Cerium,015316,2025-08-08,matched,cache,True
+7440-46-2,세슘,Cesium,Cesium,Cesium,015317,2025-08-08,matched,cache,True
+7440-47-3,크로뮴,Chromium,크롬,크롬,001071,2025-08-08,matched,cache,True
+7440-48-4,코발트,Cobalt,코발트,코발트,001072,2025-08-08,matched,cache,False
+7440-50-8,구리,Copper,구리,구리,001023,2025-08-08,matched,cache,False
+7440-51-9,퀴륨,Curium,,,,,not_found,cache,False
+7440-52-0,어븀,Erbium,,,,,not_found,cache,False
+7440-53-1,유로퓸,Europium,,유로퓸(EUROPIUM),015322,2025-08-08,matched,cache,True
+7440-54-2,가돌리늄,Gadolinium,,가돌리늄(GADOLINIUM),015323,2025-08-08,matched,cache,True
+7440-55-3,갈륨,Gallium,갈륨(GALLIUM),갈륨(GALLIUM),015324,2025-08-08,matched,cache,True
+7440-56-4,저마늄,Germanium,,저마늄(게르마늄)(GERMANIUM),015325,2025-08-08,matched,cache,True
+7440-57-5,금,Gold,,금,015326,2025-08-08,matched,cache,False
+7440-58-6,하프늄,Hafnium,하프니움,하프니움,000657,2025-08-08,matched,cache,True
+7440-59-7,헬륨,Helium,헬륨,헬륨,015328,2025-08-08,matched,cache,False
+7440-60-0,홀뮴,Holmium,,,,,not_found,cache,False
+7440-61-1,우라늄,Uranium,,우라늄,015330,2025-08-08,matched,cache,False
+7440-62-2,바나듐,Vanadium,바나듐(VANADIUM),바나듐(VANADIUM),015331,2025-08-08,matched,cache,True
+7440-63-3,제논,Xenon,"제논, 냉동 (저온 액체)(XENON, REFRIGERATED (CRYOGENIC LIQUID))","제논, 냉동 (저온 액체)(XENON, REFRIGERATED (CRYOGENIC LIQUID))",015332,2025-08-08,matched,cache,True
+7440-64-4,이터븀,Ytterbium,,이터븀(이테르븀)(YTTERBIUM),015333,2025-08-08,matched,cache,True
+7440-65-5,이트륨,Yttrium,이트리움,이트리움,000658,2025-08-08,matched,cache,True
+7440-66-6,아연,Zinc,Zinc,Zinc,015335,2025-08-08,matched,cache,True
+7440-67-7,지르코늄,Zirconium,Zirconium,Zirconium,015336,2025-08-08,matched,cache,True
+7440-68-8,아스타틴,Astatine,,,,,not_found,cache,False
+7440-69-9,비스무트,Bismuth,,비스무트,015337,2025-08-08,matched,cache,False
+7440-70-2,칼슘,Calcium,Calcium,Calcium,000659,2025-08-08,matched,cache,True
+7440-71-3,캘리포늄,Californium,,,,,not_found,cache,False
+7440-72-4,페르뮴,Fermium,,,,,not_found,cache,False
+7440-73-5,프랑슘,Francium,,,,,not_found,cache,False
+7440-74-6,인듐,Indium,인듐,인듐,000660,2025-08-08,matched,cache,False
+7446-08-4,이산화 셀레늄,SELENIUM DIOXIDE,이산화 셀레늄,이산화 셀레늄,015343,2025-12-02,matched,cache,False
+7446-70-0,염화 알루미늄,"ALUMINUM CHLORIDE, ANHYDROUS",염화 알루미늄,염화 알루미늄,000664,2025-12-02,matched,cache,False
+7447-40-7,염화칼륨,POTASSIUM CHLORIDE,염화칼륨,염화칼륨,015358,2025-08-08,matched,cache,False
+7487-94-7,염화 수은,MERCURIC CHLORIDE,염화 수은,염화 수은,000666,2025-12-02,matched,cache,False
+7553-56-2,아이오딘,Iodine,요오드,요오드,001121,2025-08-08,matched,cache,True
+76-03-9,트리클로로아세트산,TRICHLOROACETIC ACID,트리클로로아세트산,트리클로로아세트산,001056,2025-09-17,matched,cache,False
+7631-90-5,소디움 비설파이트,SODIUM BISULFITE,소디움 비설파이트,소디움 비설파이트,000671,2025-08-08,matched,cache,False
+7632-00-0,아질산나트륨,Sodium nitrite,아질산 나트륨,아질산 나트륨,000673,2025-11-25,matched,cache,True
+7646-85-7,염화 아연 흄,"ZINC CHLORIDE, ANHYDROUS",염화 아연 흄,염화 아연 흄,000676,2025-08-08,matched,cache,False
+7647-01-0,염화수소,Hydrogen chloride,염화수소,염화수소,001173,2025-11-25,matched,cache,False
+7647-14-5,염화나트륨,Sodium chloride,,염화 나트륨(SODIUM CHLORIDE),015664,2025-08-08,matched,cache,True
+7664-39-3,불화수소,Hydrogen fluoride,,불화수소,001155,2025-08-08,matched,cache,False
+7664-41-7,암모니아,Ammonia,암모니아,암모니아,001174,2025-08-08,matched,cache,False
+7664-93-9,황산,Sulfuric acid,황산,황산,001049,2025-08-08,matched,cache,False
+7681-38-1,이황산 나트륨(SODIUM BISULFATE),"SODIUM BISULFATE, SOLID",이황산 나트륨(SODIUM BISULFATE),이황산 나트륨(SODIUM BISULFATE),015713,2025-08-08,matched,cache,False
+7681-49-4,불화 나트륨,SODIUM FLUORIDE,불화 나트륨,불화 나트륨,000678,2025-08-08,matched,cache,False
+7697-37-2,질산,Nitric acid,질산,질산,001052,2025-08-08,matched,cache,False
+7704-34-9,황,Sulfur,황(SULFUR),황(SULFUR),015761,2025-08-08,matched,cache,True
+7705-08-0,"염화 제2철, 고체, 무수",FERRIC CHLORIDE,"염화 제2철, 고체, 무수","염화 제2철, 고체, 무수",000682,2025-08-08,matched,cache,False
+7722-64-7,과망가니즈산칼륨,Potassium permanganate,과망간산칼륨,과망간산칼륨,000686,2025-08-08,matched,cache,True
+7722-84-1,과산화수소,Hydrogen peroxide,과산화수소,과산화수소,001015,2025-08-08,matched,cache,False
+7723-14-0,인,Phosphorus,,인,000688,2025-08-08,matched,cache,False
+7726-95-6,브로민,Bromine,,브롬,001017,2025-08-08,matched,cache,True
+7727-37-9,질소,Nitrogen,질소(NITROGEN),질소(NITROGEN),015812,2025-08-08,matched,cache,True
+7732-18-5,물,Water,물(WATER),물(WATER),015826,2025-08-08,matched,cache,True
+7757-79-1,질산칼륨,Potassium nitrate,질산칼륨,질산칼륨,000692,2025-08-08,matched,cache,False
+7758-19-2,아염소산 나트륨,SODIUM CHLORITE,아염소산 나트륨,아염소산 나트륨,000694,2025-08-08,matched,cache,False
+7758-94-3,이염화 철(FERROUS CHLORIDE),"FERROUS CHLORIDE, SOLID",이염화 철(FERROUS CHLORIDE),이염화 철(FERROUS CHLORIDE),015875,2025-08-08,matched,cache,False
+7758-97-6,크롬산 연,LEAD CHROMATE,크롬산 연,크롬산 연,000697,2025-08-08,matched,cache,False
+7758-98-7,황산구리,Copper sulfate,황산 제II구리,황산 제II구리,000698,2025-08-08,matched,cache,True
+7761-88-8,질산은,Silver nitrate,질산 은,질산 은,000699,2025-08-08,matched,cache,True
+7772-98-7,싸이오황산 나트륨(SODIUM THIOSULFATE),SODIUM THIOSULFATE,싸이오황산 나트륨(SODIUM THIOSULFATE),싸이오황산 나트륨(SODIUM THIOSULFATE),015894,2025-08-08,matched,cache,False
+7772-99-8,주석(Ⅱ)염화물(STANNOUS CHLORIDE),"STANNOUS CHLORIDE, SOLID",주석(Ⅱ)염화물(STANNOUS CHLORIDE),주석(Ⅱ)염화물(STANNOUS CHLORIDE),015895,2025-08-08,matched,cache,False
+7773-03-7,이아황산 칼륨,POTASSIUM BISULFITE SOLUTION,이아황산 칼륨,이아황산 칼륨,015897,2025-08-08,matched,cache,False
+7778-39-4,비소 산,"ARSENIC ACID, LIQUID",비소 산,비소 산,000705,2025-08-08,matched,cache,False
+7778-50-9,중크롬산칼륨,Potassium dichromate,Potassium dichromate,Potassium dichromate,000707,2025-08-08,matched,cache,True
+7778-66-7,차아염소산 칼륨(POTASSIUM HYPOCHLORITE),POTASSIUM HYPOCHLORITE SOLUTION,차아염소산 칼륨(POTASSIUM HYPOCHLORITE),차아염소산 칼륨(POTASSIUM HYPOCHLORITE),015923,2025-08-08,matched,cache,False
+7782-41-4,불소,Fluorine,,불소,000711,2025-08-08,matched,cache,False
+7782-44-7,산소,Oxygen,산소,산소,015939,2025-08-08,matched,cache,False
+7782-49-2,셀레늄,Selenium,셀레늄,셀레늄,000712,2025-08-08,matched,cache,False
+7782-50-5,염소,Chlorine,,염소,001020,2025-08-14,matched,cache,False
+7783-00-8,아셀레늄산(아셀렌산),SELENIOUS ACID,아셀레늄산(아셀렌산),아셀레늄산(아셀렌산),000714,2025-08-08,matched,cache,False
+7783-66-6,펜타플루오린화 아이오딘(IODINE PENTAFLUORIDE),IODINE PENTAFLUORIDE,펜타플루오린화 아이오딘(IODINE PENTAFLUORIDE),펜타플루오린화 아이오딘(IODINE PENTAFLUORIDE),015986,2025-08-08,matched,cache,False
+7784-30-7,인산 알루미늄,"ALUMINUM PHOSPHATE, SOLUTION",인산 알루미늄,인산 알루미늄,016009,2025-08-08,matched,cache,False
+7786-81-4,황산니켈,NICKEL SULFATE,황산니켈,황산니켈,000732,2025-12-10,matched,cache,False
+7787-41-9,Barium selenate,BARIUM SELENATE,Barium selenate,Barium selenate,019978,2025-08-08,matched,cache,False
+7788-97-8,트라이플루오린화 크로뮴,"CHROMIC FLUORIDE, SOLID",트라이플루오린화 크로뮴,트라이플루오린화 크로뮴,016055,2025-08-08,matched,cache,False
+7789-29-9,이불화 칼륨(POTASSIUM BIFLUORIDE),POTASSIUM BIFLUORIDE,이불화 칼륨(POTASSIUM BIFLUORIDE),이불화 칼륨(POTASSIUM BIFLUORIDE),016073,2025-08-08,matched,cache,False
+7789-47-1,브롬화 수은,MERCURIC BROMIDE,브롬화 수은,브롬화 수은,000741,2025-08-08,matched,cache,False
+7789-60-8,포스포로우수 트리브롬화물(PHOSPHOROUS TRIBROMIDE),PHOSPHORUS TRIBROMIDE,포스포로우수 트리브롬화물(PHOSPHOROUS TRIBROMIDE),포스포로우수 트리브롬화물(PHOSPHOROUS TRIBROMIDE),016088,2025-08-08,matched,cache,False
+7789-61-9,안티모니 트라이브로민화물(ANTIMONY TRIBROMIDE),ANTIMONY TRIBROMIDE,안티모니 트라이브로민화물(ANTIMONY TRIBROMIDE),안티모니 트라이브로민화물(ANTIMONY TRIBROMIDE),016089,2025-08-08,matched,cache,False
+7789-69-7,Phosphorus pentabromide,PHOSPHORUS PENTABROMIDE,Phosphorus pentabromide,Phosphorus pentabromide,040008,2025-08-08,matched,cache,False
+7790-99-0,요오드 모노염화물(베타)(IODINE MONOCHLORIDE (BETA)),IODINE MONOCHLORIDE,요오드 모노염화물(베타)(IODINE MONOCHLORIDE (BETA)),요오드 모노염화물(베타)(IODINE MONOCHLORIDE (BETA)),016126,2025-08-08,matched,cache,False
+7803-55-6,암모늄 메타바나딘산염(AMMONIUM METAVANADATE),AMMONIUM METAVANADATE,암모늄 메타바나딘산염(AMMONIUM METAVANADATE),암모늄 메타바나딘산염(AMMONIUM METAVANADATE),016158,2025-08-08,matched,cache,False
+79-06-1,아크릴아미드,ACRYLAMIDE,아크릴아미드,아크릴아미드,001141,2025-12-02,matched,cache,False
+8049-17-0,Ferrosilicon,FERROSILICON,Ferrosilicon,Ferrosilicon,016534,2025-12-01,matched,cache,False
+87658-56-8,테네신,Tennessine,,,,,not_found,cache,False
+94-36-0,과산화벤조일,Benzoyl peroxide,과산화벤조일,과산화벤조일,000159,2025-12-02,matched,cache,False
+998-40-3,트라이부틸포스핀,TRIBUTYLPHOSPHANE,트라이부틸포스핀,트라이부틸포스핀,018587,2026-07-01,matched,cache,False

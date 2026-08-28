@@ -43,7 +43,7 @@ ABSTAIN_PHRASE = "제공된 자료만으로는 판단할 근거가 부족합니�
 CITED_RE = re.compile(r"\[사용한\s*근거\s*:\s*([^\]]*)\]")
 
 JUDGE_MAX_TOKENS = 400
-JUDGE_REASONING_BUDGET = 1024  # 분류 전용 — 생성 호출(4096)보다 낮춰 지연 단축
+JUDGE_REASONING_EFFORT = "low"  # 분류 전용 — 생성 호출(high)보다 낮춰 지연 단축
 
 JUDGE_PROMPT = """당신은 화학물질 위험성 평가 답변을 채점하는 심사자다. 아래 [근거]만이
 사실 판단의 근거이며, 그 외 너의 지식으로 사실 여부를 판단하지 마라(근거에 없으면
@@ -115,8 +115,8 @@ def abstention_bucket(abstained: bool, retrieval_status: str) -> str:
     return "answered_with_evidence"
 
 
-def judge(rec: dict, contexts_by_id: dict[str, str], *, model: str = L.MODEL, reasoning_budget: int = JUDGE_REASONING_BUDGET) -> dict:
-    """model/reasoning_budget override는 Cascade Judge의 Small Judge 호출용(cascade_judge.py).
+def judge(rec: dict, contexts_by_id: dict[str, str], *, model: str = L.MODEL, reasoning_effort: str = JUDGE_REASONING_EFFORT) -> dict:
+    """model/reasoning_effort override는 Cascade Judge의 Small Judge 호출용(cascade_judge.py).
     기본값은 기존 Large Judge와 동일 — 프롬프트·파싱·출력 schema는 절대 바꾸지 않는다.
     """
     evidence = "\n\n".join(
@@ -127,8 +127,7 @@ def judge(rec: dict, contexts_by_id: dict[str, str], *, model: str = L.MODEL, re
         [{"role": "user", "content": prompt}],
         model=model,
         max_tokens=JUDGE_MAX_TOKENS,
-        reasoning_budget=reasoning_budget,
-        temperature=0.0,
+        reasoning_effort=reasoning_effort,
     )
     text = data["choices"][0]["message"]["content"]
     m = re.search(r"\{.*\}", text, re.DOTALL)

@@ -31,9 +31,8 @@ FROZEN_PATH = ROOT / "results" / "frozen_retrieval_top10.jsonl"
 OUT_PATH = ROOT / "results" / "generation_baseline.jsonl"
 
 PROMPT_VERSION = "baseline_v1"
-TEMPERATURE = 0.0
 MAX_TOKENS = 1500
-REASONING_BUDGET = 4096
+REASONING_EFFORT = "high"  # DeepSeek thinking 모드는 temperature를 무시함
 
 SYSTEM_PROMPT = (
     "당신은 KOSHA MSDS 데이터를 근거로 화학물질 혼합/공동취급 위험성을 평가하는 보조자다.\n"
@@ -105,8 +104,7 @@ def main() -> None:
             data = L.chat(
                 [{"role": "user", "content": prompt}],
                 max_tokens=MAX_TOKENS,
-                reasoning_budget=REASONING_BUDGET,
-                temperature=TEMPERATURE,
+                reasoning_effort=REASONING_EFFORT,
             )
             answer = data["choices"][0]["message"]["content"]
             usage = data.get("usage", {})

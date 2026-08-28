@@ -159,9 +159,10 @@ def load_targets(path):
 
 
 def get_cached_chem_id(con, cas):
-    cur = con.execute("SELECT chem_id FROM msds_chem_id_cache WHERE cas_number=?", (cas,))
-    row = cur.fetchone()
-    return row[0] if row else None
+    """(캐시에 있는가?, chem_id). chem_id가 None인 행도 "KOSHA 미등재"로 확정된
+    결과이므로 캐시 적중으로 취급한다 - 매 실행마다 재조회하지 않기 위함."""
+    row = con.execute("SELECT chem_id FROM msds_chem_id_cache WHERE cas_number=?", (cas,)).fetchone()
+    return (row is not None, row[0] if row else None)
 
 
 def section_already_collected(con, cas, section):
@@ -173,8 +174,8 @@ def section_already_collected(con, cas, section):
 
 def resolve_chem_id(con, cas):
     """캐시에 있으면 API 호출 없이 반환. 없으면 getChemList 조회 후 캐시에 저장."""
-    cached = get_cached_chem_id(con, cas)
-    if cached:
+    hit, cached = get_cached_chem_id(con, cas)
+    if hit:
         return cached
 
     root = call_api("getChemList", {
@@ -221,6 +222,11 @@ def fetch_and_store_section(con, cas, chem_id, section):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--target-csv", default=TARGET_CSV, help="cas_number 컬럼을 가진 대상 CSV 경로")
+    args = ap.parse_args()
+
     if not SERVICE_KEY:
         print("환경변수 KOSHA_SERVICE_KEY 를 먼저 설정하세요.")
         print('PowerShell 예: $env:KOSHA_SERVICE_KEY = "발급받은키"')
@@ -229,7 +235,7 @@ def main():
     con = sqlite3.connect(DB_PATH, timeout=120)  # 병렬 실행 중인 다른 수집 스크립트와의 잠금 대기
     ensure_tables(con)
 
-    targets = load_targets(TARGET_CSV)
+    targets = load_targets(args.target_csv)
     log(f"수집 대상 {len(targets)}종 로드 (섹션 {SECTIONS})")
 
     done, not_found, section_calls = 0, 0, 0

@@ -1,0 +1,97 @@
+﻿cas_number,name,verdict,core_axis,reason
+100-01-6,p-니트로아닐린,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+100-02-7,p-나이트로페놀,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+100-15-2,N-methyl-4-nitroaniline,판단불가,representative,"registry가 커버하지 않는 CAMEO 범주에 속하나, 96종 내 후보가 그 범주의 통상 대표가 아님. 범주 대표를 세울지/어떤 물질로 세울지는 96종 밖에서 골라야 할 수 있음."
+100-22-1,"N,N,N'',N''-테트라메틸-1,4-페닐렌다이아민",drop,-,
+100-64-1,사이클로헥사논 옥심,promote,representative,"CAMEO[52] 옥심 — registry 커버 0종. 옥심 범주에서 가장 통용되는 대표종이고, registry의 카프로락탐(105-60-2)이 이 물질의 Beckmann 재배열 산물이라 범주 연결이 명시적."
+10025-91-9,삼염화 안티모니(삼염화 안티몬)(ANTIMONY TRICHLORIDE),drop,-,
+10026-06-9,"주석 염화물, 펜타수화물(STANNIC CHLORIDE, PENTAHYDRATE)",drop,-,
+10026-11-6,"사염화 지르코늄, 고체",drop,-,
+10026-13-8,포스포러스 펜타클로라이드,drop,-,
+10026-17-2,플루오린화 아코발트(플루오르화 아코발트)(COBALTOUS FLUORIDE),drop,-,
+10039-54-0,황산 하이드록실아민(HYDROXYLAMINE SULFATE),drop,-,
+101-21-3,클로르프로팜,drop,-,
+101-27-9,Barban,drop,-,
+10112-91-1,염화 수은(사이클로산),drop,-,
+10192-30-0,"이아황산 암모늄, 고체(AMMONIUM BISULFITE, SOLID)",drop,-,
+102-08-9,티오카르브아닐리드,drop,-,
+10241-05-1,오염화 몰리브덴,drop,-,
+1025-15-6,트리알릴 아이소시아누르산염,drop,-,
+103-80-0,페닐아세틸 염화물,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+104-15-4,P-톨루엔설폰 산,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+105-48-6,Isopropyl chloroacetate,판단불가,representative,"registry가 커버하지 않는 CAMEO 범주에 속하나, 96종 내 후보가 그 범주의 통상 대표가 아님. 범주 대표를 세울지/어떤 물질로 세울지는 96종 밖에서 골라야 할 수 있음."
+106-31-0,butyric anhydride,drop,-,
+106-51-4,퀴논,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+106-87-6,비닐 시클로헥센디옥사이드,판단불가,representative,"registry가 커버하지 않는 CAMEO 범주에 속하나, 96종 내 후보가 그 범주의 통상 대표가 아님. 범주 대표를 세울지/어떤 물질로 세울지는 96종 밖에서 골라야 할 수 있음."
+107-04-0,1-브로모-2-클로로에탄,판단불가,representative,"registry가 커버하지 않는 CAMEO 범주에 속하나, 96종 내 후보가 그 범주의 통상 대표가 아님. 범주 대표를 세울지/어떤 물질로 세울지는 96종 밖에서 골라야 할 수 있음."
+108-60-1,비스(2-클로로아이소프로필)에테르,drop,-,
+109-52-4,발레르 산,drop,-,
+110-16-7,말레인 산,drop,-,
+112-02-7,염화 헥사데실트라이메틸암모늄(염화 헥사데실트리메틸암모늄),promote,representative,"CAMEO[57] 4급 암모늄염 — registry 커버 0종. registry에 음이온 계면활성제(SDS 151-21-3, 도데실벤젠술폰산 27176-87-0)만 있고 양이온 계면활성제가 공백."
+1120-71-4,프로판 설톤,판단불가,representative,"registry가 커버하지 않는 CAMEO 범주에 속하나, 96종 내 후보가 그 범주의 통상 대표가 아님. 범주 대표를 세울지/어떤 물질로 세울지는 96종 밖에서 골라야 할 수 있음."
+115-19-5,2-메틸-3-부틴-2-올,drop,-,
+117-39-5,케르세틴(QUERCETIN),drop,-,
+117-80-6,디클론(DICHLONE),drop,-,
+12030-88-5,칼륨 슈퍼산화물,drop,-,
+12031-80-0,리튬 퍼옥시드,drop,-,
+12035-72-2,아황화니켈,drop,-,
+12057-74-8,Magnesium phosphide,promote,representative,"CAMEO[44] 금속 인화물 — registry 커버 0종. 물·산과 반응해 PH3(자연발화·맹독) 발생, 혼재보관에서 습기·산 격리가 핵심인 표준 범주. Mg3P2는 AlP와 함께 이 범주의 통상 대표."
+121-17-5,4-클로로-3-나이트로벤조트리플루오르화물,drop,-,
+12125-01-8,플루오르화 암모늄,drop,-,
+12136-45-7,산화 칼륨,drop,-,
+122-66-7,"1,2-다이페닐하이드라진",drop,-,
+131-52-2,Pentachlorophenol sodium salt; sodium pentachlorophenolate; NaPCP,drop,-,
+1310-61-8,칼륨 히드로황화물,drop,-,
+1310-82-3,루비듐 수산화물,drop,-,
+1312-73-8,칼륨 황화물,drop,-,
+1314-18-7,스트론튬 과산화물,drop,-,
+1314-22-3,아연 과산화물,drop,-,
+1333-83-1,이불화 나트륨(SODIUM BIFLUORIDE),drop,-,
+1341-49-7,이플루오르화 암모늄,drop,-,
+1344-00-9,규화알루미늄산 나트륨(SODIUM SILICOALUMINATE),drop,-,
+13718-26-8,나트륨 바나드산염(SODIUM VANADATE),drop,-,
+13718-59-7,아셀레늄산 바륨(아셀렌산 바륨)(BARIUM SELENITE),drop,-,
+13774-25-9,magnesium dihydrogen disulphite,drop,-,
+13814-96-5,불화붕산 납,판단불가,practical,전기도금조 성분으로 현장 실재성은 인정되나 같은 범주(불화붕산 금속염)가 5종 중복. 대표 1종 선정 기준을 별도로 세워야 판정 가능.
+13826-88-5,아연 테트라플루오로붕산염(ZINC TETRAFLUOROBORATE),판단불가,practical,전기도금조 성분으로 현장 실재성은 인정되나 같은 범주(불화붕산 금속염)가 5종 중복. 대표 1종 선정 기준을 별도로 세워야 판정 가능.
+13983-17-0,울라스토니트,drop,-,
+14018-95-2,크롬산 아연,drop,-,
+14486-19-2,카드뮴 플루오로붕산 용액,판단불가,practical,전기도금조 성분으로 현장 실재성은 인정되나 같은 범주(불화붕산 금속염)가 5종 중복. 대표 1종 선정 기준을 별도로 세워야 판정 가능.
+14708-14-6,니켈 플루우르화붕산,판단불가,practical,전기도금조 성분으로 현장 실재성은 인정되나 같은 범주(불화붕산 금속염)가 5종 중복. 대표 1종 선정 기준을 별도로 세워야 판정 가능.
+14977-61-8,크로밀 클로라이드,drop,-,
+15385-58-7,Mercury bromide,drop,-,
+1558-25-4,트리클로로(클로로메틸)실란(TRICHLORO(CHLOROMETHYL)SILANE),promote,representative,CAMEO[22] 클로로실란 — registry 커버 0종. 물과 반응해 HCl 발생. ※범주 통상 대표는 트라이클로로실란/다이메틸다이클로로실란이라 대표성 약함(충돌 표시).
+16721-80-5,히드로황화 나트륨,drop,-,
+16940-81-1,헥사플루오로인산,drop,-,
+16961-83-4,플루오로규산,drop,-,
+17014-71-0,과산화칼륨,drop,-,
+1758-73-2,아미노이미노메탄술핀 산,drop,-,
+20816-12-0,사산화 오스뮴,drop,-,
+21351-79-1,세슘하이드록시드,drop,-,
+298-12-4,글리옥실릭 산,drop,-,
+38465-60-0,구리 플루오린붕산(구리 플루오르붕산)(COPPER FLUOBORATE),판단불가,practical,전기도금조 성분으로 현장 실재성은 인정되나 같은 범주(불화붕산 금속염)가 5종 중복. 대표 1종 선정 기준을 별도로 세워야 판정 가능.
+5470-11-1,히드록실아민 수화염화물,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+591-08-2,1-아세틸-2-티오요소,drop,-,
+6303-21-5,하이포아인산 용액(HYPOPHOSPHOROUS ACID SOLUTION),drop,-,
+6487-48-5,칼륨 옥살산염 모노수화물(POTASSIUM OXALATE MONOHYDRATE),drop,-,
+7220-79-3,"메틸렌 블루, 트리수화물(METHYLENE BLUE, TRIHYDRATE)",판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+7446-08-4,이산화 셀레늄,drop,-,
+7487-94-7,염화 수은,promote,practical,"승홍(HgCl2). 실험실 시약장 상시 보관 맹독물. registry의 수은은 원소(7439-97-6, periodic_element)뿐이고 수은 화합물 0종."
+76-03-9,트리클로로아세트산,판단불가,educational,학부 과목·실험명을 지목할 수 있어 보이나 REGISTRY.md §6-2가 요구하는 교육과정 문헌 근거를 이번 조사로 확인하지 못함. 원본 CSV의 course/experiment 컬럼도 비어 있음.
+7758-97-6,크롬산 연,drop,-,
+7773-03-7,이아황산 칼륨,drop,-,
+7778-39-4,비소 산,drop,-,
+7783-00-8,아셀레늄산(아셀렌산),drop,-,
+7783-66-6,펜타플루오린화 아이오딘(IODINE PENTAFLUORIDE),drop,-,
+7784-30-7,인산 알루미늄,drop,-,
+7787-41-9,Barium selenate,drop,-,
+7788-97-8,트라이플루오린화 크로뮴,drop,-,
+7789-29-9,이불화 칼륨(POTASSIUM BIFLUORIDE),drop,-,
+7789-47-1,브롬화 수은,drop,-,
+7789-60-8,포스포로우수 트리브롬화물(PHOSPHOROUS TRIBROMIDE),drop,-,
+7789-61-9,안티모니 트라이브로민화물(ANTIMONY TRIBROMIDE),drop,-,
+7789-69-7,Phosphorus pentabromide,drop,-,
+7790-99-0,요오드 모노염화물(베타)(IODINE MONOCHLORIDE (BETA)),drop,-,
+7803-55-6,암모늄 메타바나딘산염(AMMONIUM METAVANADATE),drop,-,
+8049-17-0,Ferrosilicon,promote,practical,제강 탈산·합금철 첨가제로 대량 상시 보관. 습기와 반응해 포스핀·아르신 발생(선적 화물 사고 사례 다수). registry에 합금 0종.
+998-40-3,트라이부틸포스핀,drop,-,

@@ -1,11 +1,11 @@
-"""Stage 4 LLM 클라이언트 — NVIDIA NIM (Nemotron Nano)
+"""Stage 4 LLM 클라이언트 — DeepSeek (deepseek-v4-flash, thinking mode)
 
 설계 §3 파이프라인의 LLM 단계, 그리고 §10 RAG 지표(Faithfulness / Context Recall /
 Context Precision / Answer Relevancy) · Abstain Precision 측정에 쓰인다.
 
-  모델      : nvidia/nemotron-3-nano-omni-30b-a3b-reasoning
-  엔드포인트 : https://integrate.api.nvidia.com/v1/chat/completions (OpenAI 호환)
-  인증      : .env 의 NVIDIA_API_KEY (gitignore 대상. 원문은 코드/로그/출력 어디에도 남기지 않음)
+  모델      : deepseek-v4-flash (thinking: enabled, reasoning_effort: high)
+  엔드포인트 : https://api.deepseek.com/chat/completions (OpenAI 호환)
+  인증      : .env 의 DEEPSEEK_API_KEY (gitignore 대상. 원문은 코드/로그/출력 어디에도 남기지 않음)
 
 연결 점검:
     python 04_rag_agent/llm.py --check
@@ -25,12 +25,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-INVOKE_URL = "https://integrate.api.nvidia.com/v1/chat/completions"
-MODEL = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning"
+INVOKE_URL = "https://api.deepseek.com/chat/completions"
+MODEL = "deepseek-v4-flash"
 MAX_TOKENS = 65536
-REASONING_BUDGET = 16384
-TEMPERATURE = 0.6
-TOP_P = 0.95
+REASONING_EFFORT = "high"
 
 
 def _load_dotenv(path: Path = ROOT / ".env") -> None:
@@ -63,11 +61,11 @@ def _ensure_ca_bundle() -> None:
 
 def api_key() -> str:
     _load_dotenv()
-    key = os.environ.get("NVIDIA_API_KEY")
+    key = os.environ.get("DEEPSEEK_API_KEY")
     if not key:
         raise SystemExit(
-            "NVIDIA_API_KEY 가 없음. 프로젝트 루트 .env 에 아래 한 줄을 추가하세요.\n"
-            "  NVIDIA_API_KEY=<발급받은 키>\n"
+            "DEEPSEEK_API_KEY 가 없음. 프로젝트 루트 .env 에 아래 한 줄을 추가하세요.\n"
+            "  DEEPSEEK_API_KEY=<발급받은 키>\n"
             ".env 는 이미 .gitignore 에 등록되어 있습니다."
         )
     return key
@@ -84,9 +82,7 @@ def chat(
     *,
     model: str = MODEL,
     max_tokens: int = MAX_TOKENS,
-    reasoning_budget: int | None = REASONING_BUDGET,
-    temperature: float = TEMPERATURE,
-    top_p: float = TOP_P,
+    reasoning_effort: str | None = REASONING_EFFORT,
     timeout: int = 180,
 ) -> dict:
     """단발 호출. 스트리밍은 쓰지 않는다(평가 배치 용도라 불필요).
@@ -94,9 +90,9 @@ def chat(
     urllib 사용: requests 미설치 환경에서도 돌게 하고, 의존성을 늘리지 않는다.
     model: 기본값은 이 파일의 MODEL(현재 Generation/Large Judge용). Small Judge처럼
     다른 모델을 같은 엔드포인트/키로 호출할 때만 override.
-    reasoning_budget: nemotron reasoning 계열 전용 필드 — 다른 모델은 이 필드 자체를
-    거부한다("extra_forbidden", nvidia/llama-3.1-nemotron-nano-8b-v1에서 확인됨).
-    None이면 payload에서 아예 빼고 보낸다.
+    reasoning_effort: DeepSeek thinking 모델 전용 필드("low"/"high"/"max").
+    temperature/top_p는 thinking 모드에서 무시되므로(DeepSeek 문서) 아예 보내지 않는다.
+    None이면 payload에서 thinking을 아예 빼고 보낸다.
     """
     _ensure_ca_bundle()
     payload = {
@@ -104,11 +100,10 @@ def chat(
         "model": model,
         "max_tokens": max_tokens,
         "stream": False,
-        "temperature": temperature,
-        "top_p": top_p,
     }
-    if reasoning_budget is not None:
-        payload["reasoning_budget"] = reasoning_budget
+    if reasoning_effort is not None:
+        payload["thinking"] = {"type": "enabled"}
+        payload["reasoning_effort"] = reasoning_effort
     req = urllib.request.Request(
         INVOKE_URL,
         data=json.dumps(payload).encode("utf-8"),
@@ -157,7 +152,7 @@ def main() -> None:
         print(f"엔드포인트 : {INVOKE_URL}")
         print(f"API 키    : {key_fingerprint()}")  # 원문 아님
         try:
-            out = ask("한 단어로만 답하시오: 물의 화학식은?", max_tokens=2048, reasoning_budget=512)
+            out = ask("한 단어로만 답하시오: 물의 화학식은?", max_tokens=2048, reasoning_effort="low")
             print(f"응답      : {out.strip()[:200]}")
             print("연결 정상")
         except Exception as e:  # noqa: BLE001

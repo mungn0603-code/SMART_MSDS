@@ -1,0 +1,123 @@
+﻿set,cas_number,name,verdict,core_axis,reason
+corpus96,100-01-6,p-니트로아닐린,DROP,-,방향족 아민/유기 나이트로 대표는 아닐린·나이트로벤젠이 우월
+corpus96,100-02-7,p-나이트로페놀,UNCERTAIN,educational,분석화학 pH 지시약·생화학 ALP 기질. 학부 등장 여부가 과목 구성에 따라 갈림
+corpus96,100-15-2,N-methyl-4-nitroaniline,DROP,-,방향족 아민 대표는 아닐린(62-53-3)이 우월
+corpus96,100-22-1,"N,N,N'',N''-테트라메틸-1,4-페닐렌다이아민",DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,100-64-1,사이클로헥사논 옥심,PROMOTE,representative,옥심 범주 대표 — CORE 커버 0종. 96종 밖에도 더 나은 대표 없음(가장 통용되는 옥심). registry 카프로락탐(105-60-2)의 전구체
+corpus96,10025-91-9,삼염화 안티모니(삼염화 안티몬)(ANTIMONY TRICHLORIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10026-06-9,"주석 염화물, 펜타수화물(STANNIC CHLORIDE, PENTAHYDRATE)",DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10026-11-6,"사염화 지르코늄, 고체",DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10026-13-8,포스포러스 펜타클로라이드,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10026-17-2,플루오린화 아코발트(플루오르화 아코발트)(COBALTOUS FLUORIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10039-54-0,황산 하이드록실아민(HYDROXYLAMINE SULFATE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,101-21-3,클로르프로팜,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,101-27-9,Barban,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10112-91-1,염화 수은(사이클로산),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10192-30-0,"이아황산 암모늄, 고체(AMMONIUM BISULFITE, SOLID)",DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,102-08-9,티오카르브아닐리드,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,10241-05-1,오염화 몰리브덴,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1025-15-6,트리알릴 아이소시아누르산염,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,103-80-0,페닐아세틸 염화물,DROP,-,아실 할라이드 대표는 벤조일 클로라이드(98-88-4)가 우월
+corpus96,104-15-4,P-톨루엔설폰 산,PROMOTE,educational,유기화학 산촉매(에스터화·아세탈화·탈수)의 표준 시약. 강산이면서 고체라 보관 형태가 무기산과 다름
+corpus96,105-48-6,Isopropyl chloroacetate,DROP,-,에스터 범주 대표는 아세트산에틸(141-78-6)이 우월
+corpus96,106-31-0,butyric anhydride,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,106-51-4,퀴논,UNCERTAIN,educational,p-벤조퀴논. 유기화학 산화/Diels-Alder dienophile로 쓰이나 학부 취급 빈도가 중간. 커리큘럼 실측 필요
+corpus96,106-87-6,비닐 시클로헥센디옥사이드,DROP,-,에폭사이드 범주 대표는 에피클로로하이드린(106-89-8)이 우월
+corpus96,107-04-0,1-브로모-2-클로로에탄,DROP,-,할로겐화 유기물 대표는 다이클로로메테인(75-09-2)이 우월
+corpus96,108-60-1,비스(2-클로로아이소프로필)에테르,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,109-52-4,발레르 산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,110-16-7,말레인 산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,112-02-7,염화 헥사데실트라이메틸암모늄(염화 헥사데실트리메틸암모늄),PROMOTE,representative,4급 암모늄(양이온 계면활성제) 대표 — CORE 커버 0종. registry는 음이온 계면활성제(SDS·LAS)만 보유. 대안 벤잘코늄클로라이드는 혼합물 CAS라 부적합
+corpus96,1120-71-4,프로판 설톤,DROP,-,"설톤 범주는 서비스 가치 낮음(발암성 연구용 시약, 보관 실재성 희박)"
+corpus96,115-19-5,2-메틸-3-부틴-2-올,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,117-39-5,케르세틴(QUERCETIN),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,117-80-6,디클론(DICHLONE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,12030-88-5,칼륨 슈퍼산화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,12031-80-0,리튬 퍼옥시드,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,12035-72-2,아황화니켈,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,12057-74-8,Magnesium phosphide,DROP,-,금속 인화물 범주는 필요하나 대표는 인화알루미늄(20859-73-8)이 우월 — 국내 곡물 훈증제로 실재성·사고사례 압도적이고 CAMEO 매핑 보유
+corpus96,121-17-5,4-클로로-3-나이트로벤조트리플루오르화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,12125-01-8,플루오르화 암모늄,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,12136-45-7,산화 칼륨,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,122-66-7,"1,2-다이페닐하이드라진",DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,131-52-2,Pentachlorophenol sodium salt; sodium pentachlorophenolate; NaPCP,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1310-61-8,칼륨 히드로황화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1310-82-3,루비듐 수산화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1312-73-8,칼륨 황화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1314-18-7,스트론튬 과산화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1314-22-3,아연 과산화물,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1333-83-1,이불화 나트륨(SODIUM BIFLUORIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1341-49-7,이플루오르화 암모늄,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1344-00-9,규화알루미늄산 나트륨(SODIUM SILICOALUMINATE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,13718-26-8,나트륨 바나드산염(SODIUM VANADATE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,13718-59-7,아셀레늄산 바륨(아셀렌산 바륨)(BARIUM SELENITE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,13774-25-9,magnesium dihydrogen disulphite,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,13814-96-5,불화붕산 납,DROP,-,동일 — 플루오로붕산염 중복
+corpus96,13826-88-5,아연 테트라플루오로붕산염(ZINC TETRAFLUOROBORATE),DROP,-,"도금조 범주는 사이안화칼륨·황산니켈(II)·염화아연으로 이미 커버, 플루오로붕산염 5종 중복"
+corpus96,13983-17-0,울라스토니트,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,14018-95-2,크롬산 아연,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,14486-19-2,카드뮴 플루오로붕산 용액,DROP,-,동일 — 플루오로붕산염 중복
+corpus96,14708-14-6,니켈 플루우르화붕산,DROP,-,동일 — 플루오로붕산염 중복
+corpus96,14977-61-8,크로밀 클로라이드,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,15385-58-7,Mercury bromide,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1558-25-4,트리클로로(클로로메틸)실란(TRICHLORO(CHLOROMETHYL)SILANE),DROP,-,클로로실란 범주 대표는 다이메틸다이클로로실란(75-78-5)이 우월
+corpus96,16721-80-5,히드로황화 나트륨,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,16940-81-1,헥사플루오로인산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,16961-83-4,플루오로규산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,17014-71-0,과산화칼륨,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,1758-73-2,아미노이미노메탄술핀 산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,20816-12-0,사산화 오스뮴,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,21351-79-1,세슘하이드록시드,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,298-12-4,글리옥실릭 산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,38465-60-0,구리 플루오린붕산(구리 플루오르붕산)(COPPER FLUOBORATE),DROP,-,동일 — 플루오로붕산염 중복
+corpus96,5470-11-1,히드록실아민 수화염화물,PROMOTE,educational,유기화학 유도체화 표준 시약(케톤→옥심/하이드라존). 강환원제 축도 겸함. 100-64-1과 반응쌍을 이룸
+corpus96,591-08-2,1-아세틸-2-티오요소,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,6303-21-5,하이포아인산 용액(HYPOPHOSPHOROUS ACID SOLUTION),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,6487-48-5,칼륨 옥살산염 모노수화물(POTASSIUM OXALATE MONOHYDRATE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7220-79-3,"메틸렌 블루, 트리수화물(METHYLENE BLUE, TRIHYDRATE)",PROMOTE,educational,산화환원 지시약 — CORE에 지시약 0종. 신규 후보 페놀프탈레인(산-염기)과 범주가 다름
+corpus96,7446-08-4,이산화 셀레늄,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7487-94-7,염화 수은,PROMOTE,practical,수은 화합물 — CORE에 수은은 원소(7439-97-6)뿐. 실험실 시약장 상시 맹독물
+corpus96,76-03-9,트리클로로아세트산,UNCERTAIN,educational,생화학 단백질 침전용. 학부 생화학 실험 편성 여부에 의존
+corpus96,7758-97-6,크롬산 연,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7773-03-7,이아황산 칼륨,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7778-39-4,비소 산,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7783-00-8,아셀레늄산(아셀렌산),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7783-66-6,펜타플루오린화 아이오딘(IODINE PENTAFLUORIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7784-30-7,인산 알루미늄,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7787-41-9,Barium selenate,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7788-97-8,트라이플루오린화 크로뮴,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7789-29-9,이불화 칼륨(POTASSIUM BIFLUORIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7789-47-1,브롬화 수은,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7789-60-8,포스포로우수 트리브롬화물(PHOSPHOROUS TRIBROMIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7789-61-9,안티모니 트라이브로민화물(ANTIMONY TRIBROMIDE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7789-69-7,Phosphorus pentabromide,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7790-99-0,요오드 모노염화물(베타)(IODINE MONOCHLORIDE (BETA)),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,7803-55-6,암모늄 메타바나딘산염(AMMONIUM METAVANADATE),DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+corpus96,8049-17-0,Ferrosilicon,PROMOTE,practical,"합금철 — CORE에 합금 0종. 제강 현장 대량 상시 보관, 습기와 반응해 포스핀·아르신 발생. 대체 후보 없음"
+corpus96,998-40-3,트라이부틸포스핀,DROP,-,"CORE 5축 어느 것으로도 편입 근거를 지목할 수 없음(소속 CAMEO 범주는 CORE가 이미 커버하거나, 등록취소 농약·광물충전재 등 보관 실재성 없음)"
+new_candidate,7664-38-2,인산,ADD,fundamental,3대 무기산 중 유일 누락(황산·질산·염산 보유) | KOSHA=001129 | CAMEO매핑=Y
+new_candidate,67-63-0,아이소프로필알코올,ADD,fundamental,실험실 최다 사용 알코올계 용매 | KOSHA=001065 | CAMEO매핑=N(판정 Abstain)
+new_candidate,141-78-6,아세트산에틸,ADD,fundamental,기본 추출/TLC 용매 + 에스터 범주 대표 0종 | KOSHA=001074 | CAMEO매핑=N(판정 Abstain)
+new_candidate,75-09-2,다이클로로메테인,ADD,fundamental,기본 할로겐화 용매 + 할로겐화 유기물 범주 0종 | KOSHA=001024 | CAMEO매핑=N(판정 Abstain)
+new_candidate,75-05-8,아세토나이트릴,ADD,fundamental,HPLC 표준 용매 + 나이트릴 범주 0종 | KOSHA=001085 | CAMEO매핑=N(판정 Abstain)
+new_candidate,109-99-9,테트라하이드로퓨란,ADD,fundamental,"기본 에터계 용매, 과산화물 생성 위험 | KOSHA=001041 | CAMEO매핑=N(판정 Abstain)"
+new_candidate,68-12-2,"N,N-다이메틸폼아마이드",ADD,fundamental,기본 극성 비양성자성 용매 | KOSHA=001022 | CAMEO매핑=N(판정 Abstain)
+new_candidate,7601-90-3,과염소산,ADD,fundamental,강산화성 산 범주 0종 | KOSHA=015589 | CAMEO매핑=N(판정 Abstain)
+new_candidate,77-09-8,페놀프탈레인,ADD,educational,산-염기 적정 지시약 — registry 지시약 0종 | KOSHA=015773 | CAMEO매핑=N(판정 Abstain)
+new_candidate,547-58-0,메틸오렌지,ADD,educational,산-염기 적정 지시약 | KOSHA=011037 | CAMEO매핑=Y
+new_candidate,69-72-7,살리실산,ADD,educational,아스피린 합성(무수아세트산 108-24-7과 짝) | KOSHA=014711 | CAMEO매핑=Y
+new_candidate,110-86-1,피리딘,ADD,educational,"유기화학 염기·용매, 피리딘 범주 0종 | KOSHA=001113 | CAMEO매핑=N(판정 Abstain)"
+new_candidate,74-98-6,프로페인,ADD,practical,LPG — 사업장 상시 보관 인화성 기체 | KOSHA=015420 | CAMEO매핑=N(판정 Abstain)
+new_candidate,78-93-3,메틸에틸케톤,ADD,practical,도료·세척 최다 사용 용제 | KOSHA=001080 | CAMEO매핑=N(판정 Abstain)
+new_candidate,1330-20-7,자일렌,ADD,practical,도료 희석제(톨루엔만 보유) | KOSHA=001077 | CAMEO매핑=N(판정 Abstain)
+new_candidate,302-01-2,하이드라진,ADD,practical,보일러 탈산소제 — 강환원제 범주 | KOSHA=001168 | CAMEO매핑=N(판정 Abstain)
+new_candidate,107-21-1,에틸렌글라이콜,ADD,practical,"부동액/열매체, 다가알코올 0종 | KOSHA=001093 | CAMEO매핑=Y"
+new_candidate,62-53-3,아닐린,ADD,representative,방향족 아민 범주 0종 | KOSHA=001084 | CAMEO매핑=N(판정 Abstain)
+new_candidate,98-95-3,나이트로벤젠,ADD,representative,유기 나이트로 범주 0종 | KOSHA=018519 | CAMEO매핑=N(판정 Abstain)
+new_candidate,106-89-8,에피클로로하이드린,ADD,representative,에폭사이드 범주 0종 | KOSHA=001166 | CAMEO매핑=N(판정 Abstain)
+new_candidate,75-21-8,에틸렌옥사이드,ADD,representative,에폭사이드 범주 0종(대체안) | KOSHA=001154 | CAMEO매핑=N(판정 Abstain)
+new_candidate,98-88-4,벤조일 클로라이드,ADD,representative,아실 할라이드 범주 0종 | KOSHA=000194 | CAMEO매핑=N(판정 Abstain)
+new_candidate,75-78-5,다이메틸다이클로로실란,ADD,representative,클로로실란 범주 0종 | KOSHA=000077 | CAMEO매핑=N(판정 Abstain)
+new_candidate,20859-73-8,인화알루미늄,ADD,representative,금속 인화물 범주 0종 | KOSHA=005859 | CAMEO매핑=Y
+new_candidate,7646-69-7,수소화나트륨,ADD,representative,금속 수소화물(물과 격렬) 범주 0종 | KOSHA=015657 | CAMEO매핑=Y
+new_candidate,97-93-8,트라이에틸알루미늄,ADD,representative,발화성 유기금속 범주 0종 | KOSHA=000184 | CAMEO매핑=N(판정 Abstain)

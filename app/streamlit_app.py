@@ -63,6 +63,14 @@ BM25_TAG = "section_s210_" + "_".join(CORPUS_TAGS)  # 합본은 문서통계가 
 
 QUERY_TEMPLATE = "{a}, {b} 두 물질을 함께 취급해도 되는가? 혼합 시 위험성과 유의사항은?"
 
+# msds_sections.section -> 화면 표시용 라벨(KOSHA MSDS 항목 번호 그대로)
+SECTION_LABEL = {
+    2: "§2 유해성·위험성",
+    3: "§3 구성성분",
+    9: "§9 물리화학적 특성",
+    10: "§10 안정성 및 반응성",
+}
+
 CATEGORY_LABEL = {
     "Incompatible": "부적합 · Incompatible",
     "Caution": "주의 · Caution",
@@ -335,12 +343,74 @@ def substances() -> dict[str, str]:
 
 
 @st.cache_data
-def english_names() -> dict[str, str]:
-    """CAS -> chemicals의 영문명(CAMEO 매핑 기준 이름). 드롭다운 검색 보조용."""
+def registry() -> dict[str, dict]:
+    """substance_registry 전체(CAS -> 한글명/영문명/기호/별칭). 물질 선정과 검색
+    매칭용 식별 정보의 단일 기준(CORE 237종). 선택 목록은 여기서 KOSHA 미등재분만
+    빼서 만든다 — "Registry ∪ 173" 규칙은 폐기됐다(docs/REGISTRY.md 5절).
+    질의 텍스트(retrieve 쪽)와는 무관 — 그건 substances()가 그대로 담당한다
+    (frozen eval 보존, build_substance_registry.py 참고)."""
     con = sqlite3.connect(DB_PATH)
-    rows = con.execute("select cas_number, chemical_name from chemicals").fetchall()
+    cols = ("cas_number", "name_ko", "name_en", "formula", "aliases")
+    rows = con.execute(f"select {','.join(cols)} from substance_registry").fetchall()
     con.close()
-    return dict(rows)
+    return {r[0]: dict(zip(cols[1:], r[1:])) for r in rows}
+
+
+@st.cache_data
+def kosha_info() -> dict[str, dict]:
+    """CAS -> KOSHA MSDS 등재 정보(chemId / KOSHA 물질명 / 최종 갱신일).
+
+    출처는 msds_chem_id_cache — kosha_msds_collector가 getChemList 결과를 적재해 둔
+    기존 캐시다. 앱은 여기만 읽는다(런타임 API 호출 없음, 갱신은
+    scripts/kosha_registry_lookup.py --fetch 담당). chem_id가 NULL인 행은
+    "KOSHA에 미등재"로 확인된 물질이다."""
+    con = sqlite3.connect(DB_PATH)
+    rows = con.execute(
+        "select cas_number, chem_id, chem_name_kor, last_date from msds_chem_id_cache"
+    ).fetchall()
+    con.close()
+    return {r[0]: {"chem_id": r[1], "kosha_name": r[2], "last_date": r[3]} for r in rows}
+
+
+@st.cache_data
+def msds_detail(cas: str) -> pd.DataFrame:
+    """CAS -> KOSHA MSDS 상세정보(§2 유해성·위험성 / §3 구성성분 / §9 물리화학 /
+    §10 안정성·반응성). 출처는 msds_sections - kosha_msds_collector가 적재해 둔
+    getChemDetail0X 응답이며, 앱은 읽기만 한다(런타임 API 호출 없음).
+
+    표시명은 registry canonical name을 쓴다 - 여기서 KOSHA 원문명(§3 물질명)을
+    가져다 라벨로 쓰지 않는다."""
+    con = sqlite3.connect(DB_PATH)
+    rows = con.execute(
+        "select section, item_name_kor, lev, item_detail from msds_sections "
+        "where cas_number=? order by section, ordr_idx",
+        (cas,),
+    ).fetchall()
+    con.close()
+    return pd.DataFrame(
+        [
+            {
+                "구분": SECTION_LABEL.get(sec, f"§{sec}"),
+                "항목": "  " * (max(lev or 1, 1) - 1) + (item or "-"),
+                "내용": (detail or "").replace("|", chr(10)),
+            }
+            for sec, item, lev, detail in rows
+            if detail
+        ]
+    )
+
+
+@st.cache_data
+def cameo_mapped() -> set[str]:
+    """CAMEO 반응성 그룹이 실제로 붙은 CAS 집합. 그룹이 없으면 compatibility_engine이
+    무조건 Abstain하므로(judge_pair_by_cas), 화면 안내를 정확히 나누는 데 쓴다.
+    chemicals에 행만 있고 그룹이 없는 물질은 판정 불가이므로 여기 포함하지 않는다."""
+    con = sqlite3.connect(DB_PATH)
+    out = {c for (c,) in con.execute(
+        "select distinct c.cas_number from chemicals c"
+        " join chemical_group_membership m on m.chemical_id = c.chemical_id")}
+    con.close()
+    return out
 
 
 def retrieve(query: str) -> list[dict]:
@@ -356,9 +426,57 @@ def retrieve(query: str) -> list[dict]:
     ]
 
 
+MAX_QUERY_ALIASES = 3  # 질의문(=LLM 프롬프트에도 들어감) 가독성 상한
+
+
+@st.cache_data
+def query_aliases() -> dict[str, list[str]]:
+    """CAS -> 질의 확장용 별칭 목록.
+
+    청크 헤더는 KOSHA 원문명으로 렌더돼 있어서, registry 표준명만으로 질의하면
+    BM25가 어휘 매칭을 못 한다 - "페로센"으로 물어도 청크는 "디시클로펜타디에닐 철"
+    이라 top-10에 자기 근거가 안 잡힌다. CAS로 묶인 다른 이름을 질의에 덧붙여 메운다.
+
+    우선순위는 청크 헤더에 실제로 쓰인 이름(rag_chunks.chemical_name) > KOSHA 원문명
+    > registry 영문명/별칭. 띄어쓰기만 다른 표기도 그대로 남긴다 - 형태소 토크나이저가
+    두 표기를 같게 자른다는 보장이 없어서 둘 다 넣는 편이 안전하다.
+
+    registry는 건드리지 않는다 - 전부 DB에 이미 있는 이름을 모으기만 한다."""
+    con = sqlite3.connect(DB_PATH)
+    out: dict[str, list[str]] = {}
+    for cas, chunk_name, kosha_name, name_en, aliases, name_ko in con.execute(
+        "select r.cas_number, "
+        "       (select rc.chemical_name from rag_chunks rc where rc.cas_number=r.cas_number limit 1), "
+        "       c.chem_name_kor, r.name_en, r.aliases, r.name_ko "
+        "from substance_registry r left join msds_chem_id_cache c on c.cas_number = r.cas_number"
+    ):
+        # aliases는 공백 구분이지만 "염산 hydrochloric acid"처럼 여러 단어짜리가
+        # 섞여 있어 쪼개지 않고 통째로 넣는다(BM25는 어차피 토크나이즈한다).
+        cand = [chunk_name, kosha_name, name_en, aliases]
+        seen, picked = {name_ko.lower()}, []
+        for x in cand:
+            x = (x or "").strip()
+            if not x or x.lower() in seen:
+                continue
+            seen.add(x.lower())
+            picked.append(x)
+        out[cas] = picked[:MAX_QUERY_ALIASES]
+    con.close()
+    return out
+
+
+def query_term(cas: str, name: str) -> str:
+    """질의문에 쓸 물질 표기. 별칭이 있으면 "표준명(별칭, 별칭)"으로 붙인다."""
+    extra = [a for a in query_aliases().get(cas, []) if a.lower() != name.lower()]
+    return f"{name}({', '.join(extra)})" if extra else name
+
+
 def explain(cas_a: str, cas_b: str, name_a: str, name_b: str) -> dict:
-    """쌍 하나에 대한 전체 경로: CAMEO 조회 -> MSDS 검색 -> LLM 설명."""
-    query = QUERY_TEMPLATE.format(a=name_a, b=name_b)
+    """쌍 하나에 대한 전체 경로: CAMEO 조회 -> MSDS 검색 -> LLM 설명.
+
+    질의문은 query_term으로 별칭을 붙여 만든다. frozen 검색 지표를 낸 경로는
+    run_ab.py / freeze_retrieval.py로 별도이고 여기를 거치지 않는다."""
+    query = QUERY_TEMPLATE.format(a=query_term(cas_a, name_a), b=query_term(cas_b, name_b))
     con = sqlite3.connect(DB_PATH)
     cameo = CL.lookup(con.cursor(), cas_a, cas_b)
     con.close()
@@ -505,7 +623,7 @@ def admin_tree() -> dict[str, dict[str, str]]:
         },
         "Pipeline": {
             "Retrieval": f"{MODEL} dense + BM25 hybrid, top-{TOPK}",
-            "Generation": f"{L.MODEL} (temperature={GB.TEMPERATURE})",
+            "Generation": f"{L.MODEL} (reasoning_effort={GB.REASONING_EFFORT})",
             "Evaluation": "오프라인 배치 전용(eval_generation.py) — 이 화면엔 없음",
         },
     }
@@ -719,8 +837,7 @@ def generate_final_report(verdict, rows: list[dict], names: dict[str, str]) -> d
         data = L.chat(
             [{"role": "user", "content": prompt}],
             max_tokens=GB.MAX_TOKENS,
-            reasoning_budget=GB.REASONING_BUDGET,
-            temperature=GB.TEMPERATURE,
+            reasoning_effort=GB.REASONING_EFFORT,
         )
         return {"content": data["choices"][0]["message"]["content"], "error": None}
     except Exception as e:  # noqa: BLE001 - 데모에서 스택트레이스 대신 사유만
@@ -1015,15 +1132,42 @@ def main() -> None:
     if st.session_state.get("show_admin"):
         render_admin_panel()
 
-    names = substances()
-    # KOSHA 한글명 필드에 영문이 들어있는 물질이 있다(7440-66-6 -> "Zinc"). 그대로 두면
-    # 드롭다운에서 한글로도 영문 정식명으로도 안 걸리므로 라벨에만 chemicals의 영문명을
-    # 덧붙인다(검색 질의문에는 names[cas] 원본을 그대로 쓴다 — 평가셋 질의와 동일하게 유지).
-    en = english_names()
-    labels = {
-        f"{n} ({e}, {c})" if (e := en.get(c)) and e.lower() != n.lower() else f"{n} ({c})": c
-        for c, n in names.items()
-    }
+    names = substances()  # RAG 질의문 기준 이름(frozen eval 보존, 절대 변경 금지)
+    reg = registry()
+    kosha = kosha_info()
+    # 표시용 이름의 기준은 substance_registry의 canonical name이다 - 선택 목록
+    # (_label)·상세정보·판정 결과·보고서가 전부 같은 이름을 쓰게 하기 위함.
+    # registry에 없는 코퍼스 전용 물질만 rag_chunks 이름(names)으로 폴백한다.
+    # names는 RAG 질의문 생성(explain)에 그대로 쓰이므로 frozen eval은 무영향.
+    display_names = {**names, **{cas: r["name_ko"] for cas, r in reg.items()}}
+
+    def _label(cas: str) -> str:
+        """Streamlit multiselect는 라벨 문자열 자체에 substring 필터를 건다(커스텀
+        검색 위젯 불필요). 한글/영문/기호/별칭/CAS를 전부 라벨에 넣어 무엇을
+        입력하든 매칭되게 한다 — "아연"도 "zinc"도 "Zn"도 같은 물질로 찾힘."""
+        r = reg.get(cas)
+        if not r:
+            return f"{names.get(cas, cas)} ({cas})"
+        parts = [r["name_ko"]]
+        extra = [x for x in (r["name_en"], r["formula"], r["aliases"]) if x]
+        if extra:
+            parts.append("(" + ", ".join(extra) + ")")
+        parts.append(f"[{cas}]")
+        return " ".join(parts)
+
+    # 서비스 물질 선정의 기준은 substance_registry(CORE 5축) 하나다 — 2026-08-22 확정
+    # 237종. 과거의 173 코퍼스나 "Registry ∪ 173" 규칙은 선정 기준이 아니며, 코퍼스는
+    # 검색 인덱스·평가 재현용 자산으로만 남는다(rag_corpus_membership).
+    # 여기서 추가로 걸러내는 건 KOSHA MSDS 미등재분뿐이다 — 상세정보를 줄 수 없는
+    # 물질을 고르게 하지 않기 위함이고, Registry 237종에서 빼는 게 아니다.
+    # 미등재 판정 근거: msds_chem_id_cache.chem_id IS NULL. getChemList를 CAS(searchCnd=1)/
+    # 국문명·영문명(searchCnd=0) 3경로로 실조회해 39종 전부 0건 확인
+    # (data/collection/kosha_unlisted_39.csv, results/kosha_missing39_probe_2026-08-22.csv).
+    known_cas = set(reg)
+    unlisted = {cas for cas in known_cas if not (kosha.get(cas) or {}).get("chem_id")}
+    all_cas = known_cas - unlisted
+    labels = {_label(cas): cas for cas in all_cas}
+    no_evidence = {cas for cas in all_cas if cas not in names}
 
     col_a, col_b, col_c = st.columns([1, 2.5, 1.2], gap="medium")
 
@@ -1037,7 +1181,26 @@ def main() -> None:
                 label_visibility="collapsed",
                 placeholder="물질명을 검색해 2종 이상 선택하세요 (예: 에탄올, 질산 …)",
             )
-            st.caption(f"2~20종 선택 가능 · 현재 {len(picked)}종")
+            st.caption(
+                f"2~20종 선택 가능 · 현재 {len(picked)}종 · "
+                f"검색 대상 {len(all_cas)}종(KOSHA MSDS 등재)"
+            )
+            with st.expander(f"KOSHA MSDS 미등재로 제외된 {len(unlisted)}종"):
+                st.dataframe(
+                    pd.DataFrame(
+                        [
+                            {"물질": display_names.get(c, c), "CAS": c,
+                             "영문명": (reg.get(c) or {}).get("name_en") or "-"}
+                            for c in sorted(unlisted, key=lambda c: display_names.get(c, c))
+                        ]
+                    ),
+                    hide_index=True, use_container_width=True, height=220,
+                )
+                st.caption(
+                    "물질 선정 목록(substance_registry 237종)에는 그대로 남아 있으나 "
+                    "KOSHA MSDS Open API에 등재돼 있지 않아 상세정보를 제공할 수 없어 "
+                    "선택 대상에서 제외한다."
+                )
             analyze = st.button("분석 시작", type="primary", disabled=len(picked) < 2, use_container_width=True)
 
     if analyze:
@@ -1060,9 +1223,83 @@ def main() -> None:
     verdict = eng.judge_combination_by_cas(cas_list)
     eng.close()
 
-    rows = verdict_rows(verdict, names)
+    # 근거 없음 안내는 두 갈래다 — CAMEO 매핑이 있으면 판정은 되고 설명 근거만 없지만,
+    # 매핑까지 없으면 판정 자체가 Abstain이다. 한 문구로 묶으면 후자를 오도한다.
+    mapped = cameo_mapped()
+    no_ev = [c for c in cas_list if c in no_evidence]
+    if [c for c in no_ev if c in mapped]:
+        st.caption(
+            "검색 근거(MSDS §2/§10 청크) 없음: "
+            + ", ".join(display_names.get(c, c) for c in no_ev if c in mapped)
+            + " — CAMEO 반응성 그룹 판정은 반영되나 원문 근거는 붙지 않습니다."
+        )
+    if [c for c in cas_list if c not in mapped]:
+        st.caption(
+            "CAMEO 반응성 그룹 매핑 없음: "
+            + ", ".join(display_names.get(c, c) for c in cas_list if c not in mapped)
+            + " — 관련 조합은 Abstain(판정 보류)으로 처리됩니다."
+        )
+
+    with st.expander("선택 물질의 KOSHA MSDS 상세정보"):
+        st.dataframe(
+            pd.DataFrame(
+                [
+                    {
+                        "물질": display_names.get(c, c),
+                        "CAS": c,
+                        "KOSHA 등재": "등재" if (kosha.get(c) or {}).get("chem_id") else
+                                     ("미등재" if c in kosha else "미확인"),
+                        "KOSHA 물질명": (kosha.get(c) or {}).get("kosha_name") or "-",
+                        "chemId": (kosha.get(c) or {}).get("chem_id") or "-",
+                        "MSDS 최종 갱신": (kosha.get(c) or {}).get("last_date") or "-",
+                    }
+                    for c in cas_list
+                ]
+            ),
+            hide_index=True,
+            use_container_width=True,
+        )
+        st.caption(
+            "출처: KOSHA MSDS Open API(getChemList) 조회 결과 캐시. 표시명은 "
+            "substance_registry의 표준명을 쓰고 KOSHA 원문명은 대조용으로만 병기한다 — "
+            "갱신은 scripts/kosha_registry_lookup.py --fetch"
+        )
+
+        detail_target = st.selectbox(
+            "상세정보를 볼 물질",
+            cas_list,
+            format_func=lambda c: display_names.get(c, c),
+            key="msds_detail_target",
+        )
+        detail = msds_detail(detail_target)
+        st.markdown(
+            f'<div class="mv-section-label">{display_names.get(detail_target, detail_target)} '
+            f'· MSDS 상세</div>',
+            unsafe_allow_html=True,
+        )
+        if detail.empty:
+            st.caption(
+                "KOSHA MSDS 상세정보가 없습니다(미등재 물질). "
+                "판정은 CAMEO 반응성 그룹 근거로만 이뤄집니다."
+            )
+        else:
+            for label in detail["구분"].unique():
+                st.caption(label)
+                st.dataframe(
+                    detail.loc[detail["구분"] == label, ["항목", "내용"]],
+                    hide_index=True,
+                    use_container_width=True,
+                    column_config={"내용": st.column_config.TextColumn(width="large")},
+                )
+            st.caption(
+                "출처: KOSHA MSDS Open API getChemDetail02/03/09/10 — "
+                "갱신은 scripts/kosha_msds_collector.py "
+                "--target-csv data/collection/registry_core207.csv"
+            )
+
+    rows = verdict_rows(verdict, display_names)
     pairs = list(itertools.combinations(verdict.inputs, 2))
-    fmt = lambda p: f"{names.get(p[0], p[0])} × {names.get(p[1], p[1])}"  # noqa: E731
+    fmt = lambda p: f"{display_names.get(p[0], p[0])} × {display_names.get(p[1], p[1])}"  # noqa: E731
     worst_idx = max(range(len(pairs)), key=lambda i: verdict.pair_verdicts[i].category == verdict.category)
 
     with col_b:
@@ -1076,7 +1313,7 @@ def main() -> None:
                 wb_cas = verdict.worst_pair[1].split(" ", 1)[0]
                 st.markdown(
                     f'<div style="text-align:right;font-size:.82rem;color:#6B7280;">최악 판정 쌍<br>'
-                    f'<span class="mv-mono">{names.get(wa_cas, wa_cas)} × {names.get(wb_cas, wb_cas)}</span></div>',
+                    f'<span class="mv-mono">{display_names.get(wa_cas, wa_cas)} × {display_names.get(wb_cas, wb_cas)}</span></div>',
                     unsafe_allow_html=True,
                 )
             cache_key = tuple(cas_list)
@@ -1088,7 +1325,7 @@ def main() -> None:
             )
             if gen:
                 with st.spinner("최종 보고서 생성 중… (30초 내외)"):
-                    report_cache[cache_key] = cached_report = generate_final_report(verdict, rows, names)
+                    report_cache[cache_key] = cached_report = generate_final_report(verdict, rows, display_names)
 
             if cached_report:
                 if cached_report["error"]:
@@ -1128,7 +1365,7 @@ def main() -> None:
             if len(verdict.inputs) > 2:
                 with st.expander("전체 반응 매트릭스 보기"):
                     render_legend()
-                    render_matrix(verdict, names)
+                    render_matrix(verdict, display_names)
 
     with col_c:
         step_header(3, "PAIR INSPECTOR", "분석된 물질쌍")
@@ -1155,8 +1392,8 @@ def main() -> None:
         with st.container(border=True):
             render_pair_detail_kr(
                 verdict.pair_verdicts[sel_idx],
-                names.get(selected[0], selected[0]),
-                names.get(selected[1], selected[1]),
+                display_names.get(selected[0], selected[0]),
+                display_names.get(selected[1], selected[1]),
             )
 
     st.markdown('<hr class="mv-divider"/>', unsafe_allow_html=True)
@@ -1174,6 +1411,75 @@ if __name__ == "__main__":
         top = {c["chunk_id"] for c in got["contexts"][:5]}
         assert f"sec::{cas_a}::2" in top or f"sec::{cas_a}::10" in top, sorted(top)
         assert "[CAMEO 반응성 그룹 조회" in got["prompt"], "프롬프트에 CAMEO 컨텍스트 누락"
+        assert n[cas_a] in got["query"], "RAG 질의문이 frozen 이름을 쓰지 않음"
         print("OK:", got["cameo"].category, len(got["contexts"]), "chunks")
+
+        # 표시명 일관성: registry에 있는 물질은 모든 화면에서 canonical name 하나만 쓴다.
+        # (main()의 display_names와 동일한 식 - 여기서 깨지면 화면에서도 깨진다)
+        reg = registry()
+        display = {**n, **{c: r["name_ko"] for c, r in reg.items()}}
+        assert all(display[c] == r["name_ko"] for c, r in reg.items()), "registry 표시명 미적용"
+        assert display[cas_a] != n[cas_a], "rag_chunks 이름이 그대로 남아있음(뒤집기 실패)"
+
+        # KOSHA 상세정보는 조회만 하고 표시명을 덮어쓰지 않는다(§3 물질명은 자료로만).
+        d = msds_detail(cas_a)
+        assert set(d["구분"]) == set(SECTION_LABEL.values()), sorted(set(d["구분"]))
+        kosha_name = (kosha_info().get(cas_a) or {}).get("kosha_name")
+        assert display[cas_a] == reg[cas_a]["name_ko"] != kosha_name, "KOSHA 원문명이 표시명을 덮어씀"
+        print("OK: 표시명", display[cas_a], "| KOSHA 원문명", kosha_name, "| 상세", len(d), "행")
+
+        # 검색 대상 필터: KOSHA 미등재 물질은 선택 목록에서 빠지되 registry에는 남는다.
+        k = kosha_info()
+        known = set(reg)   # 선정 기준은 Registry 단독 (Registry ∪ 173 규칙 폐기)
+        unlisted = {c for c in known if not (k.get(c) or {}).get("chem_id")}
+        assert unlisted, "미등재 집합이 비어있음(캐시 미적재?)"
+        assert all(msds_detail(c).empty for c in list(unlisted)[:3]), "미등재인데 상세정보가 있음"
+        assert len(reg) == 237, f"확정 Registry 237종 변동: {len(reg)}"
+        assert set(reg) - unlisted, "registry가 통째로 걸러짐"
+        print("OK: 검색대상", len(known - unlisted), "종 / 미등재 제외", len(unlisted),
+              "종 (registry 잔존", len(set(reg) - unlisted), "종)")
+
+        # 질의 별칭 확장: 청크 헤더가 KOSHA 원문명이라 표준명만으론 BM25가 못 잡는
+        # 케이스(페로센 vs 디시클로펜타디에닐 철)가 실제로 복구되는지 확인한다.
+        ferro = "102-54-5"
+        term = query_term(ferro, reg[ferro]["name_ko"])
+        assert "디시클로펜타디에닐" in term, term
+        plain = retrieve(QUERY_TEMPLATE.format(a=reg[ferro]["name_ko"], b="수산화나트륨"))
+        expand = retrieve(QUERY_TEMPLATE.format(a=term, b="수산화나트륨"))
+        assert ferro not in {h["cas_number"] for h in plain}, "전제 붕괴: 확장 없이도 잡힘"
+        assert ferro in {h["cas_number"] for h in expand}, "별칭 확장이 자기 청크를 못 살림"
+        print("OK: 질의 별칭 확장 -", term)
+
+        # 코퍼스 규모: 173은 frozen(불변), core는 Registry 편입분. 둘을 합친 게 검색 대상.
+        con = sqlite3.connect(DB_PATH)
+        tags = dict(con.execute(
+            "select corpus_tag, count(*) from rag_corpus_membership"
+            " where corpus_tag in ('173','core') group by corpus_tag"))
+        con.close()
+        assert tags.get("173") == 173, f"frozen 173 코퍼스 변동: {tags}"
+        assert tags.get("core") == 89, f"core 코퍼스 변동: {tags}"
+        assert len(substances()) == 262, f"인덱스 대상 262종 변동: {len(substances())}"
+        print("OK: 코퍼스 173 + core", tags["core"], "= 인덱스 대상", len(substances()), "종")
+
+        # CAMEO 매핑: 그룹이 붙은 물질만 판정 가능하고, 없으면 무조건 Abstain이다.
+        served = set(reg) - unlisted
+        mapped_served = served & cameo_mapped()
+        assert len(served) == 198, f"서비스 대상 198종 변동: {len(served)}"
+        assert len(mapped_served) == 173, f"CAMEO 매핑 173종 변동: {len(mapped_served)}"
+        eng = CompatibilityEngine(str(DB_PATH))
+        pair_mapped = eng.judge_pair_by_cas("7664-93-9", "1310-73-2")   # 황산 x 수산화나트륨
+        assert pair_mapped.category != "Abstain", pair_mapped.category
+        unmapped_cas = next(iter(served - mapped_served))
+        pair_unmapped = eng.judge_pair_by_cas("7664-93-9", unmapped_cas)
+        assert pair_unmapped.category == "Abstain", pair_unmapped.category
+        print("OK: CAMEO 매핑", len(mapped_served), "/", len(served), "종 |",
+              "매핑쌍", pair_mapped.category, "| 미매핑쌍", pair_unmapped.category)
+
+        # 신규 매핑(pubchem_cameo_2026-08-22)이 실제로 판정으로 이어지는지 — 메탄올 x 질산.
+        methanol = eng.judge_pair_by_cas("67-56-1", "7697-37-2")
+        assert methanol.category == "Incompatible", methanol.category
+        assert not msds_detail("67-56-1").empty, "메탄올 MSDS 상세 없음"
+        print("OK: 신규 매핑 판정 - 메탄올 x 질산", methanol.category,
+              "| 상세", len(msds_detail("67-56-1")), "행")
     else:
         main()

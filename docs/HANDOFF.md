@@ -1,7 +1,14 @@
 # MSDS 위험성평가 자동화 — 핸드오프
 
-**최종 갱신**: 2026-08-17 (§0-7: prompt v2 폐기 → CAMEO-context 전환 → 전수실행 →
-문서·저장소 재편 완료)
+**최종 갱신**: 2026-08-22 (§0-8: Registry 237종 확정 · KOSHA 상세 연동 · 물질명 일관성 ·
+인덱스 23종 편입 · 질의 별칭 확장 · **CAMEO 매핑 142→173종 · B1 39종 청킹으로 A티어 173종**)
+
+> **평가 파이프라인과 서비스 계층을 구분해서 읽는다.** §0-1~§0-7은 검색·생성·채점
+> 파이프라인의 기록이고 여기 실린 지표는 그대로 유효하다(재측정하지 않았고, 평가
+> 경로는 `corpus_tag='173'`을 계속 쓴다). 2026-08-22 작업은 **서비스 계층**
+> (물질 선정·KOSHA 연동·앱)에 한정되며, 물질 선정의 현재 단일 출처는
+> [`REGISTRY.md`](REGISTRY.md)다 — CORE 237종, 서비스 대상 198종.
+> 경위는 [`PROJECT_LOG.md`](PROJECT_LOG.md)의 2026-08-22 항목.
 **현재 단계**: Chemical Selection 173종 동결(§0-3), Retrieval baseline hybrid
 Recall@10 0.9336 / MRR 0.9169 / Hit@10 0.9884(§0-5)에 이어, Generation 단계도
 CAMEO-context 파이프라인으로 **정답률 99.9% / faithful 97.2%**까지 완료(§0-7,
@@ -29,7 +36,7 @@ matrix_verdict와 2,160건 전수 100% 일치함을 확인하고, **LLM이 판�
 
 이어서 저장소를 `01_collection~05_evaluation` numbered 폴더에서
 `src/`(재사용 모듈)·`scripts/`(실행 스크립트)·`data/`(DB·평가셋·캐시)·
-`results/`(산출물)·`docs/`(표준 문서 8종)·`archive/`(폐기·기각, 원위치 유지)로
+`results/`(산출물)·`docs/`(당시 표준 문서 8종, 현재는 REGISTRY.md 포함 9종)·`archive/`(폐기·기각, 원위치 유지)로
 재편했다. 기각된 실험(cascade judge, prompt v2, RAGAS 파이프라인)은
 `archive/generation_experiments/`로, 흡수된 원본 상세 문서는
 `archive/superseded_docs/`로 이동. 전체 경위·파일 매핑은

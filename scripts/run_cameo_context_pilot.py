@@ -162,8 +162,7 @@ def run_generation() -> None:
                 data = L.chat(
                     [{"role": "user", "content": prompt}],
                     max_tokens=GB.MAX_TOKENS,
-                    reasoning_budget=GB.REASONING_BUDGET,
-                    temperature=GB.TEMPERATURE,
+                    reasoning_effort=GB.REASONING_EFFORT,
                 )
                 answer = data["choices"][0]["message"]["content"]
                 usage = data.get("usage", {})

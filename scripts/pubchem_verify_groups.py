@@ -145,13 +145,19 @@ def main():
             }
         )
 
-        if groups:
+        if groups and status == "MATCH":
             cur.execute("SELECT chemical_id FROM chemicals WHERE cas_number=?", (cas,))
             row = cur.fetchone()
             if row is None:
                 continue
             chemical_id = row[0]
             for g in groups:
+                # MATCH만으로도 groups 안에 expected에 없는 추가 그룹이 섞여
+                # 있을 수 있다(예: 질소가 Not Chemically Reactive와 함께
+                # Epoxides도 반환된 경우). expected와 교집합인 그룹만 반영-
+                # PubChem이 검증하지 못한 그룹까지 같이 밀어넣지 않는다.
+                if g not in expected_groups:
+                    continue
                 gid = name_to_gid.get(g)
                 if gid is None:
                     continue

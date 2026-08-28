@@ -12,6 +12,7 @@
       섹션3·9·10 중 ※출처 미표기 (KOSHA 작성값)          -> Recommended
       ※출처 표기 항목 (HSDB/ECHA/ICSC 등 외부DB 인용)     -> Reference
   - 청킹 단위는 2종 모두 생성하여 Retrieval 지표로 A/B (section / item)
+    -> 2026-08-23: A/B 종료(section 채택)로 item 생성 제거. 아래 build_chunks 주석 참고
 
 입력 : reactivity_reference.db (msds_sections, chemicals, chemical_group_membership,
                                 reactivity_groups, msds_chem_id_cache)
@@ -298,30 +299,11 @@ def build_chunks(
                 }
             )
 
-        # --- granularity: item (§8 "1차 경계: EAV 항목") ---
-        for it in items:
-            if not it["body"]:
-                continue  # 값 없는 구조상 상위노드(B04/B0408/I02 등)는 단독 청크 대상 아님
-            body = it["body"]
-            item_text = f"# {title}\n{heading(it['lev'])} {it['name']}\n{body}"
-            item_parts = recursive_split(item_text)
-            for idx, part in enumerate(item_parts, start=1):
-                suffix = "" if len(item_parts) == 1 else f"::p{idx}"
-                chunks.append(
-                    {
-                        **meta(cas, section),
-                        "chunk_id": f"item::{cas}::{it['code']}{suffix}",
-                        "granularity": "item",
-                        "item_codes": it["code"],
-                        "item_names": it["name"],
-                        "evidence_grade": it["grade"],
-                        "evidence_grades": it["grade"],
-                        "evidence_sources": ",".join(sorted(set(it["sources"]))),
-                        "abstain": int(it["no_data"]),
-                        "text": part,
-                        "n_chars": len(part),
-                    }
-                )
+        # granularity='item'(EAV 항목 단위) 생성은 2026-08-23에 제거했다. 2026-08-06에
+        # section과 A/B 하려고 둘 다 만들었고 section이 채택된 뒤로 앱·평가·인덱스가
+        # 전부 section만 쓴다(`GRAN = "section"`). 만들어도 아무도 읽지 않는 산출물이라
+        # 청킹 1회당 수천 행을 DB에 쌓기만 했다. 스키마와 기존 item 행은 그대로 둔다 —
+        # A/B 실측 기록이고, 되살리려면 git 이력에서 이 블록을 복원하면 된다.
     return chunks
 
 
@@ -377,7 +359,9 @@ def persist(con: sqlite3.Connection, chunks: list[dict], version: str = PIPELINE
 
 
 def write_markdown(chunks: list[dict]) -> None:
-    for gran in ("section", "item"):
+    # 주의: 전량 재생성 전제라 기존 .md를 먼저 지운다. 부분 실행(--target-csv)에서는
+    # --no-markdown을 함께 줘야 나머지 물질의 파일이 날아가지 않는다.
+    for gran in sorted({c["granularity"] for c in chunks}):
         d = CHUNK_DIR / gran
         d.mkdir(parents=True, exist_ok=True)
         for f in d.glob("*.md"):
@@ -412,7 +396,7 @@ def report(chunks: list[dict]) -> None:
     import collections
 
     print(f"총 청크: {len(chunks)}")
-    for gran in ("section", "item"):
+    for gran in sorted({c["granularity"] for c in chunks}):
         sub = [c for c in chunks if c["granularity"] == gran]
         lens = sorted(c["n_chars"] for c in sub)
         print(f"\n[{gran}] n={len(sub)}  물질={len({c['cas_number'] for c in sub})}")
@@ -428,7 +412,8 @@ def main() -> None:
     ap.add_argument("--no-markdown", action="store_true", help="마크다운 파일 생성 생략")
     ap.add_argument("--target-csv", default=None,
                      help="이 CSV(cas_number 컬럼)에 있는 물질만 청킹. 생략 시 기존 동작"
-                          "(msds_sections 전체) 그대로 — PHASE 5: 426/259 두 코퍼스 분리 rebuild용")
+                          "(msds_sections 전체) 그대로 — PHASE 5: 426/259 두 코퍼스 분리 rebuild용. "
+                          "부분 실행 시 --no-markdown을 함께 줄 것(write_markdown이 기존 .md를 전부 지운다)")
     ap.add_argument("--version", default=PIPELINE_VERSION,
                      help="rag_chunks.version 태그. 코퍼스별로 다르게 줘야 서로 안 겹침")
     args = ap.parse_args()
