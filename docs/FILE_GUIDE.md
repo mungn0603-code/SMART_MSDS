@@ -8,7 +8,7 @@
 
 | 파일 | 역할 |
 |---|---|
-| `llm.py` | DeepSeek 클라이언트. `chat()`이 전 파이프라인의 유일한 LLM 호출 경로 — 429/503 재시도(backoff+jitter) 포함 |
+| `llm.py` | Upstage Solar 클라이언트(`solar-pro3`). `chat()`이 전 파이프라인의 유일한 LLM 호출 경로 — 429/503 재시도(backoff+jitter) 포함 |
 | `retrieval.py` | FAISS(dense) + BM25 하이브리드 검색, RRF 융합, §10 boilerplate penalty |
 | `pipeline.py` | MSDS 원문 → Normalize → Chunk(section 단위) → `rag_chunks` 적재 |
 | `eval_generation.py` | Judge 채점(rule_based + LLM judge), `substance_confused`/`cas_in_text`(물질 혼동 진단) |

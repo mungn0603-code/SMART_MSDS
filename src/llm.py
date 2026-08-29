@@ -1,11 +1,11 @@
-"""Stage 4 LLM 클라이언트 — DeepSeek (deepseek-v4-flash, thinking mode)
+"""Stage 4 LLM 클라이언트 — Upstage Solar (solar-pro3, reasoning)
 
 설계 §3 파이프라인의 LLM 단계, 그리고 §10 RAG 지표(Faithfulness / Context Recall /
 Context Precision / Answer Relevancy) · Abstain Precision 측정에 쓰인다.
 
-  모델      : deepseek-v4-flash (thinking: enabled, reasoning_effort: high)
-  엔드포인트 : https://api.deepseek.com/chat/completions (OpenAI 호환)
-  인증      : .env 의 DEEPSEEK_API_KEY (gitignore 대상. 원문은 코드/로그/출력 어디에도 남기지 않음)
+  모델      : solar-pro3 (128k ctx, reasoning_effort: high)
+  엔드포인트 : https://api.upstage.ai/v1/chat/completions (OpenAI 호환)
+  인증      : .env 의 UPSTAGE_API_KEY (gitignore 대상. 원문은 코드/로그/출력 어디에도 남기지 않음)
 
 연결 점검:
     python 04_rag_agent/llm.py --check
@@ -25,10 +25,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 
-INVOKE_URL = "https://api.deepseek.com/chat/completions"
-MODEL = "deepseek-v4-flash"
-MAX_TOKENS = 65536
+INVOKE_URL = "https://api.upstage.ai/v1/chat/completions"
+MODEL = "solar-pro3"
+MAX_TOKENS = 8192  # 호출부가 명시 override 함(생성 8192 / judge 400). 여기 값은 fallback
 REASONING_EFFORT = "high"
+
+# 2026-08-29: Generation/Judge 기준 모델을 NVIDIA NIM
+# (nvidia/nemotron-3-nano-omni-30b-a3b-reasoning)에서 Upstage Solar 로 교체했다.
+# 종전 모델로 낸 173 코퍼스 지표는 archive/2026-08-17_baseline/ 에 보존한다.
 
 
 def _load_dotenv(path: Path = ROOT / ".env") -> None:
@@ -61,11 +65,12 @@ def _ensure_ca_bundle() -> None:
 
 def api_key() -> str:
     _load_dotenv()
-    key = os.environ.get("DEEPSEEK_API_KEY")
+    # .env 표기 흔들림 흡수: Upstage 공식 표기는 UPSTAGE_API_KEY, 로컬은 UPSTAGE_APIKEY.
+    key = os.environ.get("UPSTAGE_API_KEY") or os.environ.get("UPSTAGE_APIKEY")
     if not key:
         raise SystemExit(
-            "DEEPSEEK_API_KEY 가 없음. 프로젝트 루트 .env 에 아래 한 줄을 추가하세요.\n"
-            "  DEEPSEEK_API_KEY=<발급받은 키>\n"
+            "UPSTAGE_API_KEY 가 없음. 프로젝트 루트 .env 에 아래 한 줄을 추가하세요.\n"
+            "  UPSTAGE_API_KEY=<발급받은 키>\n"
             ".env 는 이미 .gitignore 에 등록되어 있습니다."
         )
     return key
@@ -90,9 +95,10 @@ def chat(
     urllib 사용: requests 미설치 환경에서도 돌게 하고, 의존성을 늘리지 않는다.
     model: 기본값은 이 파일의 MODEL(현재 Generation/Large Judge용). Small Judge처럼
     다른 모델을 같은 엔드포인트/키로 호출할 때만 override.
-    reasoning_effort: DeepSeek thinking 모델 전용 필드("low"/"high"/"max").
-    temperature/top_p는 thinking 모드에서 무시되므로(DeepSeek 문서) 아예 보내지 않는다.
-    None이면 payload에서 thinking을 아예 빼고 보낸다.
+    reasoning_effort: Upstage 문서 기준 "minimal"/"low"/"medium"/"high".
+    solar-pro3는 컨텍스트 잔여량 기준 동적 추론 예산(high=60%, medium=30%, low=추론 없음).
+    temperature/top_p는 보내지 않는다 — 모델 기본값(0.8/0.95)을 그대로 쓴다.
+    None이면 payload에서 reasoning_effort를 빼고 보낸다(모델 기본 minimal).
     """
     _ensure_ca_bundle()
     payload = {
@@ -102,7 +108,6 @@ def chat(
         "stream": False,
     }
     if reasoning_effort is not None:
-        payload["thinking"] = {"type": "enabled"}
         payload["reasoning_effort"] = reasoning_effort
     req = urllib.request.Request(
         INVOKE_URL,

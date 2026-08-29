@@ -21,7 +21,11 @@ import sys
 import time
 from pathlib import Path
 
-VERDICT_LINE_RE = re.compile(r"판정\s*[:：]\**\s*(Compatible|Caution|Incompatible)", re.IGNORECASE)
+# 2026-08-29: solar-pro3 는 "판정:" 대신 마크다운 볼드 헤더 다음 줄에 판정어를 쓰는 일이
+# 많다. 종전 정규식은 콜론을 요구해 2,240건 중 150건을 놓쳤다(판정 자체는 정확히 명시됨).
+# 콜론/볼드/줄바꿈을 모두 허용하도록 넓혔다 — 둘 다 매칭되는 건에서 결과가 달라지는
+# 사례는 0건이라 해석 변경이 아니라 순수 recall 개선이다(93.3% -> 99.8%).
+VERDICT_LINE_RE = re.compile(r"판정\**\s*[:：]?\s*\**\s*(Compatible|Caution|Incompatible)", re.IGNORECASE)
 
 
 def parse_stated_verdict(answer: str) -> str | None:
@@ -43,7 +47,7 @@ FROZEN_PATH = ROOT / "results" / "frozen_retrieval_top10.jsonl"
 GEN_OUT = ROOT / "results" / "generation_cameo_pilot_v4.jsonl"
 EVAL_OUT = ROOT / "results" / "eval_cameo_pilot_v4.jsonl"
 
-PROMPT_VERSION = "cameo_pilot_v5"
+PROMPT_VERSION = "cameo_service_v6"  # v5 + 인용 태그 요구(2026-08-29, service 측정)
 
 # v3(과장 금지 위주, CATEGORY_REASON 뭉뚱그린 정보만 제공)까지는 파일럿 실행 전.
 # v4는 사용자가 직접 작성한 프롬프트로 전략이 다르다 — 정보를 숨기는 대신
@@ -103,6 +107,12 @@ SYSTEM_PROMPT = (
     "취급 주의:\n제공된 정보 범위 안에서만 설명.\n\n"
     "근거 한계:\n추가 반응 메커니즘·생성물 정보가 없다면 \"제공된 자료에는 해당 세부 정보가\n"
     "명시되어 있지 않습니다.\"라고 명시.\n"
+    "\n"
+    "사용한 근거:\n답변 맨 마지막 줄에, 위 설명에서 실제로 인용한 [MSDS 근거]의 번호만\n"
+    "대괄호 안에 나열한다. 형식은 정확히 다음과 같다.\n"
+    "[사용한 근거: 1, 4, 7]\n"
+    "번호 외의 문자(chunk_id·CAS 번호·물질명·섹션명)를 이 줄에 넣지 않는다.\n"
+    "MSDS 근거를 하나도 인용하지 않았다면 [사용한 근거: 없음] 이라고 적는다.\n"
     "\n"
     "최종 확인(출력 전 스스로 점검): 판정을 바꾸지 않았는가 / CAMEO 근거를 충분히 활용했는가\n"
     "/ 원본보다 강한 표현을 추가하지 않았는가 / MSDS에 없는 사실을 추론하지 않았는가 /\n"

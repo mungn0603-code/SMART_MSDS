@@ -43,7 +43,7 @@ flowchart TB
     RRF --> TOP["top-10 청크(STEP1에서 전수 고정)"]
     CAMEO["CAMEO 그룹 조회\n→ 판정값 확정(100% 검증됨)"] --> PROMPT
     TOP --> PROMPT["LLM 프롬프트\n= CAMEO 판정 + MSDS 근거"]
-    PROMPT --> LLM["Generation\nDeepSeek v4-flash"]
+    PROMPT --> LLM["Generation\nUpstage solar-pro3"]
     LLM --> OUT["판정 + 위험 이유 + 물질별 근거"]
     OUT --> JUDGE["Judge(rule+LLM)\nfaithful/정답/물질혼동"]
 
@@ -68,7 +68,7 @@ LLM이 판정까지 직접 추론하는 구조였고, 그게 최대 실패 원�
 | 검색 공간 | §2·§10 필터(805→409청크) | 실측 — 정확도·속도 동시 개선 |
 | 검색 | Hybrid(dense+BM25, RRF k=60) + §10 penalty(λ=0.01) | 실측, [`RETRIEVAL.md`](RETRIEVAL.md) |
 | 리랭커 | `bge-reranker-base` 예정, **미실행** | 저비용 대안(penalty)으로 이미 목표 충족, 보류 |
-| Generation/Judge LLM | DeepSeek `deepseek-v4-flash`(thinking mode) | 사용자 지정, 동일 모델을 판정 설명·채점 양쪽에 재사용 |
+| Generation/Judge LLM | Upstage `solar-pro3`(reasoning_effort=high) | 사용자 지정, 동일 모델을 판정 설명·채점 양쪽에 재사용. 2026-08-29 전환 — 그 이전 173 코퍼스 지표는 NVIDIA NIM Nemotron 으로 냈다 |
 | 판정 소스 | CAMEO 반응성 그룹 조회(결정론적 DB) | LLM 재판단 금지 — 타협 불가 원칙 |
 | N종(3종+) 조합 | `judge_combination_by_cas`가 전체 쌍 C(N,2)을 계산 후 worst-case 종합 | 매트릭스 조회는 N종 지원, RAG 검색 실측은 쌍 단위까지만 |
 | 서비스 물질 | Registry 237종 중 KOSHA 등재 198종 | 선정 기준은 Registry 단독, [`REGISTRY.md`](REGISTRY.md) |

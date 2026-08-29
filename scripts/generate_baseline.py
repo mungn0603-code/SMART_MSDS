@@ -31,8 +31,12 @@ FROZEN_PATH = ROOT / "results" / "frozen_retrieval_top10.jsonl"
 OUT_PATH = ROOT / "results" / "generation_baseline.jsonl"
 
 PROMPT_VERSION = "baseline_v1"
-MAX_TOKENS = 1500
-REASONING_EFFORT = "high"  # DeepSeek thinking 모드는 temperature를 무시함
+MAX_TOKENS = 8192
+# 2026-08-29 Upstage 전환: 1500 -> 8192. NVIDIA NIM 은 reasoning_budget(16384) 이
+# max_tokens 와 별개라 1500 이 본문 전용 예산이었으나, solar-pro3 는 추론 토큰이
+# max_tokens 를 같이 소비한다. 1500 유지 시 20건 중 9건이 상한에 걸리고 3건은 본문이
+# 빈 문자열로 나왔다(측정). 8192 에서는 12/12 finish_reason=stop, compl p90=2371 max=6852.
+REASONING_EFFORT = "high"  # Upstage solar-pro3: 추론 예산 60%. temperature 는 보내지 않음
 
 SYSTEM_PROMPT = (
     "당신은 KOSHA MSDS 데이터를 근거로 화학물질 혼합/공동취급 위험성을 평가하는 보조자다.\n"

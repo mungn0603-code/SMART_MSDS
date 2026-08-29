@@ -54,7 +54,10 @@ def load_jsonl(path: Path) -> list[dict]:
         return [json.loads(line) for line in f if line.strip()]
 
 
-def already_done(path: Path) -> set[str]:
+def already_done(path: Path, err_field: str = "error") -> set[str]:
+    """'완료'는 성공한 건만이다. 실패 레코드(err_field 채워짐)는 제외해서
+    같은 명령을 다시 돌리면 그 건만 재시도되게 한다 — 종전처럼 query_id만 보면
+    일시적 429/파싱 실패가 영구 결손으로 굳는다."""
     if not path.exists():
         return set()
     done = set()
@@ -64,10 +67,22 @@ def already_done(path: Path) -> set[str]:
             if not line:
                 continue
             try:
-                done.add(json.loads(line)["query_id"])
+                rec = json.loads(line)
+                if rec.get(err_field) is None:
+                    done.add(rec["query_id"])
             except (json.JSONDecodeError, KeyError):
                 continue
     return done
+
+
+def dedupe_records(rows: list[dict], err_field: str) -> list[dict]:
+    """재시도로 같은 query_id 가 여러 줄일 수 있다. 성공본을 우선해 하나만 남긴다."""
+    best: dict[str, dict] = {}
+    for r in rows:
+        cur = best.get(r["query_id"])
+        if cur is None or cur.get(err_field) is not None:
+            best[r["query_id"]] = r
+    return list(best.values())
 
 
 def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str) -> dict:
@@ -79,12 +94,17 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str) ->
             max_tokens=GB.MAX_TOKENS,
             reasoning_effort=GB.REASONING_EFFORT,
         )
-        answer = data["choices"][0]["message"]["content"]
+        choice = data["choices"][0]
+        answer = choice["message"]["content"]
         usage = data.get("usage", {})
-        error = None
+        finish = choice.get("finish_reason")
+        # 빈 본문은 예외가 안 나므로 그냥 두면 조용히 채점까지 흘러간다.
+        # error 로 승격해야 already_done 이 재시도 대상으로 잡는다.
+        error = None if (answer or "").strip() else f"EmptyAnswer: finish_reason={finish}"
     except Exception as e:  # noqa: BLE001 - 배치 중 개별 실패로 전체를 잃지 않음
         answer = None
         usage = {}
+        finish = None
         error = f"{type(e).__name__}: {str(e)[:300]}"
     latency = round(time.perf_counter() - t0, 3)
     return {
@@ -102,6 +122,7 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str) ->
         "context_ids": [c["chunk_id"] for c in r["retrieved"]],
         "generated_answer": answer,
         "model": L.MODEL,
+        "finish_reason": finish,
         "prompt_version": PROMPT_VERSION,
         "latency_sec": latency,
         "prompt_tokens": usage.get("prompt_tokens"),
@@ -113,7 +134,7 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str) ->
 
 def run_generation(limit: int | None, workers: int) -> None:
     rows = load_jsonl(FROZEN_PATH)
-    done = already_done(GEN_OUT)
+    done = already_done(GEN_OUT, "error")
     todo = [r for r in rows if r["query_id"] not in done]
     if limit is not None:
         todo = todo[:limit]
@@ -156,12 +177,17 @@ def _call_eval(r: dict, contexts_by_id: dict[str, str]) -> dict:
     # 확정 — 안 하면 CAMEO를 정당하게 인용한 답변도 judge가 "근거 없음"으로 오탐한다).
     judge_rec = {**r, "context_ids": r.get("context_ids", []) + ["__cameo_context__"]}
     t0 = time.perf_counter()
-    try:
-        jr = EV.judge(judge_rec, contexts_by_id)
-        error = None
-    except Exception as e:  # noqa: BLE001
-        jr = {"predicted_verdict": None, "faithful": None, "unsupported_claims": None}
-        error = f"{type(e).__name__}: {str(e)[:300]}"
+    # judge 응답의 JSON 파싱 실패는 확률적이다(파일럿 1/20). 같은 프롬프트로 다시 부르면
+    # 대개 붙으므로 3회까지 시도한다. HTTP 오류는 L.chat 이 이미 자체 재시도한다.
+    jr = {"predicted_verdict": None, "faithful": None, "unsupported_claims": None}
+    error = None
+    for attempt in range(3):
+        try:
+            jr = EV.judge(judge_rec, contexts_by_id)
+            error = None
+            break
+        except Exception as e:  # noqa: BLE001
+            error = f"{type(e).__name__}: {str(e)[:300]}"
     latency = round(time.perf_counter() - t0, 3)
     matrix_verdict = r.get("matrix_verdict")
     pv = jr["predicted_verdict"]
@@ -191,8 +217,8 @@ def _call_eval(r: dict, contexts_by_id: dict[str, str]) -> dict:
 
 
 def run_eval(limit: int | None, workers: int) -> None:
-    rows = [r for r in load_jsonl(GEN_OUT) if r.get("error") is None]
-    done = already_done(EVAL_OUT)
+    rows = [r for r in dedupe_records(load_jsonl(GEN_OUT), "error") if r.get("error") is None]
+    done = already_done(EVAL_OUT, "judge_error")
     todo = [r for r in rows if r["query_id"] not in done]
     if limit is not None:
         todo = todo[:limit]
@@ -240,8 +266,14 @@ def main() -> None:
         run_generation(args.n, args.workers)
     if args.stage in ("eval", "both"):
         run_eval(args.n, args.workers)
-    print(f"저장: {GEN_OUT}")
-    print(f"저장: {EVAL_OUT}")
+    for path, field in ((GEN_OUT, "error"), (EVAL_OUT, "judge_error")):
+        if not path.exists():
+            continue
+        recs = dedupe_records(load_jsonl(path), field)
+        bad = [r for r in recs if r.get(field) is not None]
+        print(f"저장: {path}  성공 {len(recs) - len(bad)} / 실패 {len(bad)}")
+        if bad:
+            print(f"  -> 같은 명령을 다시 실행하면 실패분만 재시도됩니다. 예: {bad[0][field][:120]}")
 
 
 if __name__ == "__main__":

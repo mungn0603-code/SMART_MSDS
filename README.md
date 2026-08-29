@@ -79,17 +79,25 @@ Retrieval hit rate **98.84%**(병목 아님)인데도 Generation 실패율이 �
 일치** 검증됨)로 판정을 확정해 컨텍스트에 박아 넣은 뒤, LLM은 그 판정을 MSDS
 근거로 **설명만** 하게 했다. 결과:
 
-| 지표 | 1차(LLM이 직접 판정) | 최종(CAMEO-context) |
+| 지표 | 1차(LLM이 직접 판정) | 최종(CAMEO-context, service) |
 |---|---:|---:|
-| 정답률 | 19.8% | **99.9%** |
-| Over-abstention | 46.1% | 1.9% |
-| Faithful(근거 밖 주장 없음) | 측정 안 됨 | **97.2%** |
-| 물질 혼동 | 관측됨 | **0/2,142** |
+| 정답률(판정줄) | 19.8% | **99.9%** |
+| 정답률(judge 재분류) | — | 83.9% |
+| Over-abstention | 46.1% | 1.1% |
+| Faithful(근거 밖 주장 없음) | 측정 안 됨 | **94.6%** |
+| 물질 혼동 | 관측됨 | 14.7% |
 
-> 이 표는 **`corpus_tag='173'` 평가 코퍼스** 기준이다(2026-08-17, 2,142건 유효 채점).
-> 그 코퍼스는 2026-08-28에 서비스 범위에서 내려왔으므로 현재 서비스 코퍼스의 지표가
-> 아니다. 구조 전환(LLM 판정 → CAMEO-context 설명)이 효과가 있었다는 근거로는 그대로
-> 유효하지만, service 기준 값은 아직 없다 — 아래 로드맵 참고.
+> **service 기준, 2026-08-29 측정** — Upstage `solar-pro3` / 프롬프트
+> `cameo_service_v6` / `corpus_tag='service'` 173종 / 2,240건 전수, 실패 0건.
+> 정답률은 두 정의가 다르다: 답변 **판정줄**이 CAMEO 판정을 유지했는가(99.9%,
+> 뒤집힌 판정 0건)와, judge가 **본문**을 재분류한 결과가 일치하는가(83.9%).
+> 둘의 격차가 이 시스템의 남은 결함이다 — 판정은 지키되 본문 서술이 판정보다 세다
+> (Caution 745건 중 301건이 본문상 Incompatible로 읽힘). 물질 혼동 14.7%는 하락이
+> 아니라 **최초 측정치**다: 구 프롬프트는 인용 태그를 요구하지 않아 이 지표가
+> 측정된 적이 없었다. 상세는 [`docs/GENERATION.md`](docs/GENERATION.md).
+>
+> 단, **왼쪽 "1차" 열은 173 코퍼스 기준(2026-08-17)이다.** 두 열은 코퍼스·모델이
+> 달라 엄밀한 대조가 아니며, 구조 전환의 방향성을 보이는 용도로만 나란히 둔다.
 
 전체 경위(prompt v2 시도 → 실패 → CAMEO-context 전환 → judge 채점버그 발견·수정 →
 전수실행 429 재시도 강화 → 잔여 실패 표적 재시도)는 [`docs/GENERATION.md`](docs/GENERATION.md).
@@ -168,7 +176,7 @@ Retrieval hit rate **98.84%**(병목 아님)인데도 Generation 실패율이 �
 | 저장 | SQLite (`data/reactivity_reference.db`) | 관계형 진실원본 |
 | 임베딩 | `dragonkue/BGE-m3-ko` | 한국어 특화, 사용자 지정 |
 | 검색 | FAISS(dense) + BM25(kiwipiepy) + RRF 융합 + §10 boilerplate penalty | 하이브리드 |
-| LLM | DeepSeek `deepseek-v4-flash`(thinking mode) | Generation + Judge 공용, OpenAI 호환 API |
+| LLM | Upstage `solar-pro3`(reasoning_effort=high) | Generation + Judge 공용, OpenAI 호환 API |
 | 평가 | 자체 rule+LLM Judge(faithful/predicted_verdict/substance_confused) | RAGAS는 파일럿 후 자체 채점기로 대체 |
 
 ---
@@ -194,14 +202,20 @@ MSDS/
 ## 실행
 
 ```bash
-# 1) .env에 DEEPSEEK_API_KEY 설정 후 연결 확인
+# 1) .env에 UPSTAGE_API_KEY 설정 후 연결 확인
 python src/llm.py --check
 
-# 2) Retrieval baseline 재현(캐시된 임베딩/인덱스 사용)
-python scripts/run_ab.py embedding --models bge-m3-ko --granularity section --task pair --sections 2,10 --corpus-tag 173
+# 2) Retrieval 재현(캐시된 임베딩/인덱스 사용)
+python scripts/run_ab.py embedding --models bge-m3-ko --granularity section --task pair --sections 2,10 --corpus-tag service
 
-# 3) Generation 파이프라인(CAMEO-context, 최종 채택본) 재현/이어서 실행
-python scripts/run_cameo_full.py --workers 8
+# 3) Generation 입력 고정 -> 생성 -> 채점 (각 단계는 이어서 실행 가능, 실패분만 재시도됨)
+#    worker 수는 Upstage 레이트리밋(100 RPM / 250,000 TPM)에 맞춘 값이다.
+#    채점은 호출당 5.3k 토큰 x 1.3초라 worker 1개가 이미 TPM 상한이다.
+python scripts/freeze_retrieval.py --corpus-tag service
+python scripts/run_cameo_full.py --stage gen  --workers 7
+python scripts/run_cameo_full.py --stage eval --workers 1
+python scripts/reparse_verdict_line.py
+python scripts/summarize_cameo_full.py --eval results/eval_cameo_full_reparsed.jsonl
 
 # 4) Demo UI (물질 선택 -> CAMEO 판정 -> MSDS 근거 검색 -> LLM 설명)
 streamlit run app/streamlit_app.py
@@ -220,18 +234,21 @@ streamlit run app/streamlit_app.py
 - [x] KOSHA MSDS 173종 평가 코퍼스(수집 자체는 더 넓은 풀에서 진행, 평가셋은 173종 확정)
 - [x] CAMEO 68그룹 · 양립성 매트릭스 2,278쌍, PubChem 경로로 94% 재검증
 - [x] RAG 검색 계층 — hybrid, service 코퍼스 기준 Recall@10 0.8987 / Hit@10 0.9790
-- [x] Generation 계층 — CAMEO-context 파이프라인, 정답률 99.9% / faithful 97.2%
-      (**173 평가 코퍼스 기준**, service 기준 재측정 전)
+- [x] Generation 계층 — CAMEO-context 파이프라인, **service 기준** 정답률(판정줄)
+      99.9% / 정답률(judge) 83.9% / faithful 94.6% (2026-08-29, 2,240건 전수)
 - [x] N종(3종 이상) 물질 조합 판정(`judge_combination_by_cas`/`full_report`)
 - [x] 자체 Judge 채점 파이프라인(rule + LLM, faithful/predicted_verdict/substance_confused)
 
 **미완성 (감추지 않고 그대로 남김)**
-- [ ] **Generation의 service 기준 재측정 미실행** — 현재 정답률·faithful 수치는 서비스
-      범위에서 내려온 173 평가 코퍼스에서 나온 값이다. Retrieval은 2026-08-29에 service로
-      갈아끼웠지만 Generation(`run_cameo_full.py`)은 아직 안 돌렸다
+- [ ] **본문 서술이 판정보다 강한 문제 (최대 결함)** — 판정줄 기준 오답은 0건이지만,
+      matrix=Caution 745건 중 **301건이 본문상 Incompatible로 읽힌다**(judge 재분류).
+      판정줄은 그 301건 모두 Caution으로 정확히 썼다. 판정줄–본문 일치 82.9%
+- [ ] **물질 혼동 14.7%** (307/2,093) — 검색 top-10에 섞인 제3물질 청크를 이 쌍의
+      근거로 인용한다. 2026-08-29에 프롬프트가 인용 태그를 요구하게 되면서 **처음
+      측정된 값**이다(그전에는 0%가 아니라 측정 불가였다). 태그 미출력 6.2%는 여전히 측정 불가
 - [ ] Reranker 미실행 — 저비용 대안(boilerplate penalty)으로 이미 목표 충족해 보류 중
-- [ ] 잔여 faithful 실패 2.8%(61건) — 패턴은 파악됐으나(그룹 분류를 확인된 반응처럼
-      단정) 완전히 해소되진 않음
+- [ ] 잔여 faithful 실패 5.4%(120건, service 기준) — 패턴은 파악됐으나(그룹 분류를
+      확인된 반응처럼 단정) 완전히 해소되진 않음. 173/Nemotron 때는 2.8%였다
 - [ ] Registry 237종 중 **CAMEO 매핑 173종(73.0%)** — 2026-08-22에 PubChem `hid=86`으로
       142 → 173종으로 늘려 판정 가능 쌍은 51.3% → **76.3%**(14,878/19,503). 남은 25종은
       CAMEO에 데이터시트 자체가 없어(원소 23종 + 탄산나트륨 + 염화나트륨) **76.3%를 현재
