@@ -48,6 +48,31 @@ FROZEN_PATH = ROOT / "results" / "frozen_retrieval_top10.jsonl"
 GEN_OUT = ROOT / "results" / "generation_cameo_full.jsonl"
 EVAL_OUT = ROOT / "results" / "eval_cameo_full.jsonl"
 
+# 컨텍스트 구성 방식. "frozen" = 검색 top-10 그대로(2026-08-29 baseline 재현 경로).
+# "pair" = 쌍의 두 CAS 에 속한 청크 전부(검색 우회). service 코퍼스는 물질당 청크가
+# 평균 2.14개뿐이라 top-10 의 6.6개가 구조적으로 제3물질이었고, 그게 물질혼동 14.7%의
+# 원인이었다. pair 모드는 gold_evidence 를 2,240건 전건 포함하며(실측) 컨텍스트가
+# 평균 4.29개로 줄어 프롬프트 토큰도 57% 감소한다.
+CONTEXT_MODE = "frozen"
+CITATION_RE = __import__("re").compile(r"\[사용한\s*근거\s*:")
+
+
+def pair_chunk_ids(cur, cas_a: str, cas_b: str) -> list[str]:
+    """쌍의 두 물질이 service 코퍼스에 가진 §2·§10 청크 전부. 순서는 결정적으로.
+
+    인용 번호가 이 순서에 대응하므로(프롬프트의 [근거 n]) 정렬을 고정한다.
+    """
+    q = (
+        "select c.chunk_id, c.cas_number, c.section from rag_chunks c "
+        "join rag_corpus_membership m on m.cas_number = c.cas_number "
+        "where m.corpus_tag = 'service' and c.granularity = 'section' "
+        "and c.section in (2, 10) and c.cas_number in (?, ?)"
+    )
+    rows = cur.execute(q, (cas_a, cas_b)).fetchall()
+    order = {cas_a: 0, cas_b: 1}
+    rows.sort(key=lambda r: (order.get(r[1], 9), r[2], r[0]))
+    return [r[0] for r in rows]
+
 
 def load_jsonl(path: Path) -> list[dict]:
     with path.open(encoding="utf-8") as f:
@@ -85,27 +110,42 @@ def dedupe_records(rows: list[dict], err_field: str) -> list[dict]:
     return list(best.values())
 
 
-def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str) -> dict:
-    """네트워크 호출만 담당(스레드에서 실행) — sqlite 접근 없음."""
+def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str,
+                   context_ids: list[str]) -> dict:
+    """네트워크 호출만 담당(스레드에서 실행) — sqlite 접근 없음.
+
+    빈 본문과 인용 태그 누락은 예외가 아니라서 그냥 두면 조용히 채점까지 흘러간다.
+    둘 다 확률적이라 1회 재호출로 대부분 붙고(태그 누락 6.6% 관측), 그래도 안 되면
+    error 로 승격해 already_done 이 재시도 대상으로 잡게 한다.
+    """
     t0 = time.perf_counter()
-    try:
-        data = L.chat(
-            [{"role": "user", "content": prompt}],
-            max_tokens=GB.MAX_TOKENS,
-            reasoning_effort=GB.REASONING_EFFORT,
-        )
-        choice = data["choices"][0]
-        answer = choice["message"]["content"]
-        usage = data.get("usage", {})
-        finish = choice.get("finish_reason")
-        # 빈 본문은 예외가 안 나므로 그냥 두면 조용히 채점까지 흘러간다.
-        # error 로 승격해야 already_done 이 재시도 대상으로 잡는다.
-        error = None if (answer or "").strip() else f"EmptyAnswer: finish_reason={finish}"
-    except Exception as e:  # noqa: BLE001 - 배치 중 개별 실패로 전체를 잃지 않음
-        answer = None
-        usage = {}
-        finish = None
-        error = f"{type(e).__name__}: {str(e)[:300]}"
+    answer = usage = finish = None
+    error = None
+    for attempt in range(2):
+        try:
+            data = L.chat(
+                [{"role": "user", "content": prompt}],
+                max_tokens=GB.MAX_TOKENS,
+                reasoning_effort=GB.REASONING_EFFORT,
+            )
+            choice = data["choices"][0]
+            answer = choice["message"]["content"]
+            usage = data.get("usage", {})
+            finish = choice.get("finish_reason")
+            if not (answer or "").strip():
+                error = f"EmptyAnswer: finish_reason={finish}"
+            elif not CITATION_RE.search(answer):
+                error = "MissingCitationTag"
+            else:
+                error = None
+                break
+        except Exception as e:  # noqa: BLE001 - 배치 중 개별 실패로 전체를 잃지 않음
+            answer = None
+            usage = {}
+            finish = None
+            error = f"{type(e).__name__}: {str(e)[:300]}"
+            break  # HTTP 오류는 L.chat 이 이미 자체 재시도했다
+    usage = usage or {}
     latency = round(time.perf_counter() - t0, 3)
     return {
         "query_id": r["query_id"],
@@ -119,7 +159,7 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str) ->
         "cameo_context": cameo_ctx,
         "gold_evidence": r["gold_evidence"],
         "retrieval_status": r["retrieval_status"],
-        "context_ids": [c["chunk_id"] for c in r["retrieved"]],
+        "context_ids": context_ids,
         "generated_answer": answer,
         "model": L.MODEL,
         "finish_reason": finish,
@@ -148,18 +188,26 @@ def run_generation(limit: int | None, workers: int) -> None:
     for r in todo:
         cameo = CL.lookup(cur, r["cas_a"], r["cas_b"])
         cameo_ctx = CL.format_context(cameo, r["name_a"], r["name_b"], detailed=True)
-        chunk_ids = [c["chunk_id"] for c in r["retrieved"]]
+        if CONTEXT_MODE == "pair":
+            chunk_ids = pair_chunk_ids(cur, r["cas_a"], r["cas_b"])
+            # retrieval_status 는 frozen 파일 값이라 pair 모드에서는 맞지 않는다.
+            # 실제 컨텍스트에 gold 가 들어있는지로 다시 매긴다(abstention_bucket 이 쓴다).
+            gold = set(r.get("gold_evidence") or [])
+            r = {**r, "retrieval_status": "hit" if gold and gold <= set(chunk_ids) else "miss"}
+        else:
+            chunk_ids = [c["chunk_id"] for c in r["retrieved"]]
         texts = GB.load_texts(cur, chunk_ids)
         contexts = [{"chunk_id": cid, "text": texts.get(cid, "")} for cid in chunk_ids]
         prompt = build_prompt(r["query"], cameo_ctx, contexts)
-        prepared.append((r, cameo.category, cameo_ctx, prompt))
+        prepared.append((r, cameo.category, cameo_ctx, prompt, chunk_ids))
     con.close()
 
     GEN_OUT.parent.mkdir(parents=True, exist_ok=True)
     out_f = GEN_OUT.open("a", encoding="utf-8")
     n_done = 0
     with ThreadPoolExecutor(max_workers=workers) as ex:
-        futures = {ex.submit(_call_generate, r, cat, ctx, p): r for r, cat, ctx, p in prepared}
+        futures = {ex.submit(_call_generate, r, cat, ctx, p, cids): r
+                   for r, cat, ctx, p, cids in prepared}
         for fut in as_completed(futures):
             rec = fut.result()
             n_done += 1
@@ -260,7 +308,27 @@ def main() -> None:
     ap.add_argument("--n", type=int, default=None, help="처리할 최대 건수(미지정시 전체, 이미 완료된 건 제외)")
     ap.add_argument("--stage", choices=["gen", "eval", "both"], default="both")
     ap.add_argument("--workers", type=int, default=8, help="동시 API 호출 수")
+    ap.add_argument("--context", choices=["frozen", "pair"], default="frozen",
+                    help="frozen=검색 top-10 그대로(baseline 재현). "
+                         "pair=쌍의 두 CAS 청크 전부(검색 우회)")
+    ap.add_argument("--tag", default="",
+                    help="출력 파일 접미사. 출력은 append+재개라 조건이 다른 실행이 "
+                         "같은 파일에 섞이면 되돌릴 수 없다. 예: pair, pair_v7")
     args = ap.parse_args()
+
+    if args.context != "frozen" and not args.tag:
+        ap.error("--context 를 바꿀 때는 --tag 로 출력을 분리해야 합니다 "
+                 "(baseline 파일에 덮어쓰기 방지). 예: --context pair --tag pair")
+
+    # ponytail: 모듈 전역 재바인딩. 경로를 여러 함수에 인자로 흘리는 것보다 짧다.
+    global CONTEXT_MODE, GEN_OUT, EVAL_OUT
+    CONTEXT_MODE = args.context
+    if args.tag:
+        GEN_OUT = GEN_OUT.with_name(f"{GEN_OUT.stem}_{args.tag}{GEN_OUT.suffix}")
+        EVAL_OUT = EVAL_OUT.with_name(f"{EVAL_OUT.stem}_{args.tag}{EVAL_OUT.suffix}")
+    print(f"컨텍스트 모드: {CONTEXT_MODE}")
+    print(f"  생성 출력: {GEN_OUT.name}")
+    print(f"  채점 출력: {EVAL_OUT.name}")
 
     if args.stage in ("gen", "both"):
         run_generation(args.n, args.workers)

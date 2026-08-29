@@ -73,6 +73,32 @@ def test_dedupe_keeps_first_success():
     assert RC.dedupe_records(rows, "error")[0]["v"] == 1
 
 
+def test_pair_chunk_ids():
+    """pair 모드 컨텍스트: gold_evidence 를 전건 포함하고 순서가 결정적이어야 한다.
+
+    인용 번호([근거 n])가 이 순서에 대응하므로 순서가 흔들리면 물질혼동 지표가 깨진다.
+    """
+    import sqlite3
+
+    db = HERE.parent / "data" / "reactivity_reference.db"
+    frozen = HERE.parent / "results" / "frozen_retrieval_top10.jsonl"
+    if not (db.exists() and frozen.exists()):
+        print("  skip test_pair_chunk_ids (DB 또는 frozen 파일 없음)")
+        return
+    con = sqlite3.connect(db)
+    cur = con.cursor()
+    rows = RC.load_jsonl(frozen)
+    miss = []
+    for r in rows:
+        cids = RC.pair_chunk_ids(cur, r["cas_a"], r["cas_b"])
+        assert cids == RC.pair_chunk_ids(cur, r["cas_a"], r["cas_b"]), "순서가 비결정적"
+        gold = set(r["gold_evidence"])
+        if gold and not gold <= set(cids):
+            miss.append(r["query_id"])
+    con.close()
+    assert not miss, f"gold 누락 {len(miss)}건: {miss[:3]}"
+
+
 def main() -> None:
     tests = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     for t in tests:
