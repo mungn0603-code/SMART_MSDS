@@ -174,7 +174,7 @@ PAIR_SCHEMA = {
     "properties": {
         # verdict 는 필드가 아니다. CAMEO 판정은 코드가 주입한다 —
         # 모델에게 복사를 시키면 복사를 틀릴 기회를 준다(v8 에서 1.04% 뒤집힘,
-        # 그중 18/20 이 위험을 낮추는 방향. results/_v8_verdict_regression/ 참고).
+        # 그중 18/20 이 위험을 낮추는 방향. archive/2026-08-29_generation_prompt_history/_v8_verdict_regression/ 참고).
         "hazard_basis": {"type": "string"},
         "substance_a_note": {"type": "string"},
         "substance_b_note": {"type": "string"},
@@ -190,10 +190,10 @@ RESPONSE_FORMAT = {"type": "json_schema",
                    "json_schema": {"name": "pair_assessment", "strict": True,
                                    "schema": PAIR_SCHEMA}}
 
-# v9(2026-08-29) 폐기 — results/_v9_regression/FINDING.md.
+# v9(2026-08-29) 폐기 — archive/2026-08-29_generation_prompt_history/_v9_regression/FINDING.md.
 # 프롬프트를 독립시키고 강도 보존을 양방향으로 바꿨으나 사전 등록한 채택 기준을 통과하지
 # 못했다(600건 짝지은 비교: 전체 일치 87.2->86.5%, Caution 82.2->80.0%). 폐기된 v9 전문은
-# results/_v9_regression/schema_prompt_v9.txt 에 있다.
+# archive/2026-08-29_generation_prompt_history/_v9_regression/schema_prompt_v9.txt 에 있다.
 # 출력 형식 지시는 스키마가 대신하므로 프롬프트에서 잘라낸다.
 SCHEMA_PROMPT = SYSTEM_PROMPT[:SYSTEM_PROMPT.index("[출력 형식]")] + """[출력] 아래 JSON 스키마로만 답한다.
 판정과 결론 문장은 쓰지 않는다 — 둘 다 시스템이 CAMEO 판정으로 직접 채운다.

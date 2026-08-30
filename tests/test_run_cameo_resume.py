@@ -5,7 +5,7 @@
   - 실패 레코드는 '완료'로 치지 않는다 -> 같은 명령 재실행 시 그 건만 재시도된다.
   - 재시도로 같은 query_id 가 여러 줄이 되어도 소비 시 성공본 하나만 남는다.
 
-    python scripts/test_run_cameo_resume.py
+    python tests/test_run_cameo_resume.py
 """
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parent / "scripts"))
 sys.path.insert(0, str(HERE.parent / "src"))
 
 import run_cameo_full as RC  # noqa: E402
@@ -104,7 +104,7 @@ def test_verdict_is_never_model_output():
 
     v8 에서 verdict 를 스키마 필드로 두고 "CAMEO 판정을 그대로 옮기라"고 시켰더니
     1,922건 중 20건(1.04%)에서 판정이 뒤집혔고 18건이 위험을 낮추는 방향이었다
-    (results/_v8_verdict_regression/FINDING.md). 이 테스트는 그 설계로 되돌아가는 것을 막는다.
+    (archive/2026-08-29_generation_prompt_history/_v8_verdict_regression/FINDING.md). 이 테스트는 그 설계로 되돌아가는 것을 막는다.
     """
     import run_cameo_context_pilot as P
 

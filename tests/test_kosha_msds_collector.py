@@ -6,8 +6,9 @@ kosha_msds_collector.py의 XML 파서 로직 검증 (실제 API 키 없이 실�
 """
 import sys
 import xml.etree.ElementTree as ET
+from pathlib import Path
 
-sys.path.insert(0, r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\scripts")
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 from kosha_msds_collector import parse_chem_list, parse_chem_detail
 
 FAKE_CHEM_LIST_XML = """<response>

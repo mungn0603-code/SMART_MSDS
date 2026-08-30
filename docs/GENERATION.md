@@ -22,7 +22,7 @@
 
 실측 비용 $5.79, 생성 지연 평균 12.0초. 집계: `scripts/summarize_cameo_full.py`
 (지표 정의의 단일 출처). 판정줄 파생필드는 `scripts/reparse_verdict_line.py`로
-재계산한 `results/eval_cameo_full_reparsed.jsonl` 기준이다.
+재계산한 `archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full_reparsed.jsonl` 기준이다.
 
 ### 판정줄 기준 오답 0건, 그러나 본문이 판정보다 세다
 

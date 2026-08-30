@@ -20,9 +20,10 @@ __pycache__/
 data/chunks/
 data/index/
 
-# 로컬 전용 IDE 설정 - 유저 전역 gitignore에도 있지만 이 저장소를 다른 환경에서
-# clone했을 때도 안전하게 프로젝트 자체 규칙으로 한 번 더 명시
-.claude/settings.local.json
+# 로컬 전용 에이전트/IDE 설정 - 2026-08-30 추적 해제. 파일은 로컬에 그대로 있고
+# git만 더 이상 관리하지 않는다(프로젝트 지침 CLAUDE.md·launch.json 포함).
+# 주의: clone하면 이 폴더가 따라오지 않는다.
+.claude/
 
 # 재편(2026-08-17) 잔재 - 자체 .git을 가진 중복본. 루트에서 작업하고 여기는 건드리지 않는다.
 SMART_MSDS/

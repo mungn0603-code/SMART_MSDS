@@ -404,7 +404,7 @@ section 1,993행 / 인덱스 557청크 / frozen 173 코퍼스 전부 무변경.
 
 - `run_ab.py --granularity both`(기본값)/`item`은 이제 빈 코퍼스가 된다. README에 적힌
   재현 명령은 `--granularity section`을 명시하므로 문서화된 경로는 영향 없다.
-- `scripts/evalset.py`는 item 청크에서 단일물질 fact 평가셋을 만든다 — 재실행 불가.
+- `archive/2026-08-08_selection_scripts/evalset.py`는 item 청크에서 단일물질 fact 평가셋을 만든다 — 재실행 불가.
   산출물 4종(`gold_pair.jsonl`·`gold_retrieval.jsonl`·`gold_abstain.jsonl`·
   `gold_pair_abstain.jsonl`)은 `data/evalset/`에 이미 있고 쌍 평가셋이 확정 지표의
   근거이므로 재생성할 일이 없다.
@@ -459,7 +459,7 @@ item이 비면 깨진다. 실제 생성된 granularity를 보도록 바꿨다. `
   `already_done`이 query_id만 봐서 재실행해도 영구히 건너뛰었다 — 일시적 429/파싱 실패가
   영구 결손이 된다. 성공 건만 완료로 치도록 바꾸고, 재시도로 생기는 중복은
   `dedupe_records`로 접는다. 빈 응답은 `error`로 승격, judge JSON 파싱 실패는 3회 재시도.
-  자가검증 `scripts/test_run_cameo_resume.py`. 전수 실행 중 실제로 3건이 실패·누락했고
+  자가검증 `tests/test_run_cameo_resume.py`. 전수 실행 중 실제로 3건이 실패·누락했고
   같은 명령 재실행으로 전부 복구됐다.
 - **"물질 혼동 0/2,142"가 공허한 값이었음을 확인.** 이 지표는 답변의
   `[사용한 근거: n, ...]` 태그를 파싱하는데 v4/v5 프롬프트가 그 태그를 요구하지 않아

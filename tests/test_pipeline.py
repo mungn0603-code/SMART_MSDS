@@ -1,4 +1,4 @@
-"""pipeline.py 자체검증. 실행: python scripts/test_pipeline.py"""
+"""pipeline.py 자체검증. 실행: python tests/test_pipeline.py"""
 
 import sys
 from pathlib import Path

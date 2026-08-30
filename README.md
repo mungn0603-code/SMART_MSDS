@@ -239,10 +239,12 @@ MSDS/
 ├─ docs/                  # 표준 문서 9종(위 표)
 ├─ src/                   # 재사용 핵심 모듈 (llm/retrieval/pipeline/eval_generation/
 │                          # cameo_group_lookup/compatibility_engine)
-├─ scripts/                # 실행 스크립트 (수집/분류/RAG 평가·생성 파이프라인)
+├─ scripts/               # 현행 실행 스크립트 24종 (수집/분류/RAG 평가·생성)
+├─ tests/                 # 자가검증 4종 (pipeline/collector/evalset/run_cameo 재개)
+├─ app/                   # Streamlit 조회·판정 UI
 ├─ data/                  # DB·평가셋·청크·임베딩 캐시·원본 CSV
-├─ results/               # 생성·채점 산출물(jsonl/json)
-└─ archive/               # 폐기·기각 파일과 사유(NOTES.md 포함)
+├─ results/               # 현행 산출물만 — Generation v7·v8b, Retrieval 지표, Registry 감사
+└─ archive/               # 폐기·대체된 파일과 사유(폴더마다 NOTES.md)
 ```
 
 전체 파일 목록과 역할은 [`docs/FILE_GUIDE.md`](docs/FILE_GUIDE.md).
@@ -264,8 +266,11 @@ python scripts/run_ab.py embedding --models bge-m3-ko --granularity section --ta
 python scripts/freeze_retrieval.py --corpus-tag service
 python scripts/run_cameo_full.py --stage gen  --workers 7
 python scripts/run_cameo_full.py --stage eval --workers 1
-python scripts/reparse_verdict_line.py
-python scripts/summarize_cameo_full.py --eval results/eval_cameo_full_reparsed.jsonl
+python scripts/reparse_verdict_line.py --gen results/generation_cameo_full.jsonl --eval results/eval_cameo_full.jsonl --out results/eval_cameo_full_reparsed.jsonl
+python scripts/summarize_cameo_full.py --gen results/generation_cameo_full.jsonl --eval results/eval_cameo_full_reparsed.jsonl
+
+# 3-b) 재실행 없이 아래 확정 지표만 확인하려면 인자 없이 (기본값이 아카이브된 v6 산출물이다)
+python scripts/summarize_cameo_full.py --eval archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full_reparsed.jsonl
 
 # 4) Demo UI (물질 선택 -> CAMEO 판정 -> MSDS 근거 검색 -> LLM 설명)
 streamlit run app/streamlit_app.py

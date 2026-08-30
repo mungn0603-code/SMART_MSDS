@@ -19,6 +19,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
+V6 = ROOT / "archive" / "2026-08-29_generation_prompt_history" / "v6"  # 문서 확정 지표(cameo_service_v6) 산출물
 import sys  # noqa: E402
 
 sys.path.insert(0, str(HERE))
@@ -30,9 +31,9 @@ from run_cameo_full import dedupe_records, load_jsonl  # noqa: E402
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--gen", type=Path, default=ROOT / "results" / "generation_cameo_full.jsonl")
-    ap.add_argument("--eval", type=Path, default=ROOT / "results" / "eval_cameo_full.jsonl")
-    ap.add_argument("--out", type=Path, default=ROOT / "results" / "eval_cameo_full_reparsed.jsonl")
+    ap.add_argument("--gen", type=Path, default=V6 / "generation_cameo_full.jsonl")
+    ap.add_argument("--eval", type=Path, default=V6 / "eval_cameo_full.jsonl")
+    ap.add_argument("--out", type=Path, default=V6 / "eval_cameo_full_reparsed.jsonl")
     args = ap.parse_args()
 
     gen = {r["query_id"]: r for r in dedupe_records(load_jsonl(args.gen), "error")}

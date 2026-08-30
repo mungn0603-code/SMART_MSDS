@@ -168,7 +168,7 @@ CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7�
 (48) / `pool_supplement`(38) / `pool_replacement`·`_topup`(10) 즉 수집 편의로 채운
 분량이었다 — 생성 스크립트 자신이 "자동보충분은 그룹 소속만 검증된 것이며 개별
 물질이 실제 학부 실험에서 쓰이는지는 검증되지 않음"이라고 경고를 남겨 뒀다
-([`build_undergrad_target_list.py`](../scripts/build_undergrad_target_list.py) 헤더).
+([`build_undergrad_target_list.py`](../archive/2026-08-08_selection_scripts/build_undergrad_target_list.py) 헤더).
 그래서 **"Registry ∪ 173" 규칙 자체를 폐기**하고 선정 기준을 Registry 단독으로 세웠다.
 재평가 전문은 [`results/registry_expansion_proposal_2026-08-22.csv`](../results/registry_expansion_proposal_2026-08-22.csv).
 

@@ -24,6 +24,7 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+V6 = ROOT / "archive" / "2026-08-29_generation_prompt_history" / "v6"  # 문서 확정 지표(cameo_service_v6) 산출물
 
 
 def load(path: Path) -> list[dict]:
@@ -51,8 +52,8 @@ def mean(xs: list) -> float | None:
 
 def main() -> None:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--gen", type=Path, default=ROOT / "results" / "generation_cameo_full.jsonl")
-    ap.add_argument("--eval", type=Path, default=ROOT / "results" / "eval_cameo_full.jsonl")
+    ap.add_argument("--gen", type=Path, default=V6 / "generation_cameo_full.jsonl")
+    ap.add_argument("--eval", type=Path, default=V6 / "eval_cameo_full.jsonl")
     args = ap.parse_args()
 
     gen = dedupe(load(args.gen), "error")

@@ -2,8 +2,8 @@
 """전체 물질쌍 판정+MSDS(§2·§10) 근거 설명을 단일 HTML 보고서로 만든다.
 
 입력(이미 완료된 전수실행 산출물, 재생성 없음):
-  results/generation_cameo_full.jsonl (435쌍×5템플릿=2160건, LLM 설명)
-  results/eval_cameo_full.jsonl        (Judge 채점: 정답/faithful/abstain)
+  archive/2026-08-29_generation_prompt_history/v6/generation_cameo_full.jsonl (435쌍×5템플릿=2160건, LLM 설명)
+  archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full.jsonl        (Judge 채점: 정답/faithful/abstain)
 출력:
   results/pair_verdict_report.html
 """
@@ -11,9 +11,10 @@ import json
 from pathlib import Path
 from collections import defaultdict, Counter
 
-ROOT = Path(r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS")
-gen_path = ROOT / "results" / "generation_cameo_full.jsonl"
-eval_path = ROOT / "results" / "eval_cameo_full.jsonl"
+ROOT = Path(__file__).resolve().parent.parent
+V6 = ROOT / "archive" / "2026-08-29_generation_prompt_history" / "v6"  # 문서 확정 지표(cameo_service_v6) 산출물
+gen_path = V6 / "generation_cameo_full.jsonl"
+eval_path = V6 / "eval_cameo_full.jsonl"
 out_path = ROOT / "results" / "pair_verdict_report.html"
 
 gen = {}

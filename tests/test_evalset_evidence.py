@@ -1,4 +1,4 @@
-"""evalset_pairs.py 의 gold_evidence 규칙 자체검증. 실행: python scripts/test_evalset_evidence.py
+"""evalset_pairs.py 의 gold_evidence 규칙 자체검증. 실행: python tests/test_evalset_evidence.py
 
 정답지는 archive/2026-08-17_baseline/evalset/gold_pair.jsonl 이다 — 2026-08-08 일회성
 작업의 산출물로, 규칙이 맞으면 현재 DB에서 슬롯 판정이 그대로 재현돼야 한다.
@@ -11,7 +11,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
 
 from evalset_pairs import (  # noqa: E402
     DB_PATH,
