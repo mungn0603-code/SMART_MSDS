@@ -24,7 +24,7 @@ flowchart LR
 [`GENERATION.md`](GENERATION.md)(4단계 생성 + 5단계)를 본다. 이 문서는 단계 사이의
 **연결**과 최종 확정 구성만 다룬다.
 
-0단계가 1~5단계를 모두 게이트한다 — Registry에 없으면 수집도 판정도 시작되지 않고,
+0단계가 1~5단계 전체의 입구다 — Registry에 없으면 수집도 판정도 시작되지 않고,
 Registry에 있어도 KOSHA 미등재(39종)면 서비스 대상에서 빠진다. 물질별로 어느 단계까지
 실제로 도달했는지는 [`REGISTRY.md`](REGISTRY.md#6-서비스-계약--등록됐다고-다-서비스되는-게-아니다)의
 계약 티어 표로 확인한다.
@@ -51,11 +51,11 @@ flowchart TB
     style JUDGE fill:#2f855a,color:#fff
 ```
 
-**핵심 설계 결정**: 판정(Compatible/Caution/Incompatible)은 검색·생성 어느 쪽도
-내리지 않는다. CAMEO 그룹 조회가 이미 정답을 확정하고(전수 검증 100% 일치),
-검색+생성은 "왜 그런지" MSDS 원문 근거로 설명하는 역할만 맡는다. 이렇게 나눈
-이유는 [`GENERATION.md`](GENERATION.md#핵심-전환-cameo-context-주입)에 있다 — 원래는
-LLM이 판정까지 직접 추론하는 구조였고, 그게 최대 실패 원인이었다.
+**핵심 설계 결정**: 판정(Compatible/Caution/Incompatible)은 검색도 생성도 내리지
+않는다. CAMEO 그룹 조회가 이미 정답을 확정하고(전수 검증 100% 일치), 검색과 생성은
+"왜 그런지"를 MSDS 원문 근거로 설명하는 역할만 맡는다. 이렇게 나눈 이유는
+[`GENERATION.md`](GENERATION.md#핵심-전환-cameo-context-주입)에 있다 — 원래는 LLM이
+판정까지 직접 추론하는 구조였고, 그게 최대 실패 원인이었다.
 
 ---
 
@@ -80,13 +80,13 @@ LLM이 판정까지 직접 추론하는 구조였고, 그게 최대 실패 원�
 최초 설계(`archive/superseded_docs/stage4_design_principles_v2.md`)는 임베딩
 3파전(bge-m3/bge-m3-ko/KURE) A/B, 리랭커 A/B, dense 단독 우선을 계획했다. 실제로는:
 
-1. **임베딩은 사용자가 `bge-m3-ko`로 바로 지정** — A/B 승자가 아니라 지정값. 3파전은
-   실행 안 됨.
+1. **임베딩은 사용자가 `bge-m3-ko`로 바로 지정했다** — A/B에서 이긴 값이 아니라
+   지정값이다. 3개 모델 비교는 실행하지 않았다.
 2. **dense 단독 → hybrid로 재전환** — §2·§10 필터 적용 후 재실측하니 hybrid가 7개
    목표 중 6개 충족(dense는 4개), 레이턴시 차이가 예산 안에 들어와 재채택.
    ([`archive/superseded_docs/decisions.md`](../archive/superseded_docs/decisions.md) §2.4)
-3. **리랭커는 여전히 미실행** — boilerplate penalty(§10 정형문구 감점)만으로 Evidence
-   MRR이 0.516→0.835(+62%)까지 개선돼, 무거운 모델을 새로 들일 이유가 없었다.
+3. **리랭커는 여전히 미실행이다** — boilerplate penalty(§10 정형문구 감점)만으로
+   Evidence MRR이 0.516→0.835(+62%)까지 올라, 무거운 모델을 새로 들일 이유가 없었다.
 4. **Generation 단계 자체가 통째로 재설계됨** — 최초 계획은 "검색→LLM이 직접 판정"
    구조였다. 1차 실측(over-abstention 46.1%)을 본 뒤 "CAMEO가 판정, LLM은 설명만"
    구조로 전환한 게 이 프로젝트에서 가장 큰 설계 변경이다.

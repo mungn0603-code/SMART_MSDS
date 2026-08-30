@@ -26,13 +26,14 @@ Registry가 하는 일은 하나다 — **CAS 하나에 그 물질의 모든 이
 
 `substance_registry` 테이블에는 `msds_available` / `rag_available` /
 `cameo_available` 같은 가용성 플래그를 저장하지 않는다. 그 물질에 MSDS가 있는지,
-검색 대상인지, CAMEO 그룹이 매핑됐는지는 **필요한 시점에 해당 테이블을 라이브
-조회해서 판단**한다. Registry에 캐시하면 두 곳이 어긋나고, 어긋난 순간 "등록돼
-있으니 판정 가능하다"는 잘못된 전제가 파이프라인에 들어온다.
+검색 대상인지, CAMEO 그룹이 매핑됐는지는 **필요할 때 해당 테이블을 그때그때
+조회해서 판단**한다. Registry에 미리 저장해 두면 두 곳의 값이 어긋나고, 어긋난 순간
+"등록돼 있으니 판정 가능하다"는 잘못된 전제가 파이프라인에 들어온다.
 
-`substance_registry` 테이블은 CORE CSV 5종의 **파생 테이블**이다. `--write`는 UPSERT가
-아니라 테이블을 drop 후 전량 재적재한다 — CSV에서 뺀 물질이 DB에 남으면 CSV가 기준
-목록이 아니게 되기 때문이다. 구축 스크립트는
+`substance_registry` 테이블은 CORE CSV 5종에서 만들어지는 **파생 테이블**이다.
+`--write`는 기존 행을 고치는 게 아니라 테이블을 통째로 지우고 전부 다시 넣는다 —
+CSV에서 뺀 물질이 DB에 남으면 CSV가 기준 목록이 아니게 되기 때문이다. 구축
+스크립트는
 [`scripts/2_registry/build_substance_registry.py`](../scripts/2_registry/build_substance_registry.py).
 
 ## 2. CORE 선정 원칙
@@ -213,9 +214,9 @@ CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7�
   없던 39종을 청킹해 편입 → 50→**89종**). 편입은
   [`seed_core_corpus.py`](../scripts/3_corpus/seed_core_corpus.py)가 "청크>0 AND CAMEO 그룹>0 AND
   173 아님"으로 자동 판정한다.
-- **질의문은 registry 표준명에 별칭을 붙여 만든다.** 청크 헤더가 KOSHA 원문명으로
-  렌더돼 있어(`페로센` vs `디시클로펜타디에닐 철`) 표준명만으로는 BM25가 어휘
-  매칭을 못 한다. `app/streamlit_app.py`의 `query_term()`이 `rag_chunks.chemical_name`
+- **질의문은 registry 표준명에 별칭을 붙여 만든다.** 청크 헤더에 KOSHA 원문명이
+  그대로 적혀 있어서(`페로센` vs `디시클로펜타디에닐 철`) 표준명만으로는 BM25가
+  단어를 못 맞춘다. `app/streamlit_app.py`의 `query_term()`이 `rag_chunks.chemical_name`
   → KOSHA 원문명 → `name_en` → `aliases` 순으로 최대 3개를 덧붙인다. Registry는
   건드리지 않고 DB에 이미 있는 이름만 모은다.
 - **RAG 코퍼스 membership은 Registry가 건드리지 않는다.** 173종 코퍼스와 그
@@ -258,7 +259,7 @@ Registry에 있다는 이유로 LLM이 대신 판단하게 두지 않는다는 �
 **CAMEO에 데이터시트 자체가 없다.** 2026-08-23에 두 경로로 확인했다.
 
 - PubChem `hid=86`: 25종 전량 무응답(CID는 해결되나 CAMEO 분류 노드 없음)
-- CAMEO 자체 색인: `robots.txt`가 막지 않는 `/browse/{letter}` 19개 페이지, 대표명
+- CAMEO 자체 색인: `/browse/{letter}` 19개 페이지의 대표명
   **4,391건 전수 스캔** — 25종 전부 부재. 원소는 화합물만 있다(스트론튬 화합물 8종에
   스트론튬 금속 없음, GERMANE에 GERMANIUM 없음, LANTHANUM/OSMIUM/PALLADIUM/THORIUM/
   URANIUM/BORON/BISMUTH 전부 화합물만). SODIUM 대표명 130건에 SODIUM CARBONATE·
@@ -271,12 +272,12 @@ datasheets... thousands of **hazardous substances**"라고 명시한다. 염화�
 DOT/UN 분류가 없는 비위험물이고 란타넘족·귀금속 원소도 마찬가지다. 이름이 안 맞아서가
 아니라 대상이 아니다.
 
-**남은 한계**: `/browse`는 대표명만 보여준다. 별칭으로만 존재하는 데이터시트는 확인
-불가이며(별칭 검색 경로 `/search`는 robots 금지, `/react/{id}` 그룹 페이지도 소속 물질을
-나열하지 않는다), 확실히 닫으려면 CAMEO 오프라인 desktop program의 배포 데이터가
-필요하다. 위 대조군과 수록 범위 근거로 잔여 위험은 낮다고 판단해 여기서 종료한다. 유사 물질(염화칼륨 = 47번, 탄산칼슘 = 21번,
-세륨·이트륨 = 41번)로 유추해 채울 수는 있지만 그건 CAMEO의 판정이 아니라 우리의
-판단이므로 넣지 않는다 — 5절의 규칙 그대로다.
+**남은 한계**: `/browse`는 대표명만 보여준다. 별칭으로만 존재하는 데이터시트는 확인할
+수 없고(`/react/{id}` 그룹 페이지도 소속 물질을 나열하지 않는다), 확실히 닫으려면
+CAMEO 오프라인 desktop program의 배포 데이터가 필요하다. 위 대조군과 수록 범위를
+근거로 남은 위험은 낮다고 보고 여기서 종료한다. 유사 물질(염화칼륨 = 47번,
+탄산칼슘 = 21번, 세륨·이트륨 = 41번)로 유추해 채울 수는 있지만 그건 CAMEO의 판정이
+아니라 우리의 판단이므로 넣지 않는다 — 5절의 규칙 그대로다.
 
 **따라서 판정 가능 쌍 76.3%를 현재 coverage로 확정한다.** 목표는 CAMEO 100%가 아니다.
 
@@ -318,7 +319,7 @@ DOT/UN 분류가 없는 비위험물이고 란타넘족·귀금속 원소도 마
 
 | 축 | 채운 공백 | 물질 |
 |---|---|---|
-| fundamental | 3대 무기산 완성, 유기용매 계열 전멸, 강산화성 산 | 인산 · IPA · 아세트산에틸 · 다이클로로메테인 · 아세토나이트릴 · THF · DMF · 과염소산 |
+| fundamental | 3대 무기산 완성, 유기용매 계열 0종, 강산화성 산 | 인산 · IPA · 아세트산에틸 · 다이클로로메테인 · 아세토나이트릴 · THF · DMF · 과염소산 |
 | educational | 지시약 0종, 아스피린 합성 짝 | 페놀프탈레인 · 메틸오렌지 · 살리실산 |
 | practical | LPG·도료용제·탈산소제·부동액 0종 | 프로페인 · MEK · 자일렌 · 하이드라진 · 에틸렌글라이콜 |
 | representative | 12개 범주 커버 0종 중 7개 | 아닐린 · 나이트로벤젠 · 에피클로로하이드린 · 벤조일 클로라이드 · 다이메틸다이클로로실란 · 인화알루미늄 · 수소화나트륨 |

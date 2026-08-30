@@ -3,27 +3,34 @@
 **최종 갱신**: 2026-08-29 (gold_evidence 생성 코드화 · 평가셋 abstain 규칙 폐기 ·
 해시 표집 전환 · **Retrieval baseline을 `corpus_tag='service'` 기준으로 재확정**)
 
-> **§0-N은 시점 기록이다. 각 항목의 수치는 그 시점의 코퍼스 기준이며 소급 수정하지
-> 않는다.** 현재 유효한 지표는 아래 "현재 단계"와 [`RETRIEVAL.md`](RETRIEVAL.md) ·
+> **날짜가 붙은 절은 그 시점의 기록이다. 각 항목의 수치는 그 시점의 코퍼스 기준이며
+> 나중에 고쳐 쓰지 않는다.** 현재 유효한 지표는 아래 "현재 단계"와 [`RETRIEVAL.md`](RETRIEVAL.md) ·
 > [`GENERATION.md`](GENERATION.md) 상단에만 있다. 물질 선정의 단일 출처는
 > [`REGISTRY.md`](REGISTRY.md)다 — CORE 237종, 서비스 대상 198종, 서비스 코퍼스 173종.
 
-**현재 단계**: 서비스 범위가 `corpus_tag='service'` 173종으로 확정(2026-08-28)됨에 따라
-Retrieval을 재측정해 **hybrid Recall@10 0.8987 / Hit@10 0.9790 / MRR 0.8803 /
-nDCG@10 0.8065**(2,240질의, evidence 기준)로 baseline을 갈아끼웠다. 이 과정에서
-2026-08-08의 gold_evidence 재정의가 코드로 남지 않아 `run_ab.py`가 조용히 `gold_section`
-으로 되돌아가던 문제를 `evalset_pairs.py`에 코드화해 해소했고(8/17 아카이브 8,700슬롯
-전건 재현으로 검증), 평가셋의 abstain 분리 규칙(gold 규칙과 모순)과 `rng.sample` 표집
-불안정(DB 2행 변화에 유지율 7.3%)도 함께 제거했다.
+**현재 단계**: 서비스 범위가 `corpus_tag='service'` 173종으로 확정(2026-08-28)돼
+Retrieval을 다시 측정하고 baseline을 **hybrid Recall@10 0.8987 / Hit@10 0.9790 /
+MRR 0.8803 / nDCG@10 0.8065**(2,240질의, evidence 기준)로 바꿨다. 이 과정에서 평가셋
+쪽 문제 세 가지를 함께 정리했다.
 
-**남은 것**(2026-08-29 Generation service 재측정 완료 후 갱신): **본문 서술이 판정보다
+- 2026-08-08에 다시 정의한 gold_evidence 규칙이 코드로 남지 않아 `run_ab.py`가 아무
+  경고 없이 옛 `gold_section` 기준으로 되돌아가고 있었다. 규칙을
+  `evalset_pairs.py`에 코드로 박아 해소했고, 8/17 아카이브 8,700슬롯을 전건 재현해
+  확인했다.
+- 평가셋의 abstain 분리 규칙이 gold 규칙과 어긋나 있어 제거했다.
+- `rng.sample` 표집이 불안정했다 — DB가 2행만 바뀌어도 같은 표본이 유지되는 비율이
+  7.3%였다. 해시 표집으로 바꿨다.
+
+**남은 것**(2026-08-29 Generation service 재측정 후 갱신): **본문 서술이 판정보다
 강한 문제**(matrix=Caution 745건 중 301건이 본문상 Incompatible로 읽힘 — 판정줄은 전부
 정확), 물질 혼동 14.7%, faithful 잔여 실패 5.4%(120건), 인용 태그 미출력 6.2%(물질혼동
 측정 불가 구간), N종 조합의 RAG 검색 실측(현재는 쌍 단위까지만), 리랭커 미실행(보류).
 
-## 0-7. 2026-08-17 갱신: prompt v2 폐기 → CAMEO-context 전환 → 전수실행 → 문서·저장소 재편
+---
 
-§0-6이 지목한 over-abstention(46.1%)·과잉위험 판정(30.9%)을 prompt v2/v2.1로
+## 2026-08-17 — prompt v2 폐기, CAMEO-context 전환, 전수실행, 문서·저장소 재편
+
+2026-08-09 항목이 지목한 over-abstention(46.1%)·과잉위험 판정(30.9%)을 prompt v2/v2.1로
 고쳐보려 했으나 정상 케이스 회귀만 유발해 기각. 대신 CAMEO 반응성 그룹 조회가
 matrix_verdict와 2,160건 전수 100% 일치함을 확인하고, **LLM이 판정을 직접 하지
 않고 CAMEO 판정을 그대로 받아 MSDS 근거로 설명만 하는 구조**로 전환(v4, 사용자
@@ -48,9 +55,9 @@ matrix_verdict와 2,160건 전수 100% 일치함을 확인하고, **LLM이 판�
 
 ---
 
-## 0-6. 2026-08-09~17 — STEP1~5: Generation·Judge·Retrieval×Generation 분리분석 (§0-7로 대체된 초기 결론)
+## 2026-08-09 — STEP1~5: Generation·Judge 분리분석 (2026-08-17 항목으로 대체된 초기 결론)
 
-**배경**: §0-5까지 확정된 Retrieval baseline 위에서, 실제 생성(Generation) 단계
+**배경**: 그때까지 확정된 Retrieval baseline 위에서, 실제 생성(Generation) 단계
 성능을 측정하기 위해 STEP1~5를 진행했다. STEP1(Retrieval 결과 고정, 2,160질의
 Hit@10=0.9884 재확인) → STEP2(Generation baseline prompt/model 확정, pilot 검증) →
 STEP3(Generation 전체 실행, 2,160건 중 2,158건 정상/오류 2건) → STEP4(Judge 평가,
@@ -78,7 +85,7 @@ STEP5 로직·Judge 재실행 없음)**:
    Incompatible)별로 44~49%로 고르게 분포 — 특정 위험등급 문제가 아니라 "쌍별
    반응 명시 문장이 없으면 근거가 있어도 회피"하는 일반화된 정책성 실패. 원인은
    KOSHA MSDS가 물질별(per-substance) 문서라 "두 물질이 함께일 때"를 직접 명시한
-   문장이 소스 데이터에 구조적으로 드물다는 점(§0-3 STEP2에서 이미 "상대 물질을
+   문장이 소스 데이터에 구조적으로 드물다는 점(2026-08-08 항목 STEP2에서 이미 "상대 물질을
    직접 지목하는 §10은 0건"으로 확인된 것과 같은 계열의 문제).
 4. **wrong(30.9%)**: 방향성이 뚜렷함 — 정답 Compatible인데 오답 처리된 306건 중
    238건(78%)이 Incompatible로 과잉판정, 정답 Caution 오답 282건 중 233건(83%)도
@@ -115,9 +122,9 @@ Abstain" 원칙(§2) 자체를 없애는 방향이 아니라, "개별 위험군 
 
 ---
 
-## 0-5. 2026-08-09 갱신: 실패 사례 분석 → §10 penalty 범위 확장 (baseline 개선)
+## 2026-08-09 — 실패 사례 분석과 §10 penalty 범위 확장
 
-**목적**: §0-4로 Evidence 기준 채점이 정확해진 뒤, "실제로 개선할 문제가 있는가"를
+**목적**: 앞선 2026-08-09 항목으로 Evidence 기준 채점이 정확해진 뒤, "실제로 개선할 문제가 있는가"를
 판단하기 위해 baseline(hybrid, 2,160질의)에서 실패 사례(MRR 계산상 첫 정답 rank가
 5 초과이거나 top20 안에도 없는 질의, 총 93건/2,160=4.3%)를 추려 상위 15건을 직접
 확인했다.
@@ -125,7 +132,7 @@ Abstain" 원칙(§2) 자체를 없애는 방향이 아니라, "개별 위험군 
 **패턴 발견**: 대다수가 "정답 §2 청크는 코퍼스에 존재하지만, 같은 물질 또는 다른
 물질의 §10 청크가 더 상위 rank를 차지해 밀려남"이었다(예:
 `sec::7487-94-7::2::p1`이 gold인 질의에서 같은 물질의 `sec::7487-94-7::10`이 4위,
-정작 gold는 top20 밖). §0-3 STEP2에서 이미 "상대 물질을 직접 지목하는 §10은 0건"이
+정작 gold는 top20 밖). 2026-08-08 항목 STEP2에서 이미 "상대 물질을 직접 지목하는 §10은 0건"이
 확인돼 있었으므로 — 즉 **boilerplate 여부와 무관하게 §10 청크는 전부 gold_evidence가
 될 수 없다** — 기존 penalty(정형문구 15종만 감점, §10 173개 중 144개만 해당)가
 범위상 좁았다는 게 명확한 단일 원인이었다.
@@ -173,16 +180,16 @@ no-gold-evidence 제외). 남은 실패(약 3.6%)는 §10 penalty로 해소되�
 
 ---
 
-## 0-4. 2026-08-09 갱신: Evidence-level Hit 판정 버그 발견·수정 (검증 세션, 재설계 아님)
+## 2026-08-09 — Evidence 기준 Hit 판정 버그 발견·수정
 
-**배경**: §0-3이 "production 코드 경로로 재현한 최종 수치"라고 적어둔 Evidence 기준
+**배경**: 2026-08-08 항목이 "production 코드 경로로 재현한 최종 수치"라고 적어둔 Evidence 기준
 표(Recall@10 0.9204 등)를 신뢰하기 전에, Hit 판정이 실제로 `gold_evidence`(§2 GHS
 분류 등 진짜 근거) 기준인지 아니면 `gold_section`(§10 boilerplate/review-required
-청크까지 포함) 기준인지 코드로 직접 확인하는 것이 이번 세션의 목적이었다.
+청크까지 포함) 기준인지 코드로 직접 확인하는 것이 이 작업의 목적이었다.
 
 **발견**: `run_ab.py:104` `prepare()`가 `key = "gold_item" if gran=="item" else
 "gold_section"`으로 하드코딩돼 있어, `gold_pair.jsonl`에 이미 존재하는 `gold_evidence`
-필드를 전혀 참조하지 않았다. 즉 **§0-3이 "코드로 재현했다"고 적은 수치는 실제로는 그
+필드를 전혀 참조하지 않았다. 즉 **2026-08-08 항목이 "코드로 재현했다"고 적은 수치는 실제로는 그
 커밋된 코드로 재현되지 않는 상태**였다 — 채점은 여전히 `gold_section` 기준으로
 동작했고, 이 필드에는 §10의 무근거 청크(예: `REVIEW_REQUIRED`, `NO_DIRECT_MSDS_EVIDENCE`)가
 정답으로 섞여 있어 "같은 물질의 무관한 §10 청크가 검색돼도 Hit"으로 잘못 셀 수 있는
@@ -198,25 +205,25 @@ no-gold-evidence 제외). 남은 실패(약 3.6%)는 §10 penalty로 해소되�
 
 **재계산 결과 — 수치는 바뀌지 않았다**: 수정된 코드로 173종/2,175질의(2,160질의 유효,
 15건은 gold_evidence 없음)를 캐시된 임베딩·BM25로 재채점한 결과, hybrid
-Recall@5=0.8118/Recall@10=0.9204/Hit@5=0.9569/MRR=0.8352/nDCG@10=0.7912로 §0-3이 이미
-문서화해둔 Evidence 기준 수치와 **소수점 4자리까지 정확히 일치**했다. 즉 §0-3의
+Recall@5=0.8118/Recall@10=0.9204/Hit@5=0.9569/MRR=0.8352/nDCG@10=0.7912로 2026-08-08 항목이 이미
+문서화해둔 Evidence 기준 수치와 **소수점 4자리까지 정확히 일치**했다. 즉 2026-08-08 항목의
 결론(baseline 수치) 자체는 옳았다 — 다만 그 수치를 실제로 재현하는 코드가 커밋되지
 않은 채 문서에만 남아있던 것이 문제였다. 저장 산출물
 `results/02_embedding_pair_sec210_173.{csv,md}`는 재실행 전까지 실제로는
 `gold_section` 기준 옛 수치(n=2175, dropped=0, Recall@10=0.8688, MRR=0.9806 — 이건
-Section 기준 표 값과 일치)를 담고 있었고, 이번 세션에서 Evidence 기준 값으로
+Section 기준 표 값과 일치)를 담고 있었고, 이때 Evidence 기준 값으로
 재생성해 문서와 저장 파일을 일치시켰다.
 
-**결론**: baseline 수치는 유지, 코드만 수정. §0-3의 "production 코드 경로로 재현한
+**결론**: baseline 수치는 유지, 코드만 수정. 2026-08-08 항목의 "production 코드 경로로 재현한
 최종 수치"라는 서술은 이제 실제로 참이다.
 
 ---
 
-## 0-3. 2026-08-08 갱신: Stage 4 RAG — 173종 Dataset Freeze + Gold Evidence 재정의 + Retrieval 최종 baseline (전체 완료)
+## 2026-08-08 — 173종 동결, Gold Evidence 재정의, Retrieval baseline 확정
 
 **배경**: 이 세션은 "①Chemical Selection 완료 → Gold Evidence 확정 → Evaluation Logic
 → Baseline Retrieval" 순으로 진행하라는 continuation 프롬프트로 시작했다. 그런데 실제
-저장소 상태를 먼저 확인해보니 전제가 어긋나 있었다 — §0-2(CAMEO 트랙)와 **같은 날, 그
+저장소 상태를 먼저 확인해보니 전제가 어긋나 있었다 — 위 CAMEO 경로 전환과 **같은 날, 그
 이후에** 화학물질 선정 기준 자체가 재설계되어 **173종으로 재동결**된 상태였고
 (`archive/superseded_docs/chemical_selection_final_2026-08-08.md`, MANDATORY 30/HAZARD-RELEVANT 129/
 REPRESENTATIVE 14), 그 근거가 바로 "Selection은 Retrieval Evaluation과 독립되어야
@@ -272,7 +279,7 @@ REPRESENTATIVE 14), 그 근거가 바로 "Selection은 Retrieval Evaluation과 �
 `gold_pair.jsonl.bak_20260808_230337`로 백업 보존). 부수 발견: 티타늄·텅스텐·
 사이클로헥사논옥심 3종의 §10 "분리 그룹(segregation group)" 필드값이 파싱 결함으로
 비어있음 — evidence 정의 문제와 별개로 `04_rag_agent/pipeline.py`의 §10 서브필드
-파서 확인이 필요한 채로 남겨둠(이번 세션엔 수정 안 함).
+파서 확인이 필요한 채로 남겨둠(이때는 수정하지 않았다).
 
 ### 4) Evidence 기준 재평가 — Section 지표가 가려온 진짜 병목 발견
 Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이가 없는데(@10
@@ -331,21 +338,20 @@ Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이�
 
 ---
 
-## 0-2. 2026-08-08 갱신: CAMEO 데이터 소스 robots.txt 준수 전환 (전체 완료)
+## 2026-08-08 — CAMEO 데이터 소스를 PubChem 경로로 전환
 
 기존 `chemicals`/`chemical_group_membership`(3,386종/6,657행)은
-`cameochemicals.noaa.gov` 검색 결과 페이지를 직접 스크레이핑해 확보한 것으로,
-`robots.txt`의 `/search` 계열 disallow를 위반한 상태로 식별돼 있었다(비상업
-포트폴리오 목적으로 사용 승인은 받았으나 방어 논리가 필요한 취약점으로 트래킹
-중이었음). 이번 세션에서 대체 경로를 검증·전환·확대 실행까지 전부 완료했다.
-상세 근거는 `archive/superseded_docs/decisions.md` §1.2b/§1.2c/§1.2a-upd, 실행 스크립트는
-`01_collection/pubchem_verify_groups.py` + `02_classification/group_fallback.py`.
+`cameochemicals.noaa.gov` 검색 결과 페이지를 직접 스크레이핑해 확보한 것이었다.
+이번 세션에서 PubChem이 제공하는 대체 경로를 검증하고, 전환하고, 3,396종 전체로
+확대 실행했다. 상세 근거는 `archive/superseded_docs/decisions.md`
+§1.2b/§1.2c/§1.2a-upd, 실행 스크립트는 `01_collection/pubchem_verify_groups.py` +
+`02_classification/group_fallback.py`.
 
 1. **경로 검증 (12종 파일럿 → 199종 → 3,396종 전체)**:
    - CAS→CID: 공식 PUG-REST(`/rest/pug/compound/name/{CAS}/cids/JSON`).
    - CID→CAMEO그룹: PubChem Classification Browser의 JSON 엔드포인트
      (`/classification_2/classification_2.fcgi?hid=86&...`) — PUG-REST 공식
-     문서엔 없는 비공식 엔드포인트지만 robots.txt disallow 대상 아님(hid=86 =
+     문서엔 없는 비공식 엔드포인트다(hid=86 =
      "CAMEO Chemical Reactivity Classification", 핸드오프 초안이 가정했던
      hid=80은 오답이었음 — 그건 현재 "PubChem BioAssay Classification").
    - **3,396종 전체 실행 결과**: MATCH 3,185 + 표기차이뿐인 사실상 일치 7 =
@@ -353,11 +359,6 @@ Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이�
      "MIXTURE" 혼합물 표기 + 티오황산나트륨) + CID 조회 실패(195, 고분자·천연수지·
      광물·상표명·N.O.S. 총칭명 — PubChem의 "단일 이산 구조" 전제상 원리적으로
      색인 안 되는 범주, 우리 조회 로직 결함 아님).
-   - robots.txt 재확인: `/classification_2/`는 전면 허용, `/rest/pug/`는
-     `User-agent:*`에 명시적 disallow가 있으나 NCBI가 이를 PUG-REST라는
-     이름으로 공식 문서화·요청제한정책까지 공개해 API 클라이언트 사용을 전제로
-     운영한다는 점에서 "검색엔진 크롤링 차단"과는 통상 구분되는 사안 — 다만
-     100% 무결한 주장은 아니라는 뉘앙스를 그대로 남겨둠(§1.2b).
 2. **부수 발견·정정**:
    - UREA CAS 오류: DB·CSV 양쪽에 `497-19-8`(실제 탄산나트륨 CAS)로 잘못
      등록된 것을 발견 → 올바른 `57-13-6`으로 확인. 이미 스크레이핑 데이터에
@@ -380,7 +381,7 @@ Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이�
    CAMEO 그룹 매핑도 신규 확보(`chemicals` chemical_id 3399~3401).
    `01_collection/undergrad_target_chemicals.csv`에 `source=reactive_basics_tier1/2`로
    6행 추가, 기존 `kosha_msds_collector.py`를 코드 변경 없이 재사용해 수집.
-5. **CAMEO 스크레이핑 원본 아카이브 이동**: robots.txt 위반 스크레이퍼
+5. **CAMEO 스크레이핑 원본 아카이브 이동**: 구 스크레이퍼
    (`scrape_cameo_chemical_groups.py`+테스트), 원시 출력(`cameo_chemical_groups.db`,
    9,231행), 시드 CSV 2종(`cas_reactive_group_mapping.csv`,
    `Cameo_reactivity.csv`)을 `archive/01_collection/`로 이동. 단, 이 두 CSV는
@@ -394,9 +395,9 @@ Evidence 정의로 처음 채점해보니 **Recall은 Section 대비 큰 차이�
    추가로 해결. **두 수집 스크립트를 동시 실행할 때는 이 타임아웃이 필요**하다는
    점을 기록해둠(향후 병렬 실행 시 재확인).
 
-**PubChem 기반 CAS→CAMEO 재수집/교차검증 트랙은 이걸로 종료.** 이번 세션에서
-검증→199종 실행→3,396종 전체 확대→폴백 로직→기본물질 풀 확장→구 스크레이핑
-아카이브까지 전부 완결.
+**PubChem 기반 CAS→CAMEO 재수집·교차검증은 이 시점으로 종료했다.** 이번 세션에서
+경로 검증 → 199종 실행 → 3,396종 전체 확대 → 폴백 로직 → 기본물질 풀 확장 → 구
+스크레이핑 아카이브까지 진행했다.
 
 **추가: 타겟리스트 2차 확장 — 웨이브1 누락분 보강 (같은 날 후속)** — 웨이브1
 (203종, tier 슬롯 기반)은 "68그룹 골고루 커버 + 교육 현실성" 기준이라 실제
@@ -418,11 +419,11 @@ Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
 - **미반영 — 다음 세션 확인 필요**: Stage 4(RAG) 파이프라인(청킹 805개 섹션,
   임베딩 인덱스, 평가셋 gold_pair 등)은 전부 **198~203종 기준으로 빌드된 상태**.
   종수가 203→427로 2배 넘게 늘었으니 재구축 필요 여부를 다음 세션에서 판단할
-  것 — 이번 세션엔 실행 안 함(범위 밖 판단, 큰 작업이라 별도 확인 필요).
+  것 — 이때는 실행하지 않았다(범위 밖이고 큰 작업이라 별도 확인이 필요하다).
 
 ---
 
-## 0-1. 2026-08-07 갱신: 청석면 제외 + 질의 템플릿 다양화 재측정
+## 2026-08-07 — 청석면 제외, 질의 템플릿 다양화 재측정
 
 1. **청석면(12001-28-4) 제외**: 사용자 결단. CSV(200→199 유효 대상, 이하 198종 활성)·DB
    3테이블(40행)·평가셋 3종에서 제거. 근거 `decisions.md` §1.2a 인접 항목.
@@ -477,10 +478,11 @@ Abstain(KOSHA 미등록). **전체 수집 종수 203→427종**.
 
 ---
 
-## 0. 이번 세션(2026-08-06 Stage 4) 결과 요약
+## 2026-08-06 — Stage 4 결과 요약
 
-Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진행 중 설계 변경이 7건
-발생했고, 전부 근거와 함께 **`archive/superseded_docs/stage4_design_changes_2026-08-06.md`** 에 아카이빙했다.
+Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 진행**했다. 진행 중 설계 변경이
+7건 발생했고, 전부 근거와 함께
+**`archive/superseded_docs/stage4_design_changes_2026-08-06.md`** 에 정리했다.
 설계 원칙 문서(`stage4_design_principles_v2.md`)와 실제 구현이 다른 부분은 그 문서가 기준이다.
 
 ### 확정 구성
@@ -488,7 +490,7 @@ Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진�
 | 항목 | 확정값 | 근거 유형 |
 |---|---|---|
 | 임베딩 | `dragonkue/BGE-m3-ko` | **사용자 지정** (A/B 승자 아님) |
-| 리랭커 | `BAAI/bge-reranker-base` | **사용자 지정**, 이번 세션 미실행 |
+| 리랭커 | `BAAI/bge-reranker-base` | **사용자 지정**, 2026-08-06 시점 미실행 |
 | 청킹 | section 단위 단독 (item 폐기) | 실측 + 구조적 논증 |
 | 검색공간 | §2·§10 필터 (805 → 409청크) | **실측** — 정확도·속도 동시 개선 |
 | 검색 | **hybrid** (dense+BM25 RRF, FAISS IndexFlatIP) | **실측** — 아래 재검토 이력 참고 |
@@ -526,19 +528,24 @@ Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진�
 
 ---
 
-## 1. 프로젝트 개요 (변경 없음)
+> 아래 1~7절은 **2026-08-06 시점의 참고 절**이다. 그 세션에서 정리한 개요·원칙·
+> 완료 목록·환경 정보이며, 위의 날짜별 기록과 달리 특정 날짜의 작업 기록은 아니다.
+> 이후 저장소 구조와 경로가 바뀌었으므로 현행 파일 위치는
+> [`FILE_GUIDE.md`](FILE_GUIDE.md)를 본다.
+
+## 1. 프로젝트 개요
 
 - 목적: KOSHA MSDS Open API 데이터 기반, **화학물질 2종 이상 조합의 반응성·양립성**을
   RAG+Agent로 자동 평가하는 **포트폴리오 MVP**
 - 작업 경로: `C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS`
 - 제품 형태: 사용자가 **물질 2종 이상을 입력** → 상호 반응성·혼합 시 위험성·유의사항 제공.
-  (단일물질 사실조회가 아니다 — 이번 세션에서 평가셋을 이 기준으로 전면 교체했다)
+  (단일물질 사실조회가 아니다 — 2026-08-06에 평가셋을 이 기준으로 전면 교체했다)
 - **N종 조합 판정 구현됨** (`03_compatibility/compatibility_engine.py`
   `judge_combination_by_cas`): 모든 쌍 C(N,2)을 기존 쌍 판정으로 계산 후 worst-case
   종합 + 전체 쌍 매트릭스(`to_table()`) + 쌍별 상세 리포트(`pair_reports()`) 제공.
   상세 설계는 `decisions.md` §2.10.
 
-## 2. 타협 불가 원칙 (변경 없음)
+## 2. 타협 불가 원칙
 
 1. 양립성 매트릭스 조회 결과를 단독 최종 판정 근거로 사용 금지
 2. CAMEO 최신 68그룹 체계 엄격 적용(구 EPA 41그룹 폐기)
@@ -553,14 +560,14 @@ Stage 4 §13 실행순서 1~4단계 중 **Retrieval 계층까지 완주**. 진�
 
 ## 3. 완료된 작업
 
-### Stage 1~3 (이전 세션)
+### Stage 1~3 (2026-08-06 이전)
 1. `reactivity_reference.db`: CAMEO 68그룹, 2,278쌍(오프대각), self_reactivity 68행
 2. CAS↔CAMEO 매핑: `chemicals`(3,398종), `chemical_group_membership`(6,669행, 68/68그룹)
 3. 200종 타겟 리스트: `01_collection/undergrad_target_chemicals.csv`
 4. KOSHA 수집 완료: **198종 확보**(`msds_sections` 7,920행 = 198종 × 40항목, 결측 EAV 없음),
    2종 Abstain 유지(135072-82-1, 15005-97-7 — Diazonium Salts 그룹, 대체 후보 소진)
 
-### Stage 4 (이번 세션)
+### Stage 4 (2026-08-06)
 5. **청킹 파이프라인** `04_rag_agent/pipeline.py` — 본문추출 → Normalize → Chunk → Metadata
    - section 청크 **805개** (길이 p50 390 / max 1,792자, 13개 섹션이 2분할)
    - item 청크 **7,420개** (폐기했으나 DB 보존)
@@ -599,8 +606,8 @@ python 04_rag_agent/llm.py --check
   (`llm.py` 의 `key_fingerprint()` 가 길이+해시만 보여준다)
 
 ### 4-1a. ~~평가셋 질의 다양화~~ **(완료, 2026-08-07)**
-템플릿 5개로 확장, 383쌍×5템플릿=1,915질의로 재측정 완료. 결과는 §0-1 참고. 남은 것은
-템플릿별 개별 breakdown(환경 세그폴트로 미완료, §0-1 참고)뿐.
+템플릿 5개로 확장, 383쌍×5템플릿=1,915질의로 재측정 완료. 결과는 2026-08-07 항목 참고. 남은 것은
+템플릿별 개별 breakdown(환경 세그폴트로 미완료, 2026-08-07 항목 참고)뿐.
 
 ### 4-2. RAG 지표 측정 (§10, §13 5단계) — **파일럿 완료(n=7), 확대는 후속 과제**
 
@@ -640,7 +647,7 @@ Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로
 관측된 것과 동일 계열)로 손실. 병렬화(asyncio.gather) 시도는 3회 연속 시작 직후
 즉시 크래시 — 임베딩 호출만 락으로 직렬화해도 동일해서 되돌림. 크래시 직후 시스템을
 확인하니 python 프로세스가 하나도 없는데 **CPU 81%, 여유메모리 22%**로 부하가 높았음
-— 이번 세션에서 문서·CSV·JSONL·인덱스 캐시를 계속 고쳐써서 OneDrive 동기화가 그
+— 이 세션에서 문서·CSV·JSONL·인덱스 캐시를 계속 고쳐써서 OneDrive 동기화가 그
 변경분을 백그라운드에서 처리 중이었을 가능성. **후속 세션 과제**: 시스템이 유휴
 상태일 때(또는 OneDrive 동기화 일시정지 후) 15쌍 전체, 이후 필요시 383쌍 전체로 확대
 재측정.
@@ -668,9 +675,9 @@ Context Precision 목표치는 설계 §11이 "baseline 실측 후 설정"으로
   템플릿 수정 시 질의 벡터만 재생성하면 되므로 반영은 수 분.
 - **Hybrid 재검토 여부**: 위 0절 주의 참조.
 
-### 4-6. CAMEO 그룹 매핑 데이터 소스 전환 (robots.txt 준수) — **완료(199종 + 3,396종 전체)**
-2026-08-07 파일럿(12종) → 199종 전체 실행까지 완료. 상세 근거·엔드포인트·robots.txt
-뉘앙스·199종 실행 결과 표는 `archive/superseded_docs/decisions.md` §1.2b 참고. 스크립트:
+### 4-6. CAMEO 그룹 매핑 데이터 소스 전환 (PubChem 경로) — **완료(199종 + 3,396종 전체)**
+2026-08-07 파일럿(12종) → 199종 전체 실행까지 완료. 상세 근거·엔드포인트·199종 실행
+결과 표는 `archive/superseded_docs/decisions.md` §1.2b 참고. 스크립트:
 `01_collection/pubchem_verify_groups.py`(재실행 가능, idempotent — `INSERT OR IGNORE`).
 결과: MATCH 183 / 표기차이뿐인 사실상 일치 5(그룹명 정정으로 해소) / 진짜 결측 1
 (티오황산나트륨) / CID 조회 실패 9(혼합물·희귀 화합물, PubChem 자체 커버리지 한계).
