@@ -33,7 +33,7 @@ Registry가 하는 일은 하나다 — **CAS 하나에 그 물질의 모든 이
 `substance_registry` 테이블은 CORE CSV 5종의 **파생 테이블**이다. `--write`는 UPSERT가
 아니라 테이블을 drop 후 전량 재적재한다 — CSV에서 뺀 물질이 DB에 남으면 CSV가 기준
 목록이 아니게 되기 때문이다. 구축 스크립트는
-[`scripts/build_substance_registry.py`](../scripts/build_substance_registry.py).
+[`scripts/2_registry/build_substance_registry.py`](../scripts/2_registry/build_substance_registry.py).
 
 ## 2. CORE 선정 원칙
 
@@ -68,7 +68,7 @@ CORE는 다음 다섯 축을 함께 만족시키는 집합이다. 하나의 축�
 물질(예: 황산 — 기본성·교육·실무 전부 해당)은 더 기본적인 그룹으로 귀속시키고
 중복 등록하지 않는다. 귀속 우선순위는 `periodic_element` > `fundamental` >
 `educational` > `practical` > `representative`이며, 이 순서가 그대로
-[`build_substance_registry.py`](../scripts/build_substance_registry.py)의
+[`build_substance_registry.py`](../scripts/2_registry/build_substance_registry.py)의
 `CORE_SOURCES` 순서다.
 
 ### periodic_element — 주기율표 원소
@@ -189,7 +189,7 @@ CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7�
 - **Registry 등록 ≠ 판정 가능.** CAMEO 그룹 매핑이 없는 물질은 매트릭스가
   판정하지 않는다. 이때 Registry에 있다는 이유로 LLM이 대신 판단하게 두지 않는다 —
   기존 Abstain 로직이 그대로 처리한다. 이건 프로젝트의 타협 불가 원칙
-  ([`CLAUDE.md`](../CLAUDE.md), [`GENERATION.md`](GENERATION.md))의 연장이다.
+  ([`README.md`](../README.md), [`GENERATION.md`](GENERATION.md))의 연장이다.
 - **Registry에 물질을 추가해도 CAMEO `chemicals` 테이블에 임의로 넣지 않는다.**
   식별은 되게 하되 반응성 축은 정직하게 비워 둔다. 채울 수 있는 유일한 경로는
   **출처가 CAMEO 자신인 분류를 그대로 가져오는 것**이다 — PubChem Classification
@@ -197,7 +197,7 @@ CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7�
   [`DATA.md`](DATA.md)가 스크레이핑 대체 경로로 채택한 그 엔드포인트다. 구조를 보고
   "이건 알코올이니 8번"이라고 우리가 정하지 않는다. CAMEO에 분류가 없으면 비워 둔다.
   적재 스크립트는
-  [`scripts/map_registry_cameo_groups.py`](../scripts/map_registry_cameo_groups.py)이고
+  [`scripts/2_registry/map_registry_cameo_groups.py`](../scripts/2_registry/map_registry_cameo_groups.py)이고
   `source='pubchem_cameo_2026-08-22'`로 태그해 기존 `CAMEO_scrape` 행과 구분한다.
 - **앱의 물질 선택 목록은 Registry − KOSHA 미등재분이다.** 2026-08-22 기준
   237 − 39 = **198종**. 과거의 "Registry ∪ 173" 규칙은 폐기됐다 — 코퍼스 소속은
@@ -211,7 +211,7 @@ CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7�
   frozen 평가 재현용으로 그대로 두고, Registry 소속 물질은 `core` 태그로 편입한다
   (2026-08-22에 두 차례: 청크는 있는데 인덱스에 없던 23종 → 27→50종, 이어서 청크 자체가
   없던 39종을 청킹해 편입 → 50→**89종**). 편입은
-  [`seed_core_corpus.py`](../scripts/seed_core_corpus.py)가 "청크>0 AND CAMEO 그룹>0 AND
+  [`seed_core_corpus.py`](../scripts/3_corpus/seed_core_corpus.py)가 "청크>0 AND CAMEO 그룹>0 AND
   173 아님"으로 자동 판정한다.
 - **질의문은 registry 표준명에 별칭을 붙여 만든다.** 청크 헤더가 KOSHA 원문명으로
   렌더돼 있어(`페로센` vs `디시클로펜타디에닐 철`) 표준명만으로는 BM25가 어휘
@@ -252,7 +252,7 @@ Registry에 있다는 이유로 LLM이 대신 판단하게 두지 않는다는 �
 **14,878 / 19,503 = 76.3%**(확충 전 142종 / 10,011쌍 / 51.3%). 종별 대조표는
 [`results/registry237_service_contract_after_chunking_2026-08-22.csv`](../results/registry237_service_contract_after_chunking_2026-08-22.csv),
 재계산 스크립트는
-[`scripts/service_contract_audit.py`](../scripts/service_contract_audit.py).
+[`scripts/2_registry/service_contract_audit.py`](../scripts/2_registry/service_contract_audit.py).
 
 남은 C티어 25종은 원소 23종 + 탄산나트륨(497-19-8) + 염화나트륨(7647-14-5)이며
 **CAMEO에 데이터시트 자체가 없다.** 2026-08-23에 두 경로로 확인했다.
@@ -382,23 +382,23 @@ Pyridines`, 산화철(III)(Fe2O3)에 딸려온 `Sulfides, Inorganic`. 둘 다 �
 
 1. 그룹 CSV(`data/collection/core_*.csv`) 5종 중 해당 파일에 행을 추가한다.
 2. **KOSHA 캐시와 MSDS 상세를 먼저 채운다.** 추가분만 담은 CSV(`cas_number` 컬럼)를
-   만들어 `python scripts/kosha_msds_collector.py --target-csv <경로>`를 돌리면
+   만들어 `python scripts/1_collect/kosha_msds_collector.py --target-csv <경로>`를 돌리면
    `getChemList` 결과 캐시와 `getChemDetail02/03/09/10` 4개 섹션이 한 번에 적재된다.
    이 단계를 건너뛰면 다음 단계의 자가검증(`check_kosha_cache`)이 미조회 CAS를 잡아
    실패한다. 이미 등록된 물질은 캐시·수집분을 보고 알아서 skip한다.
-3. `python scripts/build_substance_registry.py --write`로 반영한다(점검만 하려면
+3. `python scripts/2_registry/build_substance_registry.py --write`로 반영한다(점검만 하려면
    `--write` 없이 실행).
 4. 검색 근거까지 주려면 `rag_corpus_membership`에 `corpus_tag='core'`로 등록한다.
    인덱스 캐시는 청크 수가 달라지면 자동 재생성된다(`retrieval.embed_corpus` /
    `build_bm25`가 길이 불일치를 검사).
-5. 판정까지 되게 하려면 `python scripts/map_registry_cameo_groups.py`로 CAMEO 분류를
+5. 판정까지 되게 하려면 `python scripts/2_registry/map_registry_cameo_groups.py`로 CAMEO 분류를
    조회한다(`--write` 없이 돌리면 리포트만). 미매핑 CAS만 대상으로 잡으므로 몇 번
    돌려도 기존 행을 덮어쓰지 않는다. CAMEO에 분류가 없으면 비워 두는 게 정답이다.
-6. `python scripts/service_contract_audit.py`로 6절 티어를 다시 계산하고,
+6. `python scripts/2_registry/service_contract_audit.py`로 6절 티어를 다시 계산하고,
    `python app/streamlit_app.py --check`로 앱 경로까지 확인한다.
 - MSDS나 CAMEO 매핑이 없어도 추가 자체는 가능하다. 없는 축은 비워 두면 되고,
   그 물질이 무엇을 받는지는 6절의 계약 티어로 드러난다.
-- `scripts/kosha_registry_lookup.py --fetch`는 registry 전체의 KOSHA 등재 상태를
+- `scripts/1_collect/kosha_registry_lookup.py --fetch`는 registry 전체의 KOSHA 등재 상태를
   점검·리포트할 때 쓴다(신규 추가분 수집은 2번이 담당).
 
 ### 삭제

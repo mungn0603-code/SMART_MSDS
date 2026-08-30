@@ -30,7 +30,7 @@ import pandas as pd
 import streamlit as st
 
 ROOT = Path(__file__).resolve().parent.parent
-sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts")]
+sys.path[:0] = [str(ROOT / "src"), str(ROOT / "scripts" / "5_generation")]
 
 import cameo_group_lookup as CL  # noqa: E402
 import generate_baseline as GB  # noqa: E402

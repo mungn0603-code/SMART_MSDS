@@ -19,7 +19,7 @@ import argparse
 import sqlite3
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "reactivity_reference.db"
 CORPUS_TAG = "core"
 

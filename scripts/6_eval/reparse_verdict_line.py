@@ -18,11 +18,11 @@ from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent
+ROOT = HERE.parent.parent
 V6 = ROOT / "archive" / "2026-08-29_generation_prompt_history" / "v6"  # 문서 확정 지표(cameo_service_v6) 산출물
 import sys  # noqa: E402
 
-sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(ROOT / "scripts" / "5_generation"))
 sys.path.insert(0, str(ROOT / "src"))
 
 from run_cameo_context_pilot import parse_stated_verdict  # noqa: E402

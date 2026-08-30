@@ -8,8 +8,11 @@ self_reactivity 테이블 채우기 (68개 CAMEO 그룹 자기반응성)
 idempotent: UPDATE만 수행, 행은 이미 68개 존재(schema 초기화 시 생성).
 """
 import sqlite3, os
+from pathlib import Path
 
-DB_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\reactivity_reference.db"
+ROOT = Path(__file__).resolve().parents[2]
+
+DB_PATH = ROOT / "data" / "reactivity_reference.db"
 
 # (group_id, category, notes)  category in {Compatible, Caution, Incompatible, Unknown}
 DATA = [

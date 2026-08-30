@@ -11,7 +11,7 @@ import json
 from pathlib import Path
 from collections import defaultdict, Counter
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 V6 = ROOT / "archive" / "2026-08-29_generation_prompt_history" / "v6"  # 문서 확정 지표(cameo_service_v6) 산출물
 gen_path = V6 / "generation_cameo_full.jsonl"
 eval_path = V6 / "eval_cameo_full.jsonl"

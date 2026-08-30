@@ -42,7 +42,7 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent
+ROOT = HERE.parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 import retrieval as R  # noqa: E402
 

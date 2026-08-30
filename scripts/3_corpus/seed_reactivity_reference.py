@@ -8,7 +8,7 @@ import re
 import sqlite3
 from pathlib import Path
 
-BASE = Path(r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS")
+BASE = Path(__file__).resolve().parents[2]
 CSV_PATH = BASE / "archive" / "01_collection" / "Cameo_reactivity.csv"
 SCHEMA_PATH = BASE / "data" / "schema.sql"
 DB_PATH = BASE / "data" / "reactivity_reference.db"

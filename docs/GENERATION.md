@@ -20,8 +20,8 @@
 | 인용 태그 출력 | 93.8% (2,102/2,240) | 물질혼동 측정의 전제 |
 | evidence precision / recall | 0.555 / 0.765 | |
 
-실측 비용 $5.79, 생성 지연 평균 12.0초. 집계: `scripts/summarize_cameo_full.py`
-(지표 정의의 단일 출처). 판정줄 파생필드는 `scripts/reparse_verdict_line.py`로
+실측 비용 $5.79, 생성 지연 평균 12.0초. 집계: `scripts/6_eval/summarize_cameo_full.py`
+(지표 정의의 단일 출처). 판정줄 파생필드는 `scripts/6_eval/reparse_verdict_line.py`로
 재계산한 `archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full_reparsed.jsonl` 기준이다.
 
 ### 판정줄 기준 오답 0건, 그러나 본문이 판정보다 세다
@@ -71,7 +71,7 @@
 Retrieval baseline([`RETRIEVAL.md`](RETRIEVAL.md)) 위에서 실제 Generation 성능을
 측정: STEP1(retrieval 결과 고정, `results/frozen_retrieval_top10.jsonl`) → STEP2
 (baseline 프롬프트 확정) → STEP3(2,160건 생성) → STEP4(Judge 전체 채점) → STEP5
-(Retrieval×Generation 분리분석, `scripts/analyze_generation.py`).
+(Retrieval×Generation 분리분석, `scripts/6_eval/analyze_generation.py`).
 
 **핵심 발견**: Retrieval hit rate 98.84% — 병목이 아니었다. 실패의 77.9%가
 retrieval 성공 상태에서도 Generation 단계에서 발생했다.
@@ -94,7 +94,7 @@ retrieval 성공 상태에서도 Generation 단계에서 발생했다.
 
 프롬프트가 아니라 **역할**을 바꿨다. CAMEO 반응성 그룹 조회(`src/cameo_group_lookup.py`)로
 CAS 쌍의 판정을 조회하면 **2,160건 전수에서 실제 정답(matrix_verdict)과 100% 일치**한다
-(`results/cameo_lookup_full_check.json`). 이미 신뢰할 수 있는 정답이 있다는 뜻이므로:
+(`archive/2026-08-17_baseline/results/cameo_lookup_full_check.json`). 이미 신뢰할 수 있는 정답이 있다는 뜻이므로:
 
 - LLM에게 판정을 맡기지 않는다 — CAMEO 판정을 프롬프트에 "이미 결정된 값"으로 박아 넣는다.
 - LLM은 그 판정을 재판단하지 않고, MSDS §2/§10 근거로 **설명만** 한다.

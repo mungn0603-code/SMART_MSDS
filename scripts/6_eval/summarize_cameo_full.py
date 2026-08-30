@@ -23,7 +23,7 @@ import json
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 V6 = ROOT / "archive" / "2026-08-29_generation_prompt_history" / "v6"  # 문서 확정 지표(cameo_service_v6) 산출물
 
 

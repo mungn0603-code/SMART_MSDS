@@ -24,7 +24,7 @@ from collections import Counter
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent
+ROOT = HERE.parent.parent
 
 GEN_PATH = ROOT / "results" / "generation_baseline.jsonl"
 EVAL_PATH = ROOT / "results" / "eval_generation.jsonl"

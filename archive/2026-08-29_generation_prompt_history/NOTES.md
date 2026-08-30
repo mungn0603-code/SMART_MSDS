@@ -8,9 +8,9 @@ Generation 프롬프트 세대별 산출물. **2026-08-30 저장소 정리에서
 | 세대 | 상태 | 위치 | 코드 경로 |
 |---|---|---|---|
 | `cameo_service_v6` | **문서의 확정 지표를 낸 산출물** | `v6/` (여기) | 프롬프트가 코드에 더는 없다 |
-| `cameo_service_v7` | 현행 · 자유텍스트 | `results/*_v7.jsonl` | `run_cameo_full.py --format text` (기본값) |
+| `cameo_service_v7` | 산출물은 대체됨 · **코드 경로는 현행**(앱이 쓴다) | `v7/` (여기) | `run_cameo_full.py --format text` (기본값) |
 | `cameo_service_v8_schema` | **폐기** | `_v8_verdict_regression/` | 없음 |
-| `cameo_service_v8b_schema` | 현행 · structured output | `results/*_v8b.jsonl` | `run_cameo_full.py --format schema` |
+| `cameo_service_v8b_schema` | **현행 채택** · structured output | `results/*_v8b.jsonl` | `run_cameo_full.py --format schema` |
 | `cameo_service_v9_schema` | **폐기** | `_v9_regression/` | 없음 |
 
 ## v6/ — 왜 archive인데 문서가 인용하는가
@@ -54,3 +54,17 @@ CLAUDE.md가 "확정 지표를 낸 경로는 건드리지 않는다"로 지정�
   McNemar 양측 p=0.789로 v8b와 통계적으로 구분되지 않아 폐기. 지시는 지켜졌는데
   (evidence_gap 보일러플레이트 -30pt 등) judge 일치가 ±0이었다는 게 결론이다.
   폐기된 프롬프트 전문은 `_v9_regression/schema_prompt_v9.txt`에 그대로 있다.
+
+## v7/ — 2026-08-30 추가
+
+`cameo_service_v7`(자유텍스트, `--context pair`) 전수 산출물. v8b(structured output)로
+측정치가 대체돼 `results/`에서 옮겼다.
+
+**프롬프트 자체는 폐기가 아니다.** `run_cameo_full.py --format text`의 기본 경로이고
+`app/streamlit_app.py`가 `SYSTEM_PROMPT`/`build_prompt`를 그대로 쓴다. 옮긴 것은
+결과 파일뿐이다.
+
+| 파일 | 내용 |
+|---|---|
+| `generation_cameo_full_pair_v7.jsonl` | 생성 결과 |
+| `eval_cameo_full_pair_v7.jsonl` | Judge 채점 결과 |

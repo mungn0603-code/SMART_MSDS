@@ -28,8 +28,8 @@ RRF_K = 60
 MAX_SEQ_LEN = 2048
 
 # STEP 2/3 실측 확정(2026-08-08): §10 "피해야 할 물질" 중 173종 코퍼스 안에서 2회 이상
-# 반복되는 정형문구 15종(boilerplate_sec10_values.json, evidence_full173_tagged.jsonl 태깅으로
-# 식별)이 BM25 어휘매칭으로 상위 rank를 차지해 실제 evidence(§2 분류)를 밀어내는 문제를
+# 반복되는 정형문구 15종(evidence_full173_tagged.jsonl 태깅으로 식별, 목록은
+# archive/2026-08-30_superseded/data_inputs/boilerplate_sec10_values.json)이 BM25 어휘매칭으로 상위 rank를 차지해 실제 evidence(§2 분류)를 밀어내는 문제를
 # 완화하려고 RRF 융합 시 고정 penalty를 도입(Evidence MRR 0.52->0.83).
 # 2026-08-09 확장: gold_evidence 재정의상 상대 물질을 직접 지목하는 §10은 0건 확인됨(§0-3
 # STEP2) - 즉 boilerplate 여부와 무관하게 **§10 청크는 전부 gold_evidence가 될 수 없다**.

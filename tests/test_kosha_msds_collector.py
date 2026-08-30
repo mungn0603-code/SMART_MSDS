@@ -8,7 +8,7 @@ import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts" / "1_collect"))
 from kosha_msds_collector import parse_chem_list, parse_chem_detail
 
 FAKE_CHEM_LIST_XML = """<response>

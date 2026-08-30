@@ -20,7 +20,7 @@
 구성: `dragonkue/BGE-m3-ko` 임베딩 + FAISS(dense) + BM25(kiwipiepy) + RRF(k=60) 융합 +
 §2·§10 섹션 필터(717→371청크) + §10 boilerplate penalty(λ=0.01) + **질의 분해**.
 
-재현: `python scripts/run_ab.py embedding --task pair --granularity section --sections 2,10
+재현: `python scripts/4_retrieval/run_ab.py embedding --task pair --granularity section --sections 2,10
 --models bge-m3-ko --corpus-tag service --decompose`
 (`--decompose` 없이 실행하면 우측 "쌍질의" 열이 나온다 — 기본값은 종전 경로 그대로다.)
 

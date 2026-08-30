@@ -19,11 +19,14 @@ import urllib.request
 import urllib.parse
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[2]
 
 BASE_URL = "https://apis.data.go.kr/B552468/msdschem"
-DB_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\reactivity_reference.db"
-TARGET_CSV = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\collection\undergrad_target_chemicals.csv"
-LOG_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\collection\kosha_collect.log"
+DB_PATH = ROOT / "data" / "reactivity_reference.db"
+TARGET_CSV = ROOT / "data" / "collection" / "undergrad_target_chemicals.csv"
+LOG_PATH = ROOT / "data" / "collection" / "kosha_collect.log"
 
 SECTIONS = [2, 3, 9, 10]
 SLEEP_SEC = 0.3

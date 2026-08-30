@@ -28,11 +28,14 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
-DB_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\reactivity_reference.db"
-CSV_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\collection\undergrad_target_chemicals.csv"
-REPORT_PATH = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\collection\pubchem_verification_report.csv"
-REPORT_PATH_FULL = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\collection\pubchem_verification_report_full.csv"
+ROOT = Path(__file__).resolve().parents[2]
+
+DB_PATH = ROOT / "data" / "reactivity_reference.db"
+CSV_PATH = ROOT / "data" / "collection" / "undergrad_target_chemicals.csv"
+REPORT_PATH = ROOT / "data" / "collection" / "pubchem_verification_report.csv"
+REPORT_PATH_FULL = ROOT / "data" / "collection" / "pubchem_verification_report_full.csv"
 UA = {"User-Agent": "Mozilla/5.0"}
 RATE_DELAY = 0.25  # PUG-REST 권장 상한(5req/s) 이내
 

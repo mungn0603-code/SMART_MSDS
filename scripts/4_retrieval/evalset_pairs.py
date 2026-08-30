@@ -35,7 +35,7 @@ import sqlite3
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "reactivity_reference.db"
 OUT_DIR = ROOT / "data" / "evalset"
 

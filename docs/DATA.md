@@ -27,7 +27,7 @@
 
 2026-08-22에 이 경로를 **신규 매핑 확보**에도 그대로 썼다. Registry 237종 중 스크레이핑
 풀에 아예 없던 미매핑 95종을 `hid=86`으로 조회해 31종을 채웠다(매핑 142 → 173종).
-스크립트는 [`scripts/map_registry_cameo_groups.py`](../scripts/map_registry_cameo_groups.py),
+스크립트는 [`scripts/2_registry/map_registry_cameo_groups.py`](../scripts/2_registry/map_registry_cameo_groups.py),
 적재 태그는 `source='pubchem_cameo_2026-08-22'`, 경위는
 [`REGISTRY.md`](REGISTRY.md) 7절. 적용 전에 **이미 매핑된 30종을 같은 엔드포인트로
 재조회해 29종 완전 일치 / 1종 superset**임을 확인하고 시작했다.

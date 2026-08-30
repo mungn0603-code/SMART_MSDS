@@ -33,7 +33,7 @@ def parse_stated_verdict(answer: str) -> str | None:
     return m.group(1) if m else None
 
 HERE = Path(__file__).resolve().parent
-ROOT = HERE.parent
+ROOT = HERE.parent.parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "src"))
 

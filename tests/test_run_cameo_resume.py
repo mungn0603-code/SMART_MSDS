@@ -15,7 +15,7 @@ import tempfile
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent / "scripts"))
+sys.path.insert(0, str(HERE.parent / "scripts" / "5_generation"))
 sys.path.insert(0, str(HERE.parent / "src"))
 
 import run_cameo_full as RC  # noqa: E402

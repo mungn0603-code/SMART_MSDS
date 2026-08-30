@@ -131,8 +131,8 @@ Retrieval hit rate **98.84%**(병목 아님)인데도 Generation 실패율이 �
 ```
 검색 계층 (평가·확장)                    서비스 경로 (production)
   src/retrieval.py                         app/streamlit_app.py
-  scripts/run_ab.py                          explain(CAS_A, CAS_B)
-  scripts/freeze_retrieval.py                  └─ pair_context()   CAS 직접조회 §2+§10
+  scripts/4_retrieval/run_ab.py                          explain(CAS_A, CAS_B)
+  scripts/4_retrieval/freeze_retrieval.py                  └─ pair_context()   CAS 직접조회 §2+§10
   app: retrieve(query)
 ```
 
@@ -239,15 +239,22 @@ MSDS/
 ├─ docs/                  # 표준 문서 9종(위 표)
 ├─ src/                   # 재사용 핵심 모듈 (llm/retrieval/pipeline/eval_generation/
 │                          # cameo_group_lookup/compatibility_engine)
-├─ scripts/               # 현행 실행 스크립트 24종 (수집/분류/RAG 평가·생성)
+├─ scripts/               # 실행 스크립트 24종 — 파이프라인 순서대로 폴더가 나뉜다
+│   ├─ 1_collect/         #   KOSHA MSDS 수집
+│   ├─ 2_registry/        #   물질 선정 · CAMEO 매핑 · 서비스 계약 감사
+│   ├─ 3_corpus/          #   DB 시드 · 코퍼스 정의 · 임베딩 인덱스
+│   ├─ 4_retrieval/       #   평가셋 · 검색 평가 · 입력 고정
+│   ├─ 5_generation/      #   프롬프트 정의 · 전수 생성
+│   └─ 6_eval/            #   채점 · 요약 · 리포트
 ├─ tests/                 # 자가검증 4종 (pipeline/collector/evalset/run_cameo 재개)
 ├─ app/                   # Streamlit 조회·판정 UI
-├─ data/                  # DB·평가셋·청크·임베딩 캐시·원본 CSV
-├─ results/               # 현행 산출물만 — Generation v7·v8b, Retrieval 지표, Registry 감사
-└─ archive/               # 폐기·대체된 파일과 사유(폴더마다 NOTES.md)
+├─ data/                  # DB·평가셋·선정 기준 CSV (+ 미추적 캐시 chunks/ index/)
+├─ results/               # 최종 결과만 12개 — 무엇이 어느 수치의 근거인지는 results/README.md
+└─ archive/               # 대체·폐기된 파일과 사유(폴더마다 NOTES.md)
 ```
 
-전체 파일 목록과 역할은 [`docs/FILE_GUIDE.md`](docs/FILE_GUIDE.md).
+전체 파일 목록과 역할은 [`docs/FILE_GUIDE.md`](docs/FILE_GUIDE.md),
+결과 파일과 지표의 대응은 [`results/README.md`](results/README.md).
 
 ---
 
@@ -258,19 +265,19 @@ MSDS/
 python src/llm.py --check
 
 # 2) Retrieval 재현(캐시된 임베딩/인덱스 사용)
-python scripts/run_ab.py embedding --models bge-m3-ko --granularity section --task pair --sections 2,10 --corpus-tag service
+python scripts/4_retrieval/run_ab.py embedding --models bge-m3-ko --granularity section --task pair --sections 2,10 --corpus-tag service
 
 # 3) Generation 입력 고정 -> 생성 -> 채점 (각 단계는 이어서 실행 가능, 실패분만 재시도됨)
 #    worker 수는 Upstage 레이트리밋(100 RPM / 250,000 TPM)에 맞춘 값이다.
 #    채점은 호출당 5.3k 토큰 x 1.3초라 worker 1개가 이미 TPM 상한이다.
-python scripts/freeze_retrieval.py --corpus-tag service
-python scripts/run_cameo_full.py --stage gen  --workers 7
-python scripts/run_cameo_full.py --stage eval --workers 1
-python scripts/reparse_verdict_line.py --gen results/generation_cameo_full.jsonl --eval results/eval_cameo_full.jsonl --out results/eval_cameo_full_reparsed.jsonl
-python scripts/summarize_cameo_full.py --gen results/generation_cameo_full.jsonl --eval results/eval_cameo_full_reparsed.jsonl
+python scripts/4_retrieval/freeze_retrieval.py --corpus-tag service
+python scripts/5_generation/run_cameo_full.py --stage gen  --workers 7
+python scripts/5_generation/run_cameo_full.py --stage eval --workers 1
+python scripts/6_eval/reparse_verdict_line.py --gen results/generation_cameo_full.jsonl --eval results/eval_cameo_full.jsonl --out results/eval_cameo_full_reparsed.jsonl
+python scripts/6_eval/summarize_cameo_full.py --gen results/generation_cameo_full.jsonl --eval results/eval_cameo_full_reparsed.jsonl
 
 # 3-b) 재실행 없이 아래 확정 지표만 확인하려면 인자 없이 (기본값이 아카이브된 v6 산출물이다)
-python scripts/summarize_cameo_full.py --eval archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full_reparsed.jsonl
+python scripts/6_eval/summarize_cameo_full.py --eval archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full_reparsed.jsonl
 
 # 4) Demo UI (물질 선택 -> CAMEO 판정 -> MSDS 근거 검색 -> LLM 설명)
 streamlit run app/streamlit_app.py

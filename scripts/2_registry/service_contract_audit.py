@@ -23,7 +23,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "reactivity_reference.db"
 CORE207 = ROOT / "data" / "collection" / "registry_core207.csv"
 DEFAULT_OUT = ROOT / "results" / "registry_service_contract_recheck.csv"

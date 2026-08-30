@@ -24,7 +24,7 @@ import urllib.request
 from datetime import date
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(__file__).resolve().parents[2]
 DB_PATH = ROOT / "data" / "reactivity_reference.db"
 TODAY = date.today().isoformat()
 # results/는 덮어쓰지 않는다 — 실행일로 파일을 나눈다.

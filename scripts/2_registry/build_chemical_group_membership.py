@@ -1,7 +1,10 @@
 import sqlite3, csv
+from pathlib import Path
 
-DB = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\data\reactivity_reference.db"
-CSV = r"C:\Users\mungn\OneDrive\문서\OPEN CODE\MSDS\archive\01_collection\cas_reactive_group_mapping.csv"
+ROOT = Path(__file__).resolve().parents[2]
+
+DB = ROOT / "data" / "reactivity_reference.db"
+CSV = ROOT / "archive" / "01_collection" / "cas_reactive_group_mapping.csv"
 
 conn = sqlite3.connect(DB)
 cur = conn.cursor()

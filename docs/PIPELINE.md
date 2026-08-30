@@ -12,11 +12,11 @@ flowchart LR
 
 | # | 단계 | 산출물 | 코드 |
 |---|---|---|---|
-| 0 | 다룰 물질 확정(CORE 5축) | `substance_registry`(237종) | `scripts/build_substance_registry.py`, [`REGISTRY.md`](REGISTRY.md) |
-| 1 | KOSHA MSDS Open API로 물질별 §2/§3/§9/§10 4개 핵심 섹션 수집 | `data/reactivity_reference.db`의 `msds_sections`, `msds_chem_id_cache` | `scripts/kosha_msds_collector.py` |
-| 2 | CAS → CAMEO 68개 반응성 그룹 매핑 | `chemicals`, `chemical_group_membership` | `scripts/build_chemical_group_membership.py`, `archive/2026-08-08_selection_scripts/group_fallback.py` |
-| 3 | 68×68 그룹 양립성 매트릭스 구축 | `compatibility_pairs`(2,278쌍), `self_reactivity` | `scripts/seed_reactivity_reference.py`, `scripts/seed_self_reactivity.py` |
-| 4 | 청킹→임베딩→검색→CAMEO-context 생성 | `data/chunks`, `data/index`, `archive/2026-08-29_generation_prompt_history/v6/generation_cameo_full.jsonl` | `src/pipeline.py`, `src/retrieval.py`, `scripts/run_cameo_full.py` |
+| 0 | 다룰 물질 확정(CORE 5축) | `substance_registry`(237종) | `scripts/2_registry/build_substance_registry.py`, [`REGISTRY.md`](REGISTRY.md) |
+| 1 | KOSHA MSDS Open API로 물질별 §2/§3/§9/§10 4개 핵심 섹션 수집 | `data/reactivity_reference.db`의 `msds_sections`, `msds_chem_id_cache` | `scripts/1_collect/kosha_msds_collector.py` |
+| 2 | CAS → CAMEO 68개 반응성 그룹 매핑 | `chemicals`, `chemical_group_membership` | `scripts/2_registry/build_chemical_group_membership.py`, `archive/2026-08-08_selection_scripts/group_fallback.py` |
+| 3 | 68×68 그룹 양립성 매트릭스 구축 | `compatibility_pairs`(2,278쌍), `self_reactivity` | `scripts/3_corpus/seed_reactivity_reference.py`, `scripts/3_corpus/seed_self_reactivity.py` |
+| 4 | 청킹→임베딩→검색→CAMEO-context 생성 | `data/chunks`, `data/index`, `archive/2026-08-29_generation_prompt_history/v6/generation_cameo_full.jsonl` | `src/pipeline.py`, `src/retrieval.py`, `scripts/5_generation/run_cameo_full.py` |
 | 5 | Judge 채점(faithful/정답/abstain) | `archive/2026-08-29_generation_prompt_history/v6/eval_cameo_full.jsonl` | `src/eval_generation.py` |
 
 단계별 상세 설계·실측은 [`REGISTRY.md`](REGISTRY.md)(0단계),
