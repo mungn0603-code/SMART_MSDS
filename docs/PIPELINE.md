@@ -15,7 +15,7 @@
 
 ```mermaid
 flowchart TB
-    U["사용자가 목록에서 물질 2종 이상 선택<br/>(선택 가능 198종 · CAS가 이미 확정된 상태)"]
+    U["사용자가 목록에서 물질 2종 이상 선택<br/>(선택 가능 173종 · CAS가 이미 확정된 상태)"]
     U --> CAM["CAMEO 반응성 그룹 조회<br/>chemicals · chemical_group_membership · compatibility_pairs"]
     CAM --> V["판정 확정 (결정론적 DB 조회)<br/>compatibility_engine.judge_pair_by_cas<br/>그룹 매핑이 없으면 Abstain"]
     U --> CTX["MSDS 근거 조회 (검색 아님)<br/>msds_context(): 두 CAS의 §2·§10 청크를 SQL로 직접 조회"]
