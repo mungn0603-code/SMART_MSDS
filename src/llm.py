@@ -1,14 +1,14 @@
-"""Stage 4 LLM 클라이언트 — Upstage Solar (solar-pro3, reasoning)
+"""LLM 클라이언트 — Upstage Solar (solar-pro3, reasoning)
 
-설계 §3 파이프라인의 LLM 단계, 그리고 §10 RAG 지표(Faithfulness / Context Recall /
-Context Precision / Answer Relevancy) · Abstain Precision 측정에 쓰인다.
+전 파이프라인의 유일한 LLM 호출 경로다. 설명 생성(Generation)과 채점(Judge)이 같은
+모델을 쓴다 — docs/GENERATION.md.
 
   모델      : solar-pro3 (128k ctx, reasoning_effort: high)
   엔드포인트 : https://api.upstage.ai/v1/chat/completions (OpenAI 호환)
   인증      : .env 의 UPSTAGE_API_KEY (gitignore 대상. 원문은 코드/로그/출력 어디에도 남기지 않음)
 
 연결 점검:
-    python 04_rag_agent/llm.py --check
+    python src/llm.py --check
 """
 
 from __future__ import annotations

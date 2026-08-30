@@ -2,15 +2,24 @@
 
 Substance Registry는 이 프로젝트가 "다룬다"고 선언한 물질의 목록이자, 그 물질의
 기준 식별 정보(CAS·한글명·영문명·화학식·별칭)를 보관하는 단일 출처다.
-현재 확정 규모는 **CORE 237종**이며, 그중 KOSHA MSDS에 등재돼 실제로 서비스되는
-물질은 **198종**이다(2026-08-22 확정, 5절·7절).
+**서비스 물질 선정의 기준은 이 Registry 하나다.**
 
-**서비스 물질 선정의 기준은 이 Registry 하나다.** 과거의 173종 코퍼스나
-"Registry ∪ 173" 규칙은 선정 기준이 아니며, 코퍼스는 검색 인덱스와 평가 재현을
-위한 자산으로만 남는다.
+| 집합 | 규모 | 뜻 |
+|---|---:|---|
+| CORE Registry | **237종** | 다섯 축 기준을 통과해 등록된 물질 |
+| 선택 가능 | **198종** | 그중 KOSHA MSDS에 등재된 물질. 앱 목록에 뜨고 상세정보를 준다 |
+| 판정 가능 | **173종** | 그중 CAMEO 매핑까지 있는 물질. 이게 `corpus_tag='service'`다 |
 
-이 문서는 물질을 넣고 빼는 판단 기준을 정의한다. 데이터 소스와 173종 코퍼스의
-수집 이력은 [`DATA.md`](DATA.md), 검색 지표는 [`RETRIEVAL.md`](RETRIEVAL.md).
+셋은 포함 관계이고(173 ⊂ 198 ⊂ 237), 각 단계에서 빠지는 이유는 6절의 계약 표에 있다.
+**등록에서 뺀 게 아니라 조건을 못 채운 것이다.**
+
+> **이름 충돌 주의.** 여기서 말하는 `corpus_tag='service'` 173종과, 구 평가 코퍼스인
+> `corpus_tag='173'` 173종은 **크기만 같고 84종만 겹치는 다른 집합**이다. 구 코퍼스에는
+> Registry 심사를 거치지 않은 물질 89종이 들어 있고, 그 코퍼스는 과거 지표를 재현할
+> 때만 쓴다.
+
+이 문서는 물질을 넣고 빼는 판단 기준을 정의한다. 데이터 원천은 [`DATA.md`](DATA.md),
+검색 지표는 [`RETRIEVAL.md`](RETRIEVAL.md).
 
 ## 1. Registry의 목적
 
@@ -24,15 +33,14 @@ Registry가 하는 일은 하나다 — **CAS 하나에 그 물질의 모든 이
 | 한글명/영문명/화학식/별칭 정규화 | 검색 근거 청크 보관 (→ `rag_chunks`) |
 | CORE 소속 그룹(`core_category`) 표시 | 반응성 판정 (→ CAMEO 매트릭스) |
 
-`substance_registry` 테이블에는 `msds_available` / `rag_available` /
-`cameo_available` 같은 가용성 플래그를 저장하지 않는다. 그 물질에 MSDS가 있는지,
-검색 대상인지, CAMEO 그룹이 매핑됐는지는 **필요한 시점에 해당 테이블을 라이브
-조회해서 판단**한다. Registry에 캐시하면 두 곳이 어긋나고, 어긋난 순간 "등록돼
-있으니 판정 가능하다"는 잘못된 전제가 파이프라인에 들어온다.
+`substance_registry` 테이블에는 "MSDS가 있음 / 검색 가능 / CAMEO 매핑 있음" 같은
+상태 값을 따로 저장하지 않는다. 그건 **물어볼 때마다 해당 테이블을 직접 조회해서**
+판단한다. 상태를 Registry에 복사해 두면 원본이 바뀔 때 두 값이 어긋나고, 어긋난
+순간 "등록돼 있으니 판정도 된다"는 틀린 전제가 파이프라인 전체로 퍼진다.
 
-`substance_registry` 테이블은 CORE CSV 5종의 **파생 테이블**이다. `--write`는 UPSERT가
-아니라 테이블을 drop 후 전량 재적재한다 — CSV에서 뺀 물질이 DB에 남으면 CSV가 기준
-목록이 아니게 되기 때문이다. 구축 스크립트는
+`substance_registry` 테이블은 CORE CSV 5종에서 만들어지는 **결과물**이다. `--write`는
+기존 행을 하나씩 고치는 게 아니라 테이블을 통째로 지우고 다시 채운다 — CSV에서 뺀
+물질이 DB에 남아 있으면 CSV가 더는 기준 목록이 아니게 되기 때문이다. 구축 스크립트는
 [`scripts/2_registry/build_substance_registry.py`](../scripts/2_registry/build_substance_registry.py).
 
 ## 2. CORE 선정 원칙
@@ -62,7 +70,8 @@ CORE는 다음 다섯 축을 함께 만족시키는 집합이다. 하나의 축�
 | `representative` | 31 | [`core_representative_chemicals.csv`](../data/collection/core_representative_chemicals.csv) |
 | **CORE 합계** | **237** | |
 
-2026-08-22에 207 → 237로 확장했다(+30). 경위와 물질별 근거는 7절.
+물질별 편입 근거는 각 CSV의 근거 컬럼(`course`·`experiment`·`note`)에 행 단위로 남아
+있다. 목록이 지금 규모가 된 경위는 [`PROJECT_LOG.md`](PROJECT_LOG.md).
 
 한 CAS는 하나의 `core_category`에만 귀속된다. 여러 그룹의 성격을 동시에 갖는
 물질(예: 황산 — 기본성·교육·실무 전부 해당)은 더 기본적인 그룹으로 귀속시키고
@@ -140,37 +149,20 @@ CORE는 다음 다섯 축을 함께 만족시키는 집합이다. 하나의 축�
 아자이드화나트륨(26628-22-8, 아지도 화합물) · 아세틸렌(74-86-2, 알킨류)
 **목록** — [`data/collection/core_representative_chemicals.csv`](../data/collection/core_representative_chemicals.csv)
 
-## 4. project_173을 폐기하고 CORE 중심으로 전환한 이유
+## 4. 왜 코퍼스가 아니라 CORE가 선정 기준인가
 
-173종은 RAG 코퍼스로 동결된 집합이지 물질 선정 기준이 아니다. 이 둘을 Registry
-안에서 나란히 둘 이유가 없다:
+173종 코퍼스는 **수집 결과이지 선정 기준이 아니다.** "KOSHA MSDS §10에서 반응성 정보가
+확보됐는가"는 그 물질을 다뤄야 하는 이유가 아니라 다룰 수 있는 조건이다. 조건을 기준
+자리에 놓으면 데이터가 있는 쪽으로 목록이 끌려간다 — 실제로 그 목록에는 실험실에도
+사업장에도 없는 물질이 다수 들어 있으면서 물·염산 같은 기본 물질이 빠져 있었고, 외부에
+"이 프로젝트가 다루는 물질"로 제시했을 때 선정 논리를 한 문장으로 말할 수 없었다.
 
-- **선정 기준이 아니라 수집 결과였다.** 173종은 KOSHA MSDS §10에서 의미 있는
-  반응성 정보가 확보된 물질이 남은 결과다. "MSDS 수집에 성공했는가"는 그 물질을
-  다뤄야 하는 이유가 아니라 다룰 수 있는 조건이다. 조건을 기준 자리에 놓으면
-  데이터가 있는 쪽으로 목록이 끌려간다.
-- **목록의 성격을 설명할 수 없다.** 173종에는 실험실에도 사업장에도 없는 물질이
-  다수 포함돼 있는 반면, 물·염산 같은 기본 물질이 빠져 있다. 외부에 "이 프로젝트가
-  다루는 물질"로 제시했을 때 선정 논리를 한 문장으로 말할 수 없다.
-- **두 축을 한 테이블에 두면 기준이 흐려진다.** Registry에 CORE와 173이 공존하면
-  "이 물질은 왜 여기 있는가"의 답이 물질마다 달라진다. 판단 기준으로 재사용할 수
-  없는 목록은 기준 문서를 만들 수 없다.
+그래서 Registry의 소속 기준은 **CORE 다섯 그룹 하나로 통일**한다. 앱 선택 목록을
+"Registry ∪ 코퍼스"로 잡던 규칙도 폐기했다 — 코퍼스 소속은 선정 근거가 아니다.
+코퍼스는 사라지지 않고 원래 있어야 할 축(RAG 코퍼스 membership)으로 돌아간다(5절).
 
-따라서 **Registry의 소속 기준은 CORE 다섯 그룹 하나로 통일**하고, project_173은
-Registry의 별도 집합으로 유지하지 않는다. 173종 자체가 사라지는 게 아니라 원래
-있어야 할 축(RAG 코퍼스 membership)으로 돌아간다 — 아래 5절.
-
-2026-08-22에 한 걸음 더 갔다. 그때까지 앱의 선택 목록은 "Registry ∪ 173"이라
-Registry 심사를 거치지 않은 코퍼스 전용 96종이 서비스 대상에 남아 있었다. 그 96종을
-CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7종뿐이었고, 나머지 86종은
-어느 축으로도 설명되지 않았다(3종은 판정 보류). **출신 소스를 조회해 보니 96종 중
-`curated_curriculum` 근거를 가진 물질은 0종**이고 전량이 `reaction_frequency_high`
-(48) / `pool_supplement`(38) / `pool_replacement`·`_topup`(10) 즉 수집 편의로 채운
-분량이었다 — 생성 스크립트 자신이 "자동보충분은 그룹 소속만 검증된 것이며 개별
-물질이 실제 학부 실험에서 쓰이는지는 검증되지 않음"이라고 경고를 남겨 뒀다
-([`build_undergrad_target_list.py`](../archive/2026-08-08_selection_scripts/build_undergrad_target_list.py) 헤더).
-그래서 **"Registry ∪ 173" 규칙 자체를 폐기**하고 선정 기준을 Registry 단독으로 세웠다.
-재평가 전문은 [`results/registry_expansion_proposal_2026-08-22.csv`](../results/registry_expansion_proposal_2026-08-22.csv).
+이 판단의 경위와 재평가 전문은 [`PROJECT_LOG.md`](PROJECT_LOG.md) 2026-08-22 항목과
+[`results/registry_expansion_proposal_2026-08-22.csv`](../results/registry_expansion_proposal_2026-08-22.csv).
 
 ## 5. Registry · RAG corpus · CAMEO의 관계
 
@@ -194,33 +186,34 @@ CORE 5축으로 재평가한 결과 편입 근거를 지목할 수 있는 건 7�
   식별은 되게 하되 반응성 축은 정직하게 비워 둔다. 채울 수 있는 유일한 경로는
   **출처가 CAMEO 자신인 분류를 그대로 가져오는 것**이다 — PubChem Classification
   Browser의 `hid=86`(CAMEO Chemical Reactivity Classification)이며, 이는
-  [`DATA.md`](DATA.md)가 스크레이핑 대체 경로로 채택한 그 엔드포인트다. 구조를 보고
+  [`DATA.md`](DATA.md)가 공식 API 경로로 채택한 그 엔드포인트다. 구조를 보고
   "이건 알코올이니 8번"이라고 우리가 정하지 않는다. CAMEO에 분류가 없으면 비워 둔다.
   적재 스크립트는
   [`scripts/2_registry/map_registry_cameo_groups.py`](../scripts/2_registry/map_registry_cameo_groups.py)이고
   `source='pubchem_cameo_2026-08-22'`로 태그해 기존 `CAMEO_scrape` 행과 구분한다.
-- **앱의 물질 선택 목록은 Registry − KOSHA 미등재분이다.** 2026-08-22 기준
-  237 − 39 = **198종**. 과거의 "Registry ∪ 173" 규칙은 폐기됐다 — 코퍼스 소속은
-  선정 근거가 아니다. 미등재 제외는 상세정보를 줄 수 없는 물질을 고르게 하지
-  않으려는 **표시 단계 필터**이며 Registry 237종에서 빼는 게 아니다. 미등재 39종은
+- **앱의 물질 선택 목록은 Registry − KOSHA 미등재분이다.** 237 − 39 = **198종**.
+  미등재 제외는 상세정보를 줄 수 없는 물질을 고르게 하지 않으려는 **표시 단계
+  필터**이며 Registry 237종에서 빼는 게 아니다. 미등재 39종은
   전부 원소(초중원소·방사성 원소·란타넘족 일부)이고, getChemList를 CAS(searchCnd=1)/
   국문명·영문명(searchCnd=0) 3경로로 실조회해 전부 0건임을 확인했다
   (`data/collection/kosha_unlisted_39.csv`, `results/kosha_missing39_probe_2026-08-22.csv`).
-- **검색 인덱스 멤버십은 Registry와 별개로 `rag_corpus_membership`이 소유한다.**
-  현재 인덱스는 `corpus_tag in ('173','core')` = **262종 / §2·§10 557청크**다. 173 태그는
-  frozen 평가 재현용으로 그대로 두고, Registry 소속 물질은 `core` 태그로 편입한다
-  (2026-08-22에 두 차례: 청크는 있는데 인덱스에 없던 23종 → 27→50종, 이어서 청크 자체가
-  없던 39종을 청킹해 편입 → 50→**89종**). 편입은
-  [`seed_core_corpus.py`](../scripts/3_corpus/seed_core_corpus.py)가 "청크>0 AND CAMEO 그룹>0 AND
-  173 아님"으로 자동 판정한다.
+- **검색 코퍼스 멤버십은 Registry와 별개로 `rag_corpus_membership`이 소유한다.**
+  태그가 둘이고 용도가 다르다.
+  - `service` — **현재 서비스·평가의 코퍼스.** Registry·KOSHA·MSDS·CAMEO 4조건을 모두
+    채운 173종 / §2·§10 371청크. 정의 지점은
+    [`seed_service_corpus.py`](../scripts/3_corpus/seed_service_corpus.py)이고, 앱과
+    `run_cameo_full.py`가 이 태그만 본다.
+  - `173` · `core` — **과거 지표 재현용 인덱스**(합쳐 262종 / §2·§10 557청크). 서비스
+    경로에서 쓰지 않는다. `173`에는 Registry 심사를 거치지 않은 89종이 들어 있어,
+    검색 후보로 남겨 두면 서비스 불가 물질이 경쟁에 끼어든다.
+
 - **질의문은 registry 표준명에 별칭을 붙여 만든다.** 청크 헤더가 KOSHA 원문명으로
   렌더돼 있어(`페로센` vs `디시클로펜타디에닐 철`) 표준명만으로는 BM25가 어휘
   매칭을 못 한다. `app/streamlit_app.py`의 `query_term()`이 `rag_chunks.chemical_name`
   → KOSHA 원문명 → `name_en` → `aliases` 순으로 최대 3개를 덧붙인다. Registry는
   건드리지 않고 DB에 이미 있는 이름만 모은다.
-- **RAG 코퍼스 membership은 Registry가 건드리지 않는다.** 173종 코퍼스와 그
-  검색 지표는 `rag_corpus_membership`에서 그대로 유지된다. 이번 재편은 Registry
-  축만의 변경이며 RAG 코퍼스·평가셋·검색 인덱스는 대상이 아니다.
+- **코퍼스 membership을 Registry가 건드리지 않는다.** Registry에 물질을 넣고 빼는
+  일과 코퍼스·평가셋·인덱스를 바꾸는 일은 서로 다른 작업이다.
 
 ## 6. 서비스 계약 — 등록됐다고 다 서비스되는 게 아니다
 
@@ -232,138 +225,64 @@ Registry 등록은 식별을 보장할 뿐이다. 화면에서 그 물질이 실
 | ① | 식별 | `substance_registry` | 검색·선택 자체 불가 |
 | ② | KOSHA 등재 | `msds_chem_id_cache.chem_id` | 상세정보 불가 → **선택 목록에서 제외** |
 | ③ | MSDS 상세 §2/§3/§9/§10 | `msds_sections` | 상세 패널 공란 |
-| ④ | 검색 근거 청크 | `rag_chunks` + 인덱스 태그 | LLM이 §2/§10 원문 근거를 못 붙임 |
+| ④ | 근거 청크 | `rag_chunks` + `corpus_tag='service'` | LLM이 §2/§10 원문 근거를 못 붙임 |
 | ⑤ | CAMEO 그룹 매핑 | `chemicals` | **판정 자체가 Abstain** |
 
 ⑤가 없으면 `compatibility_engine.judge_pair_by_cas`가 무조건 Abstain을 반환한다.
 Registry에 있다는 이유로 LLM이 대신 판단하게 두지 않는다는 원칙(5절)이 여기서
 코드로 강제된다.
 
-### 2026-08-22 실측 이행률 (237종, 최종)
+### 현재 이행률 (237종)
 
-| 티어 | 종수 | 변화 | 상태 |
-|---|---:|---|---|
-| **A** 4조건 전부 충족 | 173 | 134 → 173 | 상세·검색·판정 전부 가능 |
-| **B1** 검색 근거 결여 | 0 | 8 → 39 → 0 | 해소 |
-| **C** 상세정보만 | 25 | 56 → 25 | CAMEO 매핑이 없어 조합은 Abstain |
-| **X** KOSHA 미등재 | 39 | — | 선택 목록 제외 |
-
-**서비스 대상 198종 중 CAMEO 매핑이 있는 173종은 전부 A티어다.** 판정 가능 쌍
-**14,878 / 19,503 = 76.3%**(확충 전 142종 / 10,011쌍 / 51.3%). 종별 대조표는
-[`results/registry237_service_contract_after_chunking_2026-08-22.csv`](../results/registry237_service_contract_after_chunking_2026-08-22.csv),
-재계산 스크립트는
-[`scripts/2_registry/service_contract_audit.py`](../scripts/2_registry/service_contract_audit.py).
-
-남은 C티어 25종은 원소 23종 + 탄산나트륨(497-19-8) + 염화나트륨(7647-14-5)이며
-**CAMEO에 데이터시트 자체가 없다.** 2026-08-23에 두 경로로 확인했다.
-
-- PubChem `hid=86`: 25종 전량 무응답(CID는 해결되나 CAMEO 분류 노드 없음)
-- CAMEO 자체 색인: `robots.txt`가 막지 않는 `/browse/{letter}` 19개 페이지, 대표명
-  **4,391건 전수 스캔** — 25종 전부 부재. 원소는 화합물만 있다(스트론튬 화합물 8종에
-  스트론튬 금속 없음, GERMANE에 GERMANIUM 없음, LANTHANUM/OSMIUM/PALLADIUM/THORIUM/
-  URANIUM/BORON/BISMUTH 전부 화합물만). SODIUM 대표명 130건에 SODIUM CARBONATE·
-  SODIUM CHLORIDE 없고, 별칭 후보(SODA ASH·SALT·HALITE·BRINE·COLUMBIUM=나이오븀
-  구명칭)도 없다. **대조군**: `PLATINUM`(`/chemical/25055`)은 존재하며 우리 DB에 이미
-  42번으로 매핑돼 있다 — CAMEO가 원소로 수록한 건 우리가 갖고 있다는 뜻이다
-
-근거는 CAMEO 자신의 수록 범위다. About 페이지가 "a database of **hazardous** chemical
-datasheets... thousands of **hazardous substances**"라고 명시한다. 염화나트륨·탄산나트륨은
-DOT/UN 분류가 없는 비위험물이고 란타넘족·귀금속 원소도 마찬가지다. 이름이 안 맞아서가
-아니라 대상이 아니다.
-
-**남은 한계**: `/browse`는 대표명만 보여준다. 별칭으로만 존재하는 데이터시트는 확인
-불가이며(별칭 검색 경로 `/search`는 robots 금지, `/react/{id}` 그룹 페이지도 소속 물질을
-나열하지 않는다), 확실히 닫으려면 CAMEO 오프라인 desktop program의 배포 데이터가
-필요하다. 위 대조군과 수록 범위 근거로 잔여 위험은 낮다고 판단해 여기서 종료한다. 유사 물질(염화칼륨 = 47번, 탄산칼슘 = 21번,
-세륨·이트륨 = 41번)로 유추해 채울 수는 있지만 그건 CAMEO의 판정이 아니라 우리의
-판단이므로 넣지 않는다 — 5절의 규칙 그대로다.
-
-**따라서 판정 가능 쌍 76.3%를 현재 coverage로 확정한다.** 목표는 CAMEO 100%가 아니다.
-
-### §10 근거가 얇은 물질을 코퍼스에서 빼지 않는 이유
-
-대조표에 `s10_specific_chars` 열이 있다. §10에서 정형문구(`타는 동안 열분해…`)와
-`자료없음`을 뺀 물질특이 정보량이며, 173 코퍼스 하위 5%가 27자다. **편입 게이트가
-아니라 표시용이다.**
-
-2026-08-22에 이 값을 코퍼스 편입 게이트로 쓰려다 폐기했다. 27자 미만을 자르면 이미
-편입된 `core` 50종 중 6종 — 과산화나트륨·삼산화크로뮴·중크롬산칼륨·칼륨·나트륨·
-카드뮴 — 이 먼저 걸러진다. 알칼리 금속과 크로뮴(VI)은 혼재보관 위험성평가가 가장
-다뤄야 할 물질이다. 즉 이 값이 재는 건 물질의 근거 유무가 아니라 **KOSHA가 그 물질의
-§10을 채웠는가**이며, 편입 여부를 가를 근거가 못 된다.
-
-§10이 얇아도 §2 청크는 정상 작동한다는 점도 근거다 — 검색 실측에서 gold_evidence는
-전량 §2이고 §10 청크는 전부 감점 대상이다([`RETRIEVAL.md`](RETRIEVAL.md),
-`retrieval.boilerplate_penalty_vector`).
-
----
-
-## 7. 2026-08-22 확장 기록 — 207 → 237
-
-두 갈래에서 30종을 편입했다.
-
-**① 코퍼스 전용 96종 재평가 → PROMOTE 7종**
-
-| CAS | 물질 | 축 | 근거 |
-|---|---|---|---|
-| `100-64-1` | 사이클로헥사논 옥심 | representative | 옥심 범주 커버 0종. 카프로락탐(105-60-2)의 전구체 |
-| `112-02-7` | 염화 헥사데실트라이메틸암모늄 | representative | 4급 암모늄 커버 0종(음이온 계면활성제만 보유) |
-| `8049-17-0` | 페로실리콘 | practical | 합금 0종. 제강 대량 보관, 습기와 반응해 포스핀·아르신 발생 |
-| `7487-94-7` | 염화수은(II) | practical | 수은 화합물 0종(원소만 보유). 시약장 상시 맹독물 |
-| `5470-11-1` | 하이드록실아민 염산염 | educational | 유기화학 케톤 유도체화 표준 시약 |
-| `104-15-4` | p-톨루엔설폰산 | educational | 유기화학 에스터화·아세탈화 산촉매. 고체 강산 |
-| `7220-79-3` | 메틸렌 블루 | educational | 지시약 0종. 산화환원 지시약 |
-
-**② CORE 공백 채우기 → 신규 23종** (Registry·코퍼스 어디에도 없던 물질)
-
-| 축 | 채운 공백 | 물질 |
-|---|---|---|
-| fundamental | 3대 무기산 완성, 유기용매 계열 전멸, 강산화성 산 | 인산 · IPA · 아세트산에틸 · 다이클로로메테인 · 아세토나이트릴 · THF · DMF · 과염소산 |
-| educational | 지시약 0종, 아스피린 합성 짝 | 페놀프탈레인 · 메틸오렌지 · 살리실산 |
-| practical | LPG·도료용제·탈산소제·부동액 0종 | 프로페인 · MEK · 자일렌 · 하이드라진 · 에틸렌글라이콜 |
-| representative | 12개 범주 커버 0종 중 7개 | 아닐린 · 나이트로벤젠 · 에피클로로하이드린 · 벤조일 클로라이드 · 다이메틸다이클로로실란 · 인화알루미늄 · 수소화나트륨 |
-
-편입 후보를 **96종 안에서만 고르지 않은 것이 핵심**이다. 범주 대표는 96종 밖에
-더 나은 후보가 있으면 그쪽을 택했다 — 금속 인화물은 Mg₃P₂(96종) 대신 인화알루미늄,
-클로로실란은 트리클로로(클로로메틸)실란 대신 다이메틸다이클로로실란. 데이터가 있는
-쪽으로 목록이 끌려가지 않게 하려는 것이며, 이는 4절이 project_173을 폐기한 이유와
-같은 원칙이다.
-
-신규 30종 전량 `getChemList` 실호출로 KOSHA 등재를 확인했고(30/30),
-`getChemDetail02/03/09/10`으로 상세 92행을 수집했다. 편입 근거 원본은
-[`data/collection/registry_additions_2026-08-22.csv`](../data/collection/registry_additions_2026-08-22.csv).
-
-**보류 6종** — 학부 커리큘럼 실측이 필요한 3종(p-벤조퀴논 `106-51-4` · p-나이트로페놀
-`100-02-7` · 트리클로로아세트산 `76-03-9`)과 대안·저우선순위 3종(에틸렌옥사이드
-`75-21-8` · 피리딘 `110-86-1` · 트라이에틸알루미늄 `97-93-8`).
-
-### ③ CAMEO 매핑 확충 → 142 → 173종
-
-미매핑 95종(원소 68 + 화합물 27)을 PubChem `hid=86`으로 전량 조회해 31종을 채웠다.
-CID 오식별을 막으려고 PubChem 분자식을 registry 분자식과 대조했고(원소는 registry가
-기호 `Br`, PubChem이 분자 `Br2`로 적으므로 원소 종류만 비교), 결과는
-[`results/registry_cameo_mapping_2026-08-22.csv`](../results/registry_cameo_mapping_2026-08-22.csv)에
-95종 전량 status와 함께 남겼다.
-
-| 상태 | 종수 | 내용 |
+| 티어 | 종수 | 상태 |
 |---|---:|---|
-| OK | 30 | PubChem이 CAMEO 분류를 반환 → 적재 |
-| MANUAL | 1 | 자일렌(1330-20-7) — 혼합 이성질체라 CID 없음. o/m/p 세 이성질체가 전부 `Hydrocarbons, Aromatic` 단독이라 그것만 지정 |
-| NO_CAMEO_GROUP | 63 | CID는 있으나 CAMEO 분류 없음 → 비워 둠 |
-| NO_CID | 1 | 테네신(87658-56-8) |
+| **A** 4조건 전부 충족 | 173 | 상세·검색·판정 전부 가능 |
+| **B1** 검색 근거 결여 | 0 | 없음 |
+| **C** 상세정보만 | 25 | 선택은 되지만 CAMEO 매핑이 없어 조합은 Abstain |
+| **X** KOSHA 미등재 | 39 | 선택 목록에서 제외 |
 
-**두 건은 조성 대조로 제외했다** — 메탄올(CH4O)에 딸려온 `Amines, Phosphines, and
-Pyridines`, 산화철(III)(Fe2O3)에 딸려온 `Sulfides, Inorganic`. 둘 다 해당 원소가
-분자에 아예 없다(PubChem CID 하나에 CAMEO 데이터시트 여럿이 엮이면서 생긴 것으로
-보인다). 판단이 아니라 조성 대조이며, 제외 사유는 스크립트의 `EXCLUDE` 상수와 리포트
-`note` 열에 남겼다.
+**판정 가능 쌍은 14,878 / 19,503 = 76.3%**다(선택 가능 198종 중 판정 가능 173종끼리의 쌍).
+종별 대조표는
+[`results/registry237_service_contract_after_chunking_2026-08-22.csv`](../results/registry237_service_contract_after_chunking_2026-08-22.csv),
+재계산은 [`scripts/2_registry/service_contract_audit.py`](../scripts/2_registry/service_contract_audit.py).
 
-기존 `CAMEO_scrape` 행은 하나도 건드리지 않았다. 추가된 48행 전량
-`source='pubchem_cameo_2026-08-22'`이므로 되돌리려면 그 태그만 지우면 된다.
+### C티어 25종을 채우지 않는 이유
+
+원소 23종 + 탄산나트륨(497-19-8) + 염화나트륨(7647-14-5)이며 **CAMEO에 데이터시트 자체가
+없다.** 두 경로로 확인했다.
+
+- PubChem `hid=86`: 25종 전량 무응답(CID는 찾아지지만 CAMEO 분류 항목이 없다)
+- CAMEO 자체 색인: 알파벳 목록 페이지 19장의 대표명 4,391건을 전부 훑었다 — 25종 전부
+  없었다. 원소는 화합물만 있다(스트론튬 화합물 8종은 있는데 스트론튬 금속은 없다).
+  **대조군** `PLATINUM`은 실제로 있고 우리 DB에 이미 42번으로 매핑돼 있다 — CAMEO가
+  원소로 수록한 것은 우리가 이미 갖고 있다는 뜻이다
+
+근거는 CAMEO가 밝힌 수록 범위다. About 페이지가 "위험(hazardous) 화학물질 데이터시트
+모음"이라고 적고 있고, 염화나트륨·탄산나트륨은 운송 위험물 분류가 없는 비위험물이다.
+이름이 안 맞아 못 찾은 게 아니라 애초에 수록 대상이 아니다.
+
+비슷한 물질(염화칼륨 = 47번, 탄산칼슘 = 21번)을 보고 유추해 채울 수도 있지만, 그건
+CAMEO의 판정이 아니라 우리의 추측이므로 넣지 않는다 — 5절의 규칙 그대로다.
+**따라서 판정 가능 쌍 76.3%를 현재 coverage로 확정한다. 목표는 100%가 아니다.**
+
+**남은 한계**: 알파벳 목록에는 물질마다 대표 이름 하나만 실린다. 대표명이 아닌 다른
+이름으로만 존재하는 데이터시트가 있다면 이 방법으로는 **확인할 수 없다.** 완전히 닫으려면
+CAMEO 오프라인 프로그램의 배포 데이터가 필요하다.
+
+### §10 근거가 얇다고 코퍼스에서 빼지 않는다
+
+대조표의 `s10_specific_chars` 열(§10에서 정형문구와 `자료없음`을 뺀 물질특이 정보량)은
+**표시용이고 편입 게이트가 아니다.**
+
+이 값이 재는 건 물질의 근거 유무가 아니라 **KOSHA가 그 물질의 §10을 채웠는가**다. 실제로
+이 값으로 자르면 과산화나트륨·삼산화크로뮴·중크롬산칼륨·칼륨·나트륨·카드뮴이 먼저 걸린다 —
+알칼리 금속과 크로뮴(VI)은 혼재보관 위험성평가가 가장 다뤄야 할 물질이다. 게다가 검색에서
+정답 근거는 전량 §2이고 §10 청크는 전부 감점 대상이라([`RETRIEVAL.md`](RETRIEVAL.md)),
+§10이 얇아도 §2 청크는 정상 작동한다.
 
 ---
 
-## 8. 물질 추가·삭제 기준
+## 7. 물질 추가·삭제 기준
 
 ### 추가
 
@@ -388,9 +307,11 @@ Pyridines`, 산화철(III)(Fe2O3)에 딸려온 `Sulfides, Inorganic`. 둘 다 �
    실패한다. 이미 등록된 물질은 캐시·수집분을 보고 알아서 skip한다.
 3. `python scripts/2_registry/build_substance_registry.py --write`로 반영한다(점검만 하려면
    `--write` 없이 실행).
-4. 검색 근거까지 주려면 `rag_corpus_membership`에 `corpus_tag='core'`로 등록한다.
-   인덱스 캐시는 청크 수가 달라지면 자동 재생성된다(`retrieval.embed_corpus` /
-   `build_bm25`가 길이 불일치를 검사).
+4. 근거 청크까지 주려면 `src/pipeline.py`로 청킹한 뒤
+   `python scripts/3_corpus/seed_service_corpus.py --write`를 돌린다 —
+   `substance_status`를 다시 계산해 4조건을 채운 물질을 `corpus_tag='service'`로
+   시딩한다. 인덱스 캐시는 청크 수가 달라지면 자동 재생성된다
+   (`retrieval.embed_corpus` / `build_bm25`가 길이 불일치를 검사).
 5. 판정까지 되게 하려면 `python scripts/2_registry/map_registry_cameo_groups.py`로 CAMEO 분류를
    조회한다(`--write` 없이 돌리면 리포트만). 미매핑 CAS만 대상으로 잡으므로 몇 번
    돌려도 기존 행을 덮어쓰지 않는다. CAMEO에 분류가 없으면 비워 두는 게 정답이다.
@@ -407,11 +328,13 @@ Pyridines`, 산화철(III)(Fe2O3)에 딸려온 `Sulfides, Inorganic`. 둘 다 �
 
 - **"쓸 일이 없어 보인다"는 삭제 사유가 아니다.** 그룹 귀속 근거가 무효가 됐음을
   보여야 한다(예: 교육과정에서 해당 실험이 사라짐, 대표 범주가 재편됨).
-- **MSDS·CAMEO 데이터가 없다는 이유로 삭제하지 않는다.** 데이터 가용성은 식별
-  축의 문제가 아니다. 이 이유로 빼기 시작하면 project_173에서 벗어난 의미가 없어진다.
-- **173종 RAG 코퍼스에 속한 물질의 질의 이름(`rag_chunks.chemical_name`)은
-  변경·삭제하지 않는다.** 한 글자만 바뀌어도 동결된 검색 지표(쌍 질의 2,160건 기준)가
-  무효가 된다. 자가검증(`check_frozen_173`)이 이를 강제한다.
+- **MSDS·CAMEO 데이터가 없다는 이유로 삭제하지 않는다.** 데이터 가용성은 식별 축의
+  문제가 아니다. 이 이유로 빼기 시작하면 4절이 폐기한 "데이터가 있는 쪽으로 목록이
+  끌려가는" 상태로 되돌아간다.
+- **구 평가 코퍼스(`corpus_tag='173'`)에 속한 물질의 질의 이름
+  (`rag_chunks.chemical_name`)은 변경·삭제하지 않는다.** 한 글자만 바뀌어도 그
+  코퍼스로 낸 지표가 무효가 된다. `build_substance_registry.py`의 자가검증
+  `check_frozen_173()`이 이를 강제한다.
 - 삭제 시에도 CSV → `--write` → 자가검증 순서를 거친다.
 
 ### 식별 정보 유지 규칙

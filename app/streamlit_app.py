@@ -1,11 +1,14 @@
-"""Demo UI: 물질 선택 -> CAMEO 판정 확정 -> MSDS 검색(§2/§10) -> LLM 설명.
+"""서비스 UI: 물질 선택 -> CAMEO 판정 확정 -> MSDS 근거 직접조회(§2/§10) -> LLM 설명.
 
-파이프라인 구성은 run_cameo_full.py(최종 채택본)와 동일하게 맞춘다 —
+파이프라인 구성은 run_cameo_full.py(--context pair)와 동일하게 맞춘다 —
 프롬프트(run_cameo_context_pilot.SYSTEM_PROMPT/build_prompt), CAMEO 컨텍스트
-(cameo_group_lookup.format_context(detailed=True)), 검색 설정(bge-m3-ko / section /
-§2·§10 / hybrid RRF + §10 penalty / top-10), LLM 파라미터(generate_baseline 상수)를
-전부 그대로 재사용한다. 여기서 새로 하는 건 UI와 **live 검색**뿐이다(배치는
-frozen_retrieval_top10.jsonl을 쓰지만 임의 쌍은 그 안에 없으므로 그때그때 검색).
+(cameo_group_lookup.format_context(detailed=True)), 근거 수집 규칙(corpus_tag='service'의
+§2·§10을 두 CAS로 직접 조회하고 정렬을 고정), LLM 파라미터(generate_baseline 상수)를
+전부 그대로 재사용한다. 여기서 새로 하는 건 UI뿐이다.
+
+**근거 수집에 검색을 쓰지 않는다**(2026-08-29). 사용자가 목록에서 고르므로 CAS가 이미
+정해져 있고, 정답 근거는 정의상 그 두 물질의 §2다 - 사유와 실측은 msds_context()의
+docstring과 docs/RETRIEVAL.md 5절. retrieve()는 자유 문장 질의를 위해 남겨 둔다.
 
 UI는 st.set_page_config 이후 커스텀 CSS(_inject_css)로 데모/AI-생성 느낌을 지우고
 "현업 EHS 대시보드"에 가까운 톤(중립 배경 + 단일 accent + 뱃지형 판정 + 히트맵
@@ -366,7 +369,9 @@ def embedder():
 
 @st.cache_data
 def substances() -> dict[str, str]:
-    """CAS -> 한글 물질명(173 + core). rag_chunks 기준 = 평가셋이 쓴 이름과 동일."""
+    """CAS -> 한글 물질명. 서비스 코퍼스(corpus_tag='service') 안에서 rag_chunks가
+    쓰는 이름 그대로다 - 평가셋 질의문과 같은 이름을 유지하려고 registry 표준명으로
+    덮지 않는다(표시명은 main()의 display_names가 따로 만든다)."""
     con = sqlite3.connect(DB_PATH)
     rows = con.execute(
         "select rc.cas_number, rc.chemical_name from rag_chunks rc "
@@ -1634,7 +1639,7 @@ if __name__ == "__main__":
 
         # 검색 대상 필터: KOSHA 미등재 물질은 선택 목록에서 빠지되 registry에는 남는다.
         k = kosha_info()
-        known = set(reg)   # 선정 기준은 Registry 단독 (Registry ∪ 173 규칙 폐기)
+        known = set(reg)   # 선정 기준은 Registry 단독 (docs/REGISTRY.md 4절)
         unlisted = {c for c in known if not (k.get(c) or {}).get("chem_id")}
         assert unlisted, "미등재 집합이 비어있음(캐시 미적재?)"
         assert all(msds_detail(c).empty for c in list(unlisted)[:3]), "미등재인데 상세정보가 있음"

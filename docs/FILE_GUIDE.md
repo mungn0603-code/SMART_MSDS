@@ -4,9 +4,6 @@
 엔트리포인트(**파이프라인 단계별 폴더**), `tests/`는 자가검증, `app/`은 Streamlit UI,
 `data/`는 입력, `results/`는 **최종 결과만**, `archive/`는 대체·폐기된 것(폴더마다 `NOTES.md`).
 
-> **최종 갱신 2026-08-30 — 저장소 재구성.** `scripts/`를 파이프라인 6단계 폴더로 나누고,
-> 중간 실험 산출물과 더 이상 쓰이지 않는 입력 데이터를 `archive/`로 옮겼다. 삭제한 파일은 없다.
-
 ```
 MSDS/
 ├─ app/           Streamlit UI (진입점)
@@ -55,7 +52,7 @@ MSDS/
 | 파일 | 역할 |
 |---|---|
 | `build_substance_registry.py` | `core_*.csv` 5종 → `substance_registry` 재생성(drop 후 전량 적재) + 자가검증([`REGISTRY.md`](REGISTRY.md)) |
-| `map_registry_cameo_groups.py` | 미매핑 CAS를 PubChem `hid=86`으로 조회해 CAMEO 그룹 적재(`--write`). 분자식 대조로 CID 오식별 차단([`REGISTRY.md`](REGISTRY.md) 7절) |
+| `map_registry_cameo_groups.py` | 미매핑 CAS를 PubChem `hid=86`으로 조회해 CAMEO 그룹 적재(`--write`). 분자식 대조로 CID 오식별 차단([`DATA.md`](DATA.md) 2절) |
 | `pubchem_verify_groups.py` | PubChem 경로로 CAS→CAMEO 그룹 재검증([`DATA.md`](DATA.md)). ⚠ argparse 없음 |
 | `build_chemical_group_membership.py` | CAS→CAMEO 그룹 매핑 테이블 시드. 입력 CSV는 `archive/01_collection/`. ⚠ `__main__` 가드 없음 — 실행하면 즉시 DB에 쓴다 |
 | `service_contract_audit.py` | 서비스 계약 5조건 재대조 + A/B1/C/X 티어 재계산([`REGISTRY.md`](REGISTRY.md) 6절) |
@@ -66,7 +63,7 @@ MSDS/
 | `seed_reactivity_reference.py` | `schema.sql`로 DB를 만들고 68×68 매트릭스를 적재. ⚠ argparse 없음 — **실행하면 DB를 재생성한다** |
 | `seed_self_reactivity.py` | 자기반응성 68행 UPDATE. ⚠ argparse 없음 |
 | `seed_service_corpus.py` | `substance_status` VIEW 생성 + `corpus_tag='service'` 시딩. **서비스 범위의 정의 지점** |
-| `seed_core_corpus.py` | 청크·CAMEO 그룹이 둘 다 있는 Registry 물질을 `corpus_tag='core'`로 편입([`REGISTRY.md`](REGISTRY.md) §8) |
+| `seed_core_corpus.py` | 청크·CAMEO 그룹이 둘 다 있는 Registry 물질을 `corpus_tag='core'`로 편입. **평가 재현용 인덱스 쪽**이며 서비스 코퍼스는 `seed_service_corpus.py`가 정의한다 |
 | `build_service_embedding_cache.py` | service 태그 문서 임베딩 캐시를 기존 캐시에서 조립(전량 재인코딩 100분 회피) |
 
 ### `4_retrieval/` — 평가셋·검색 평가·입력 고정
@@ -86,7 +83,7 @@ MSDS/
 ### `6_eval/` — 채점·요약·리포트
 | 파일 | 역할 |
 |---|---|
-| `reparse_verdict_line.py` | 판정줄 재파싱 — **확정 지표는 이 출력 기준**([`GENERATION.md`](GENERATION.md)) |
+| `reparse_verdict_line.py` | 자유 텍스트(v7) 답변의 판정줄 재파싱. structured output(v8b)은 판정줄을 코드가 조립하므로 이 단계가 필요 없다 |
 | `summarize_cameo_full.py` | 전수 결과 요약. **지표 정의의 단일 출처는 이 파일 docstring** |
 | `score_answer_metrics.py` | 본문 기준 지표를 기존 결과에 사후 계산(LLM 호출 없음). `substance_confused` 0%가 측정 결과가 아니라 구조가 강제한 값임을 드러내려고 만든 것. ⚠ argparse 없음 |
 | `analyze_generation.py` | Retrieval×Generation 분리분석(4-bucket, [`GENERATION.md`](GENERATION.md)). ⚠ argparse 없음 |
@@ -115,12 +112,12 @@ MSDS/
 
 | 항목 | 내용 | 읽는 코드 |
 |---|---|---|
-| `reactivity_reference.db` | SQLite 진실원본(15테이블 + `substance_status` VIEW) | 앱·전 스크립트 |
+| `reactivity_reference.db` | SQLite 진실원본(14테이블 + `substance_status` VIEW) | 앱·전 스크립트 |
 | `schema.sql` | DB 스키마 원본 | `seed_reactivity_reference.py` |
 | `collection/core_*.csv` (5종) | **Registry 237종의 기준 목록** — CORE 5축별 물질과 편입 근거 | `build_substance_registry.py` |
 | `collection/_frozen_substances_baseline.json` | Registry 자가검증 기준선 | `build_substance_registry.py` |
-| `collection/registry_core207.csv` | 확장 이전 CORE 207종 — 물질별 origin 판별 | `service_contract_audit.py`, 앱 |
-| `collection/registry_additions_2026-08-22.csv` | 207→237 확장분 30종의 편입 근거 | [`REGISTRY.md`](REGISTRY.md) §7 |
+| `collection/registry_core207.csv` | 확장 이전 CORE 목록 — 물질별 origin 판별에 쓰인다 | `service_contract_audit.py`, 앱 |
+| `collection/registry_additions_2026-08-22.csv` | 확장분 30종의 편입 근거(참조 전용) | — |
 | `collection/kosha_unlisted_39.csv` | KOSHA MSDS 미등재 39종 — 앱 선택 목록에서 제외 | 앱 |
 | `collection/undergrad_target_chemicals.csv` | 수집 대상 기본 목록 | `kosha_msds_collector.py`, `pubchem_verify_groups.py` |
 | `collection/pubchem_verification_report{,_full}.csv` | PubChem 재검증 입출력 | `pubchem_verify_groups.py` |
@@ -145,12 +142,9 @@ MSDS/
 | KOSHA 상태 | `kosha_registry_lookup.csv` | registry 전체 등재 상태 스냅샷 |
 | | `kosha_missing39_probe_2026-08-22.csv` | 미등재 39종 3경로 실조회 근거(전부 0건) |
 
-**문서의 Generation 확정 지표는 v6 기준이고 그 산출물은 archive에 있다.**
-`summarize_cameo_full.py`를 인자 없이 실행하면 거기를 읽어 문서와 같은 수치를 낸다.
-
 주의: `run_cameo_full.py`의 출력 슬롯은 `--tag` 미지정 시
 `results/generation_cameo_full.jsonl` / `eval_cameo_full.jsonl`로 고정이다. 태그 없이
-재실행하면 그 이름의 파일이 `results/`에 **새로** 생긴다 — archive의 v6 산출물과 다른 파일이다.
+재실행하면 그 이름의 파일이 `results/`에 **새로** 생긴다 — 기존 산출물과 다른 파일이다.
 
 ## docs/ — 표준 문서 9종
 
@@ -169,7 +163,7 @@ MSDS/
 | `chemical_selection_2026-08-08/` | 화학물질 선정 재설계 이전 시행착오 |
 | `2026-08-08_selection_scripts/` | 물질선정 시절 1회성 스크립트 14종 + 전용 입력 CSV 3종 |
 | `2026-08-17_baseline/` | `corpus_tag='173'` 코퍼스 확정 지표와 산출물 |
-| `2026-08-29_generation_prompt_history/` | Generation 세대별 산출물 — `v6/`(문서 확정 지표) · `v7/` · `_v8_verdict_regression/` · `_v9_regression/` |
+| `2026-08-29_generation_prompt_history/` | Generation 세대별 산출물. `v7/`은 **현행 프롬프트의 산출물**이고(프롬프트 자체는 앱이 쓴다), `v6/`·`_v8_verdict_regression/`·`_v9_regression/`은 대체·폐기분이다 |
 | `2026-08-30_superseded/` | 중간 Retrieval baseline · Registry 대조 1~3판 · 코드가 더는 읽지 않는 입력 데이터 |
 | `superseded_docs/` | 표준 문서에 흡수된 원본 상세 문서(decisions.md 등) |
 | `design_docs/` | 설계 철학 자체가 교체되며 폐기된 문서 |
