@@ -210,6 +210,41 @@ div[data-testid="stVerticalBlockBorderWrapper"] {
   text-transform: uppercase; letter-spacing: .04em;
 }
 
+/* 물질 배치 판정 - <details> 아코디언 3개. 화면에서만 쓰고 DOCX/PDF 는 소제목+불릿이다. */
+.mv-placement details {
+  border: 1px solid var(--mv-border); border-radius: 8px; background: var(--mv-surface);
+  padding: .55rem .85rem; margin-bottom: .45rem;
+}
+.mv-placement summary {
+  cursor: pointer; font-weight: 700; font-size: .86rem; color: var(--mv-text);
+  list-style: none;
+}
+.mv-placement summary::marker, .mv-placement summary::-webkit-details-marker { display: none; }
+.mv-placement summary::before { content: "▸ "; color: var(--mv-text-faint); }
+.mv-placement details[open] > summary::before { content: "▾ "; }
+.mv-placement details[open] > summary { margin-bottom: .5rem; }
+.mv-placement ul { margin: .2rem 0 .6rem 0; padding-left: 1.1rem; }
+.mv-placement li { font-size: .85rem; line-height: 1.75; color: var(--mv-text); }
+.mv-placement p { font-size: .85rem; line-height: 1.7; margin: .1rem 0 .3rem 0; }
+.mv-place-sub {
+  font-weight: 700; font-size: .78rem; color: var(--mv-text-muted);
+  margin: .6rem 0 .1rem 0 !important; letter-spacing: .02em;
+}
+
+/* 선택한 물질쌍 패널 - 한글 풀이를 한 곳에 모았다(종전에는 좌/우로 나뉘어 있었다). */
+.mv-pair-title {
+  font-family: "JetBrains Mono", SFMono-Regular, Consolas, monospace !important;
+  font-size: .82rem; color: var(--mv-text); margin: .55rem 0 .1rem 0;
+}
+.mv-pair-kr {
+  background: var(--mv-accent-weak); border-left: 3px solid var(--mv-accent);
+  border-radius: 6px; padding: .55rem .8rem; margin: .5rem 0 .6rem 0;
+}
+.mv-pair-group { font-weight: 700; font-size: .82rem; margin: .35rem 0 .1rem 0 !important; }
+.mv-pair-kr p:first-child { margin-top: 0 !important; }
+.mv-pair-kr ul { margin: 0 0 .1rem 0; padding-left: 1.05rem; }
+.mv-pair-kr li { font-size: .8rem; line-height: 1.6; color: var(--mv-text-muted); }
+
 /* FINAL REPORT 본문(LLM 마크다운)의 섹션 계층 - "## n. 제목" 헤더는 앱 전체에서
    이 보고서에만 나오므로 전역 선택자로 걸어도 다른 화면과 안 겹친다. */
 [data-testid="stMarkdownContainer"] h2 {
@@ -416,17 +451,80 @@ def cameo_mapped() -> set[str]:
     return out
 
 
-def retrieve(query: str) -> list[dict]:
+# ── 근거 수집: 두 경로 ──────────────────────────────────────────────────────
+# 현재 서비스는 사용자가 드롭다운에서 CAS를 고르는 closed-world 질의라, 근거가
+# 결정론적으로 정해진다 -> msds_context() (production path. 쌍은 pair_context() 래퍼).
+# retrieve()는 그 전제가 깨질 때를 위한 검색 계층 진입점이다. 지우지 않는 이유는
+# 아래 docstring에 적었다. 두 함수는 역할이 다르며 서로를 호출하지 않는다.
+
+
+def retrieve(query: str, topk: int = TOPK) -> list[dict]:
+    """자유 텍스트 질의 -> §2·§10 하이브리드 검색 top-k. **현재 서비스 경로가 아니다.**
+
+    근거 수집은 msds_context()가 처리한다. 이 함수를 남겨두는 건 다음 전제가 깨지는
+    순간 바로 필요해지기 때문이다 — 셋 다 지금은 성립하지 않는다:
+      - 입력이 CAS가 아니라 자유 문장이 되는 경우(물질을 문장에서 찾아내야 함)
+      - §2·§10 밖의 섹션을 근거로 써야 하는 경우
+      - 물질·청크가 늘어 한 물질 안에서도 골라야 하는 경우(현재는 물질당 2.1청크)
+
+    죽은 코드가 아니다: `--check`의 질의 별칭 확장 테스트가 이 경로를 실제로 태워
+    검증한다(페로센 질의가 자기 청크를 되찾는지). 검색이 깨지면 그 단정이 깨진다.
+
+    측정된 검색 지표(docs/RETRIEVAL.md)는 이 계층의 것이고, run_ab.py /
+    freeze_retrieval.py가 src/retrieval.py를 직접 써서 낸다 — 이 함수를 거치지 않는다.
+    """
     corpus, index, bm25, penalty = search_index()
     qvec = embedder().encode([query], normalize_embeddings=True, convert_to_numpy=True).astype("float32")
     d = R.dense_rank(index, qvec, CAND_K)
     b = R.bm25_rank(bm25, [query], CAND_K)
-    fused = R.rrf_fuse([d, b], TOPK, penalty=penalty)[0]
+    fused = R.rrf_fuse([d, b], topk, penalty=penalty)[0]
     return [
         {"chunk_id": corpus.chunk_ids[i], "text": corpus.texts[i], **corpus.meta[i]}
         for i in fused
         if i >= 0
     ]
+
+
+def msds_context(cas_list: list[str]) -> list[dict]:
+    """**서비스 기본 경로.** 주어진 물질들이 가진 §2·§10 청크 전부. 검색하지 않는다(2026-08-29).
+
+    왜 검색을 안 쓰나: gold_evidence는 정의상 대상 물질의 §2다. 그리고 이 함수는 CAS를
+    이미 인자로 받는다 - 검색기는 이미 결정론적으로 아는 것을 다시 찾고 있었다.
+    코퍼스는 173종 371청크라 물질당 청크가 2개뿐이고, 그래서 top-k를 키우면 늘어나는
+    건 전부 남의 물질이다.
+
+    실측(service 2,240쌍질의 기준, 쌍당 평균):
+      방식                  청크    정답확보   제3물질   프롬프트   질의임베딩
+      분해 top-5/측         9.62    0.9888    60.1%    8,570자    461ms
+      분해 top-3/측         5.93    0.9821    44.5%    5,326자    461ms
+      CAS 직접조회(이 함수)  4.29    1.0000     0.0%    3,170자      0ms
+
+    정렬을 고정한다 - 프롬프트의 [근거 n] 인용 번호가 이 순서에 대응한다.
+    scripts/run_cameo_full.py의 pair_chunk_ids()와 같은 규칙이다(Generation 평가 경로).
+    """
+    order = {}
+    for cas in cas_list:
+        order.setdefault(cas, len(order))
+    holes = ",".join("?" * len(order))
+    con = sqlite3.connect(DB_PATH)
+    rows = con.execute(
+        "select c.chunk_id, c.text, c.cas_number, c.section, c.chemical_name from rag_chunks c "
+        "join rag_corpus_membership m on m.cas_number = c.cas_number "
+        f"where m.corpus_tag = '{SERVICE_CORPUS_TAG}' and c.granularity = 'section' "
+        f"and c.section in (2, 10) and c.cas_number in ({holes})",
+        tuple(order),
+    ).fetchall()
+    con.close()
+    rows.sort(key=lambda r: (order.get(r[2], 9), r[3], r[0]))
+    return [
+        {"chunk_id": r[0], "text": r[1], "cas_number": r[2], "section": r[3], "chemical_name": r[4]}
+        for r in rows
+    ]
+
+
+def pair_context(cas_a: str, cas_b: str) -> list[dict]:
+    """쌍 전용 래퍼. 쌍 설명(explain)은 여기를 통해 들어온다."""
+    return msds_context([cas_a, cas_b])
 
 
 MAX_QUERY_ALIASES = 3  # 질의문(=LLM 프롬프트에도 들어감) 가독성 상한
@@ -475,16 +573,17 @@ def query_term(cas: str, name: str) -> str:
 
 
 def explain(cas_a: str, cas_b: str, name_a: str, name_b: str) -> dict:
-    """쌍 하나에 대한 전체 경로: CAMEO 조회 -> MSDS 검색 -> LLM 설명.
+    """쌍 하나에 대한 전체 경로: CAMEO 조회 -> MSDS 근거 수집 -> LLM 설명.
 
-    질의문은 query_term으로 별칭을 붙여 만든다. frozen 검색 지표를 낸 경로는
-    run_ab.py / freeze_retrieval.py로 별도이고 여기를 거치지 않는다."""
+    근거는 pair_context()로 두 CAS의 §2·§10을 직접 조회한다(검색 안 함, 사유는 거기 주석).
+    질의문은 LLM에게 줄 질문 문장이라 query_term으로 별칭을 붙인 종전 형태 그대로 둔다.
+    검색 경로(run_ab.py / freeze_retrieval.py)의 지표는 여기를 거치지 않는다."""
     query = QUERY_TEMPLATE.format(a=query_term(cas_a, name_a), b=query_term(cas_b, name_b))
     con = sqlite3.connect(DB_PATH)
     cameo = CL.lookup(con.cursor(), cas_a, cas_b)
     con.close()
     cameo_ctx = CL.format_context(cameo, name_a, name_b, detailed=True)
-    contexts = retrieve(query)
+    contexts = pair_context(cas_a, cas_b)
     prompt = build_prompt(query, cameo_ctx, contexts)
     return {"query": query, "cameo": cameo, "cameo_ctx": cameo_ctx, "contexts": contexts, "prompt": prompt}
 
@@ -533,69 +632,60 @@ def verdict_rows(verdict, names: dict[str, str]) -> list[dict]:
     return rows
 
 
-def render_pair_detail(v) -> None:
-    """PAIR INSPECTOR 오른쪽 상세 - CAMEO 판정만으로 즉시 표시(LLM 호출 없음).
-    근거는 §2/§10 MSDS가 아니라 CAMEO 68그룹 반응성 매트릭스(참고자료 등급)다 -
-    쌍을 클릭할 때마다 검색/LLM을 태우지 않기 위한 의도적 선택."""
-    st.markdown(badge_html(v.category), unsafe_allow_html=True)
+def render_pair_detail(v, name_a: str, name_b: str) -> None:
+    """선택한 쌍의 전부 - 판정 / 한글 풀이 / 근거 원문(접힘).
 
-    st.markdown('<div class="mv-section-label">원인</div>', unsafe_allow_html=True)
-    for r in v.reasons:
-        st.caption(f"- {r}")
-    for n in v.abstain_notes:
-        st.caption(f"! {n}")
-
-    st.markdown('<div class="mv-section-label">근거</div>', unsafe_allow_html=True)
+    종전에는 같은 쌍을 왼쪽(한글 풀이)과 오른쪽(영문 원인·근거)에 나눠 그렸다. 한 쌍을
+    보려고 화면 양끝을 오가야 해서 한 곳으로 합쳤다. 영문 원문은 아래 아코디언에 남긴다.
+    근거는 MSDS 가 아니라 CAMEO 68그룹 매트릭스이며, 쌍을 누를 때마다 검색·LLM 을 태우지
+    않는 것은 의도된 선택이다."""
     st.markdown(
-        f'<span class="mv-grade-tag">CAMEO 반응성 그룹 매트릭스 · {v.evidence_grade}</span>',
+        badge_html(v.category)
+        + f'<div class="mv-pair-title">{name_a} × {name_b}</div>',
         unsafe_allow_html=True,
     )
+    for n in v.abstain_notes:
+        st.markdown(f'<div class="mv-abstain-note">{n}</div>', unsafe_allow_html=True)
 
-    if v.group_pair_details:
-        with st.expander("근거 상세 →"):
-            for d in v.group_pair_details:
-                extra = ", ".join(
-                    x for x in (
-                        d.description,
-                        f"위험코드={d.hazard_codes}" if d.hazard_codes else None,
-                        f"발생가스={d.gas_products}" if d.gas_products else None,
-                    ) if x
-                )
-                st.markdown(f"**{d.group_a_name} × {d.group_b_name}** — {d.category}")
-                if extra:
-                    st.caption(extra)
-
-
-def render_pair_detail_kr(v, name_a: str, name_b: str) -> None:
-    """PAIR INSPECTOR에서 고른 쌍의 CAMEO 그룹/위험코드/발생가스를 한글로 풀어
-    화면 왼쪽에 보여준다. 영어를 모르는 사용자를 위한 보조 패널 - 판정 로직은
-    그대로, kr_glossary 정적 사전으로 용어만 번역(LLM 호출 없음)."""
-    st.markdown('<div class="mv-section-label" style="margin-top:0;">쉬운 설명</div>', unsafe_allow_html=True)
     if not v.group_pair_details:
-        st.caption(f"{name_a} × {name_b}: 참고할 CAMEO 그룹 근거가 없습니다.")
+        st.caption("참고할 CAMEO 그룹 근거가 없습니다.")
         return
 
-    verdict_kr = CATEGORY_LABEL.get(v.category, v.category).split(" · ")[0]
-    st.markdown(
-        f'<div class="mv-kr-panel"><b>{name_a}</b>와(과) <b>{name_b}</b>는 '
-        f'<b>{verdict_kr}</b>(으)로 분류됩니다.</div>',
-        unsafe_allow_html=True,
-    )
-    seen = set()
+    seen, blocks = set(), []
     for d in v.group_pair_details:
         key = (d.group_a_name, d.group_b_name)
         if key in seen:
             continue
         seen.add(key)
-        ga_kr, gb_kr = KRG.kr_group(d.group_a_name), KRG.kr_group(d.group_b_name)
-        st.markdown(f"- **{ga_kr}** 계열과 **{gb_kr}** 계열의 조합")
-        hz_kr = KRG.kr_codes(d.hazard_codes, KRG.HAZARD_KR)
-        gp_kr = KRG.kr_codes(d.gas_products, KRG.GAS_KR)
-        if hz_kr:
-            st.caption("위험: " + "; ".join(hz_kr))
-        if gp_kr:
-            st.caption("발생 가능 물질: " + "; ".join(gp_kr))
-    st.caption("※ 이 설명은 CAMEO 68그룹 매트릭스 용어를 그대로 옮긴 것으로, 단독 최종 판단 근거로 쓸 수 없습니다.")
+        hz = KRG.kr_codes(d.hazard_codes, KRG.HAZARD_KR)
+        gp = KRG.kr_codes(d.gas_products, KRG.GAS_KR)
+        rows = "".join(f"<li>{x}</li>" for x in hz)
+        if gp:
+            rows += "<li>발생 가능 물질: " + ", ".join(gp) + "</li>"
+        blocks.append(
+            f'<p class="mv-pair-group">{KRG.kr_group(d.group_a_name)} × '
+            f'{KRG.kr_group(d.group_b_name)}</p>'
+            + (f"<ul>{rows}</ul>" if rows else "")
+        )
+    st.markdown('<div class="mv-pair-kr">' + "".join(blocks) + "</div>", unsafe_allow_html=True)
+    st.markdown(
+        f'<span class="mv-grade-tag">CAMEO 반응성 그룹 매트릭스 · {v.evidence_grade}</span>',
+        unsafe_allow_html=True,
+    )
+
+    with st.expander("근거 원문(영문) →"):
+        for r in v.reasons:
+            st.caption(r)
+        for d in v.group_pair_details:
+            st.markdown(f"**{d.group_a_name} × {d.group_b_name}** — {d.category}")
+            extra = ", ".join(x for x in (
+                d.description,
+                f"hazard={d.hazard_codes}" if d.hazard_codes else None,
+                f"gas={d.gas_products}" if d.gas_products else None,
+            ) if x)
+            if extra:
+                st.caption(extra)
+    st.caption("※ CAMEO 68그룹 매트릭스 용어를 그대로 옮긴 것으로, 단독 최종 판단 근거로 쓸 수 없습니다.")
 
 
 # ---------- 관리자(ADMIN) 읽기 전용 대시보드 ----------
@@ -648,203 +738,308 @@ def render_admin_panel() -> None:
 
 
 # ---------- 최종 종합 보고서 (신규 LLM 호출 1회, 쌍별 재검색 없음) ----------
-# 요구사항: 줄글 중심 보고서가 아니라 KPI/Table/Badge/Callout 중심의 정형화된
-# 보고서. 숫자(전체 건수, 판정별 건수/비율)는 미리 계산해 프롬프트에 "그대로
-# 옮겨쓸 것"으로 못박아 LLM이 통계를 잘못 계산하는 걸 막는다 - 판정 로직/사실은
-# 바뀌지 않고 프레젠테이션만 바뀌는 게 목표라 숫자 정확도가 특히 중요하다.
+# v2(2026-08-29): "부적합 목록 + 정성 서술" 에서 "관리 그룹 중심" 으로 재편했다.
+# 코드가 결정론적으로 확정하는 것은 셋뿐이다 - 관리 그룹 구성, 판정, 근거 번호.
+# 문장은 전부 LLM 이 쓴다. 숫자(건수/비율)는 미리 계산해 "그대로 옮길 것"으로 못박아
+# LLM 이 통계를 잘못 계산하는 걸 막는다.
+
+# 5절이었던 고정 문구. LLM 에게 복사시키면 복사를 틀릴 기회만 생기므로 코드가 붙인다
+# (화면 + DOCX + PDF 세 경로 공통).
+JUDGEMENT_BASIS = (
+    "본 판정은 CAMEO 68그룹 반응성 매트릭스 대조 결과([참고자료] 등급)에 기반하며, "
+    "단독으로 최종 위험성평가의 근거로 사용할 수 없다. 실제 취급·저장 판단에는 KOSHA "
+    "MSDS 원문과 산업안전보건법상 요구사항, 전문가 검토를 반드시 병행해야 한다."
+)
+
+# 표 셀에 넣을 짧은 위험 라벨. kr_glossary.HAZARD_KR 은 "쉬운 설명" 패널용 완전한 문장이라
+# 표에 넣으면 같은 문장이 행마다 반복돼 보고서가 장황해진다(실측). 강도 표현("~일 수 있음")은
+# 범례가 아니라 판정이 이미 담고 있으므로 여기서는 명사구로만 쓴다.
+HAZARD_SHORT = {
+    "C": "부식성 생성물", "E": "폭발성 생성물", "F": "인화성 생성물",
+    "G": "기체 발생·압력 상승", "NR": "알려진 위험 반응 없음", "R1": "발열",
+    "R2": "가열 시 불안정", "R3": "격렬·폭발적 반응", "R4": "격렬한 중합",
+    "T": "독성 생성물", "UR": "위험 가능(근거 불충분)",
+}
 
 FINAL_REPORT_INSTRUCTION = """
-역할: 화학물질 안전관리자가 빠르게 판독하는 정형 안전성 분석 보고서를 작성한다.
-서술형 장문이 아니라 KPI 표 + 판정 표 + 종합 해석 + 제약 고지로 구성한다.
+역할: 화학물질을 어떻게 나눠 보관·관리할지 보여주는 짧은 보고서에서 **두 개 절만** 쓴다.
+배치 판정과 데이터 제약은 시스템이 뒤에 직접 붙이므로 쓰지 않는다.
 
 # 입력 데이터 계약
-각 조합 레코드는 다음 필드를 갖는다. 없는 필드는 "확인되지 않음"으로 쓰고 추정하지 않는다.
-- substance_a, substance_b : 물질명
-- verdict : 부적합 | 주의 | 적합 | 판단 보류
-- deciding_group_pair : 최악케이스 집계로 판정을 결정한 그룹쌍 1개
-- group_pair_count : 해당 조합에서 평가된 그룹쌍 총 개수
-- hazard_codes, gas_products : CAMEO 코드
-- mapping_confidence : verified | inferred | unverified
-- unmapped_substances : 그룹 매핑에 실패한 물질 목록
-- self_reactivity_status : 자기반응 데이터 유무
-
-# 섹션 역할 (중복 판단의 기준)
-- 1절: 전체 결과가 어떠한가 — 수치 분포
-- 2절: 어떤 조합이 왜 부적합인가 — 조합 단위 근거
-- 3절: 전체 근거를 종합하면 무엇을 의미하는가 — 해석과 결론
-- 4절: 데이터상 한계는 무엇인가 — 제약
-- 5절: 어떤 기준으로 판단했는가 — 고정 문구
-하나의 정보는 자기 역할에 해당하는 절에서 한 번만 쓴다. 앞 절에 이미 나온 수치,
-물질쌍, hazard code를 뒤 절에서 다시 나열하지 않는다.
+- 판정(부적합/주의/적합/판단 보류)은 코드가 이미 확정했다. 다시 계산하거나 바꾸지 않는다.
+- [MSDS 근거]에는 번호가 붙어 있다. 본문에 원문을 옮기지 말고 근거 번호만 [근거 3] 형태로
+  붙인다. 원문과 출처는 화면의 별도 근거 영역이 보여준다.
+- 값이 없는 항목은 "확인되지 않음"으로 쓰고 추정하지 않는다.
 
 # 내용 규칙
-1. 입력 데이터에 없는 화학적 사실을 생성하지 않는다.
-2. 모든 판정은 "CAMEO 그룹쌍 대조 결과"로만 서술한다. 실제 반응의 발생·강도·결과를
-   단정하지 않으며, 이는 위험 방향과 안전 방향 모두에 적용된다.
-   - 금지(위험 단정): "폭발한다", "화재 위험이 크다", "~가 발생한다",
-     "위험이 매우 높다", "즉시 분리해야 한다", "관리 조치가 필요하다"
-   - 금지(안전 단정): "실제 위험성은 제한적이다", "실제로는 반응하지 않는다",
-     "우려할 수준은 아니다"
-   - 허용: "CAMEO 매트릭스상 A군 x B군 조합은 <코드>로 분류된다",
-     "데이터상 <코드>가 표시되어 있다",
-     "실제 반응 여부는 농도·온도·상(phase)·불순물에 따라 달라지므로 본 결과만으로
-     확정할 수 없다"
-3. 개별 물질의 유해성과 물질 간 조합 판정을 혼동하지 않는다.
-4. 반응 메커니즘 추론과 조치·권고 문장을 쓰지 않는다.
-5. 제공된 통계의 건수·비율은 재계산하지 않고 그대로 옮긴다.
-6. 근거가 부족하면 "확인되지 않음"으로 표시하고 억지로 채우지 않는다.
+1. 제공된 CAMEO 근거와 MSDS 근거에 있는 것만 쓴다. 일반 화학지식으로 보완하지 않는다.
+2. 근거보다 강하거나 약하게 표현하지 않는다.
+   - may / can / possible -> 가능성("~할 수 있다")
+   - should / recommended -> 권고
+   - must / prohibited / incompatible -> 필수·금지
+3. 판정은 CAMEO 그룹쌍 대조 결과다. 실제 반응의 발생·강도·결과를 단정하지 않으며 이는
+   위험 방향과 안전 방향 모두에 적용된다.
+   - 금지(위험 단정): "폭발한다", "화재 위험이 크다", "~가 발생한다"
+   - 금지(안전 단정): "실제 위험성은 제한적이다", "우려할 수준은 아니다"
+4. 개별 물질의 유해성과 물질 간 조합 판정을 혼동하지 않는다. 물질별 정보를 서로 섞지 않는다.
+5. 반응 메커니즘 추론과 화학적 추론 과정을 쓰지 않는다. 근거에 없는 조치(감시·설비·농도
+   조건 등)를 새로 만들지 않는다.
+6. 반복 서술, 일반적인 안전수칙, 앞 절에 이미 나온 내용의 재나열을 하지 않는다.
 
 # 서식 규칙
-7. 각 표는 제시된 헤더 행과 구분선 행(|---|)을 문자 그대로 복사한 뒤 데이터 행만
-   채운다. 컬럼 개수·순서 변경과 헤더 병합을 금지한다.
-8. 중첩 bullet과 번호 목록을 쓰지 않는다. 단일 단계 "- " bullet만 쓴다.
-9. 한 문단은 2~5문장. 표 셀은 한 줄로 짧게 유지하고 장문은 표 밖 문단에 쓴다.
-10. 볼드는 지정된 위치에만 쓴다. 판정 단어는 "부적합"/"주의"/"적합"/"판단 보류"
-    중 정확히 하나만 쓴다(화면에서 배지로 자동 변환됨).
-11. 표기 언어는 한국어. 물질명은 한국어를 앞에 쓰고 괄호에 화학식 또는 원문을
-    병기한다(예: 아연(Zn)). CAMEO 그룹명과 hazard code는 원문을 그대로 쓰고
-    번역·병기하지 않는다. 그룹명에 포함된 쉼표는 그룹명의 일부이므로 자르지 않는다
-    (예: "Acids, Weak"를 "Weak"로 줄이지 않는다).
-12. 이 지시문의 문장이나 지시 어투("~라고 쓴다", "~하지 않는다")가 본문에 나타나면
-    안 된다. 따옴표로 제시된 고정 문구는 따옴표 안의 내용만 그대로 출력한다.
+7. 각 표는 제시된 헤더 행과 구분선 행(|---|)을 문자 그대로 복사한 뒤 데이터 행만 채운다.
+   컬럼 개수·순서 변경과 헤더 병합을 금지한다.
+8. 중첩 bullet과 번호 목록을 쓰지 않는다. 표 셀은 한 줄로 짧게 유지하고, 셀 안에서
+   줄을 바꾸지 않는다 - 줄을 바꾸면 표가 깨진다.
+9. 판정 단어는 "부적합"/"주의"/"적합"/"판단 보류" 중 정확히 하나만 쓴다(화면에서 배지로
+   자동 변환됨).
+10. 표기 언어는 한국어. 물질명은 주어진 표기를 그대로 쓴다 - MSDS 근거 안에 다른 이름
+    (원문명·이명)이 보여도 그 이름으로 바꾸지 않는다.
+11. 이 지시문의 문장이나 지시 어투("~라고 쓴다", "~하지 않는다")가 본문에 나타나면 안 된다.
 
-아래 5개 섹션 제목을 순서·문구 그대로 "## n. 제목" 형식으로 쓴다.
+아래 2개 섹션 제목을 순서·문구 그대로 "## n. 제목" 형식으로 쓴다. 다른 절을 만들지 않는다.
 
-## 1. Executive Summary
+## 1. 개별 물질 유의사항
 
-첫 블록은 마크다운 표 하나로만 구성한다(불릿 금지). 행 순서를 고정하고, 값이 0건이어도
-행을 생략하지 않는다. 각 셀은 한 줄로 유지한다.
+물질별로 한 줄씩, 그 물질에 배정된 근거에서 확인되는 핵심 위험·특성만 쓴다. **항목은 3개
+이내**로 추리고 관리 판단에 영향을 주지 않는 정보는 싣지 않는다. 물질은 하나도 빠뜨리지
+않는다 - 근거가 없는 물질도 행을 만들되 "확인되지 않음"으로 쓴다.
+"근거" 열에는 "물질별 근거 번호"에 주어진 그 물질의 표기를 그대로 옮긴다 - 다른 물질의
+번호를 쓰지 않는다.
 
-| 지표 | 값 |
-|---|---|
-| 분석 대상 조합 | **N건** |
-| 부적합 | **N건 (N%)** |
-| 주의 | **N건 (N%)** |
-| 적합 | **N건 (N%)** |
-| 판단 보류 | **N건 (N%)** |
-| 그룹 매핑 실패 물질 | **N종** |
-| 최고 위험 수준 | **부적합|주의|적합|판단 보류 중 하나** |
+| 물질 | 핵심 유의사항 | 근거 |
+|---|---|---|
 
-표 다음에는 결과 분포를 설명하는 1~2문장 문단 하나만 둔다(목록 금지).
+## 2. 분리 필요 관계
 
-## 2. 부적합 판정 조합
+주어진 "분리 필요 관계" 표를 헤더부터 마지막 행까지 그대로 옮긴다. 행 순서와 셀 값을 바꾸지
+않고 행을 빼거나 합치지 않으며, 해석·귀결을 덧붙이지 않는다. 표 외에 다른 문장을 쓰지 않는다.
+자세한 CAMEO 그룹쌍·코드 원문은 화면 오른쪽 물질쌍 패널이 보여주므로 여기에 옮기지 않는다.
 
-부적합으로 판정된 조합을 건수 제한 없이 전부 싣는다. hazard code 개수가 많은 순으로
-정렬한다.
+분리가 필요한 조합이 없으면 표 대신 "분리가 필요한 조합은 없다." 한 줄만 쓴다.
 
-| 판정 | 물질 A | 물질 B | 판정 근거 그룹쌍 | CAMEO 표시 코드 |
-|---|---|---|---|---|
-
-- "판정 근거 그룹쌍"에는 최악케이스로 선택된 그룹쌍 1개만 그룹명 전체를 쓴다.
-  group_pair_count가 2 이상이면 뒤에 "(외 N쌍)"을 붙인다.
-- "CAMEO 표시 코드"는 코드 원문을 쉼표와 공백으로 구분해 나열한다. 해석·귀결을 쓰지 않는다.
-- 표 바로 다음 줄에 다음 고정 문구를 그대로 출력한다:
-  "※ 표시된 코드는 CAMEO 그룹 단위의 잠재적 위험 분류이며 특정 조건에서의 반응 예측이
-  아니다. 전체 판정 분포는 1절을 참조한다."
-- 그 다음 줄에 주의 판정 조합이 1건 이상이면 "주의 판정 조합: " 뒤에 물질쌍만 쉼표로
-  나열한 한 줄을 덧붙인다(그룹쌍·코드·설명 없이 물질명만). 주의 판정이 0건이면 생략한다.
-
-## 3. 분석 및 근거자료에 따른 결과 요약 및 결론
-
-앞 절들의 근거를 종합해 이번 분석 전체가 무엇을 말하는지 해석한다. 문단만 쓰며 표,
-불릿, 목록을 쓰지 않는다. 문단 수는 2~4개로 한다.
-
-- 각 문단은 하나의 위험 패턴 또는 하나의 해석 축을 다룬다. 패턴은 deciding_group_pair에
-  공통으로 등장하는 그룹 계열을 기준으로 식별하고, 해당하는 조합이 많은 패턴부터 쓴다.
-- 서술은 정성적으로 한다. 어떤 그룹 계열이 판정을 주도했는지, 그 계열에서 CAMEO상 어떤
-  성격의 코드가 공통으로 표시되는지를 쓴다.
-- 마지막 문단은 결론으로 쓴다. 이번 조합 집합을 그룹 대조 관점에서 어떻게 읽어야 하는지,
-  그리고 이 결과로 확정할 수 있는 범위와 확정할 수 없는 범위를 구분해 마무리한다.
-- 금지: 개별 조합의 나열, 물질쌍과 hazard code의 재열거, 1절 수치의 재인용, 코드별
-  빈도·건수 집계, 순위표, 2절 표현의 재사용, 4절 제약의 선반영.
-
-## 4. 데이터 제약 사항
-
-인용 블록(">")으로 시작하는 2~3문장 한 문단으로만 작성한다. 판정 결과의 해석에 직접
-영향을 주는 제약만 쓴다: 판단 보류 조합과 그 사유, 그룹 매핑에 실패했거나
-mapping_confidence가 verified가 아닌 물질, 농도·온도·상·혼합비 정보의 부재. 동일 물질
-조합이 요청에 포함된 경우에만 자기반응 데이터 부재를 덧붙인다. 내부 집계 방식이나
-파이프라인 처리 통계는 쓰지 않는다. 제약이 전혀 없으면
-"> 판정 해석에 영향을 주는 데이터 제약은 확인되지 않았다."만 출력한다.
-
-## 5. 판정 기준 및 참고사항
-
-아래 문장을 그대로 출력한다. 다른 문장을 추가하지 않는다.
-
-"본 판정은 CAMEO 68그룹 반응성 매트릭스 대조 결과([참고자료] 등급)에 기반하며,
-단독으로 최종 위험성평가의 근거로 사용할 수 없다. 실제 취급·저장 판단에는 KOSHA
-MSDS 원문과 산업안전보건법상 요구사항, 전문가 검토를 반드시 병행해야 한다."
 """
 
 
+def compatible_groups(verdict) -> list[list[str]]:
+    """서로 전부 Compatible 인 물질끼리 묶는다 - 이 묶음이 "함께 관리 가능한 그룹"이다.
+
+    Caution/Incompatible/Abstain 은 전부 "함께 묶지 않음"으로 취급한다. Caution 을
+    Compatible 과 같게 다루면 그룹 구성 자체가 판정을 완화하는 셈이 된다.
+
+    LLM 에게 시키지 않는 이유는 이게 판정의 연장이기 때문이다 - 어떤 물질을 한 칸에
+    넣어도 되는가는 CAMEO 판정이 결정하지 설명자가 결정하지 않는다.
+
+    ponytail: greedy clique cover - 그룹 수가 최소라는 보장은 없다. 최소 분할이
+    필요해지면 그때 정확 알고리즘으로 교체한다(N<=20이라 완전탐색도 가능하다).
+    """
+    ok = {}
+    for (a, b), v in zip(itertools.combinations(verdict.inputs, 2), verdict.pair_verdicts):
+        ok[(a, b)] = ok[(b, a)] = v.category == "Compatible"
+    groups: list[list[str]] = []
+    for cas in verdict.inputs:
+        for g in groups:
+            if all(ok[(cas, other)] for other in g):
+                g.append(cas)
+                break
+        else:
+            groups.append([cas])
+    return groups
+
+
 def _major_risk_pairs(verdict, names: dict[str, str]) -> list[dict]:
-    """부적합/주의 쌍만 골라 프롬프트에 넣을 (판정, 물질A/B, 관련 물질군, 근거)
-    구조화 데이터로 정리한다. LLM이 표를 채울 때 이 값을 그대로 옮기게 해서
-    관련 물질군·근거 컬럼이 CAMEO 원본 데이터를 벗어나지 않게 한다."""
+    """부적합/주의 쌍만 골라 2절 표의 셀 값을 그대로 만든다.
+
+    CAMEO 그룹쌍과 코드 원문은 넣지 않는다 - 화면 오른쪽 물질쌍 패널이 같은 내용을
+    보여주고 있어서 표에 다시 실으면 보고서만 길어진다."""
     out = []
     for (ca, cb), v in zip(itertools.combinations(verdict.inputs, 2), verdict.pair_verdicts):
         if v.category not in ("Incompatible", "Caution"):
             continue
-        worst_details = [d for d in v.group_pair_details if d.category == v.category]
-        groups = list(dict.fromkeys(f"{d.group_a_name} × {d.group_b_name}" for d in worst_details))
-        descs = list(dict.fromkeys(d.description for d in worst_details if d.description))
+        worst = [d for d in v.group_pair_details if d.category == v.category]
+        d0 = worst[0] if worst else None
+        codes = [c.strip() for c in ((d0.hazard_codes if d0 else None) or "").split(",") if c.strip()]
+        risk = " · ".join(HAZARD_SHORT.get(c, c) for c in codes)
+        if not risk:
+            # 코드가 없는 쌍(그룹 자기조합 등)은 설명이 유일한 근거다.
+            risk = (((d0.description if d0 and d0.description else "")
+                     or "; ".join(v.reasons))[:80] or "확인되지 않음")
         out.append({
             "판정": CATEGORY_LABEL.get(v.category, v.category).split(" · ")[0],
             "물질A": names.get(ca, ca), "물질B": names.get(cb, cb),
-            "관련물질군": "; ".join(groups[:2]) or "확인되지 않음",
-            "근거": (" / ".join(descs)[:150] or "; ".join(v.reasons)[:150] or "확인되지 않음"),
+            "위험": risk,
         })
+    # 정렬해서 준다 - LLM 에게 정렬을 시키면 정렬을 틀릴 기회를 준다.
+    rank = {"부적합": 0, "주의": 1}
+    out.sort(key=lambda m: (rank.get(m["판정"], 9), -len(m["위험"])))
     return out
 
 
-def build_final_report_prompt(verdict, rows: list[dict], names: dict[str, str]) -> str:
-    total = len(rows)
-    counts = {cat: sum(1 for r in rows if r["_category"] == cat)
-              for cat in ("Incompatible", "Caution", "Compatible", "Abstain")}
-    pct = {cat: round(100 * n / total) for cat, n in counts.items()}
+def build_final_report_prompt(verdict, rows: list[dict], names: dict[str, str],
+                              contexts: list[dict]) -> str:
+    lines = [f"입력 물질 {len(verdict.inputs)}종 조합 판정", ""]
 
-    lines = [f"입력 물질 {len(verdict.inputs)}종 조합 판정", "", "통계(그대로 사용):"]
-    lines.append(f"- 분석 대상 조합: {total}건")
-    lines.append(f"- 부적합: {counts['Incompatible']}건 ({pct['Incompatible']}%)")
-    lines.append(f"- 주의: {counts['Caution']}건 ({pct['Caution']}%)")
-    lines.append(f"- 적합: {counts['Compatible']}건 ({pct['Compatible']}%)")
-    if counts["Abstain"]:
-        lines.append(f"- 판단 보류: {counts['Abstain']}건 ({pct['Abstain']}%)")
-    lines.append(f"- 최고 위험 수준(worst-case): {CATEGORY_LABEL.get(verdict.category, verdict.category).split(' · ')[0]}")
+    # 근거 번호 -> 물질. 어느 번호가 누구 것인지는 코드가 안다.
+    cite = {}
+    for n, c in enumerate(contexts, 1):
+        cite.setdefault(c["cas_number"], []).append(str(n))
+
+    lines.append("물질별 근거 번호(1절에서 그 물질 행에만 이 번호를 쓴다):")
+    for cas in verdict.inputs:
+        ns = cite.get(cas)
+        lines.append(f"- {names.get(cas, cas)}"
+                     + (f" [근거 {', '.join(ns)}]" if ns else " [근거 없음]"))
 
     major = _major_risk_pairs(verdict, names)
-    lines.append("")
-    lines.append("주요 위험 조합 원본 데이터(부적합/주의만, 표에 그대로 반영):")
+    # 표를 통째로 만들어 준다 - key=value 로 주면 LLM 이 "코드=" 같은 라벨까지 셀에
+    # 복사하거나 이웃 행의 값을 가져온다(둘 다 실측됨).
+    lines += ["", "분리 필요 관계(부적합/주의 전건, 정렬 완료):"]
     if major:
+        cols = ["판정", "물질A", "물질B", "위험"]
+        lines.append("| 판정 | 물질 A | 물질 B | 주요 위험 |")
+        lines.append("|---|---|---|---|")
         for m in major:
-            lines.append(
-                f"- 판정={m['판정']}, 물질A={m['물질A']}, 물질B={m['물질B']}, "
-                f"관련물질군={m['관련물질군']}, 근거={m['근거']}"
-            )
+            lines.append("| " + " | ".join(m[c].replace("|", "/") for c in cols) + " |")
     else:
-        lines.append("- 없음(전체 적합)")
+        lines.append("없음(분리가 필요한 조합 없음)")
 
-    if verdict.abstain_notes:
-        lines.append("")
-        lines.append("판단 보류/미상 경고(데이터 제약 사항에 반영):")
-        lines += [f"- {n}" for n in verdict.abstain_notes]
+    # 근거 번호 규약은 run_cameo_context_pilot.build_prompt 와 같다([근거 n] + chunk_id).
+    # 물질명·섹션을 같은 줄에 덧붙인다 - 20종이면 누구의 청크인지가 번호만으로는 안 보인다.
+    lines += ["", "[MSDS 근거] (본문에는 번호만 인용하고 원문을 옮기지 않는다)"]
+    for n, c in enumerate(contexts, 1):
+        label = names.get(c["cas_number"], c["chemical_name"])
+        sec = SECTION_LABEL.get(c["section"], "§" + str(c["section"]))
+        lines.append(f"\n[근거 {n}] (chunk_id={c['chunk_id']}) {label} {sec}\n{c['text']}")
 
-    lines.append("")
-    lines.append(FINAL_REPORT_INSTRUCTION)
+    lines += ["", FINAL_REPORT_INSTRUCTION]
     return "\n".join(lines)
 
 
+# ── 물질 배치 판정 (전부 코드 산출) ─────────────────────────────────────────
+# 판정과 관리 그룹에서 기계적으로 따라오는 결과라 LLM 을 태울 이유가 없다.
+# 화면은 <details> 아코디언으로, DOCX/PDF 는 소제목+불릿 마크다운으로 같은 데이터를 낸다.
+
+PLACEMENT_RULES = [
+    "부적합 조합 → 분리 보관",
+    "주의 조합 → 동일 구역 배치 여부 검토",
+    "단독 관리가 필요한 물질 → 별도 배치",
+]
+PLACEMENT_LIMIT = (
+    "본 결과는 CAMEO에 등록된 반응성 정보를 기준으로 산출되었습니다. "
+    "CAMEO에 반영되지 않은 추가 반응 가능성은 포함하지 않으며, 새로운 데이터가 확보되면 "
+    "재평가가 필요합니다."
+)
+
+
+def _group_label(cas_list: list[str], verdict, limit: int = 3) -> str:
+    """물질들이 속한 CAMEO 반응성 그룹의 한글명을 이어 붙인 라벨."""
+    prof = {pr.cas: pr for pr in verdict.profiles}
+    out: list[str] = []
+    for cas in cas_list:
+        for g in (prof[cas].groups if cas in prof else []):
+            kr = KRG.kr_group(g)
+            if kr not in out:
+                out.append(kr)
+    return " · ".join(out[:limit]) or "분류 정보 없음"
+
+
+def placement_plan(verdict, contexts: list[dict], names: dict[str, str]) -> dict:
+    """배치 결과 = 관리 그룹(동일 구역/단독) + 부적합 쌍(분리) + 주의 쌍(검토)."""
+    groups = compatible_groups(verdict)
+    nm = lambda c: names.get(c, c)  # noqa: E731
+
+    together = [(_group_label(g, verdict), " + ".join(nm(c) for c in g))
+                for g in groups if len(g) > 1]
+    alone = [(_group_label(g, verdict), nm(g[0])) for g in groups if len(g) == 1]
+
+    separate, review = [], []
+    for (ca, cb), v in zip(itertools.combinations(verdict.inputs, 2), verdict.pair_verdicts):
+        if v.category not in ("Incompatible", "Caution"):
+            continue
+        item = (f"{_group_label([ca], verdict, 2)} ↔ {_group_label([cb], verdict, 2)}",
+                f"{nm(ca)} ↔ {nm(cb)}")
+        (separate if v.category == "Incompatible" else review).append(item)
+
+    limits = []
+    unmapped = [pr.cas for pr in verdict.profiles if not pr.mapped]
+    if unmapped:
+        limits.append("CAMEO 반응성 그룹 매핑이 없어 판정하지 못한 물질: "
+                      + ", ".join(nm(c) for c in unmapped))
+    have = {c["cas_number"] for c in contexts}
+    no_ev = [c for c in verdict.inputs if c not in have]
+    if no_ev:
+        limits.append("MSDS §2·§10 근거가 없는 물질: " + ", ".join(nm(c) for c in no_ev))
+    n_abstain = sum(1 for v in verdict.pair_verdicts if v.category == "Abstain")
+    if n_abstain:
+        limits.append(f"근거 부족으로 판정하지 않은(판단 보류) 조합 {n_abstain}건")
+    limits.append("농도·온도·상(phase)·혼합비 정보가 입력에 없어 반응의 강도와 발생 "
+                  "가능성은 이 결과만으로 확정할 수 없습니다")
+
+    return {"together": together, "alone": alone, "separate": separate,
+            "review": review, "limits": limits}
+
+
+_PLACEMENT_BLOCKS = (
+    ("동일 구역 배치", "together"),
+    ("단독 관리", "alone"),
+    ("분리 배치", "separate"),
+    ("배치 검토 (주의)", "review"),
+)
+
+
+def placement_markdown(plan: dict) -> str:
+    """DOCX/PDF 용. 화면과 같은 내용을 소제목+불릿으로 낸다."""
+    out = ["## 3. 물질 배치 판정", "", "### 배치 원칙", ""]
+    out += [f"- {r}" for r in PLACEMENT_RULES]
+    out += ["", "### 배치 결과", ""]
+    for title, key in _PLACEMENT_BLOCKS:
+        if plan[key]:
+            out.append(f"**{title}**")
+            out += [f"- {label}: {members}" for label, members in plan[key]]
+            out.append("")
+    out += ["### 판정의 한계", "", PLACEMENT_LIMIT, ""]
+    out += [f"- {x}" for x in plan["limits"]]
+    return "\n".join(out)
+
+
+def placement_html(plan: dict) -> str:
+    """화면용 <details> 아코디언. 기본은 접힌 상태이고 배치 결과만 펼쳐 둔다."""
+    def block(title, items):
+        rows = "".join(f"<li><b>{label}</b>: {members}</li>" for label, members in items)
+        return f"<p class='mv-place-sub'>{title}</p><ul>{rows}</ul>"
+
+    body = "".join(block(t, plan[k]) for t, k in _PLACEMENT_BLOCKS if plan[k])
+    rules = "".join(f"<li>{r}</li>" for r in PLACEMENT_RULES)
+    limits = "".join(f"<li>{x}</li>" for x in plan["limits"])
+    return (
+        "<div class='mv-placement'>"
+        "<details><summary>배치 원칙</summary>"
+        f"<ul>{rules}</ul></details>"
+        "<details open><summary>배치 결과</summary>"
+        f"{body}</details>"
+        "<details><summary>판정의 한계</summary>"
+        f"<p>{PLACEMENT_LIMIT}</p><ul>{limits}</ul></details>"
+        "</div>"
+    )
+
+
 def generate_final_report(verdict, rows: list[dict], names: dict[str, str]) -> dict:
-    prompt = build_final_report_prompt(verdict, rows, names)
+    contexts = msds_context(list(verdict.inputs))
+    prompt = build_final_report_prompt(verdict, rows, names, contexts)
+    plan = placement_plan(verdict, contexts, names)
     try:
         data = L.chat(
             [{"role": "user", "content": prompt}],
             max_tokens=GB.MAX_TOKENS,
             reasoning_effort=GB.REASONING_EFFORT,
         )
-        return {"content": data["choices"][0]["message"]["content"], "error": None}
+        content, err = data["choices"][0]["message"]["content"].rstrip(), None
     except Exception as e:  # noqa: BLE001 - 데모에서 스택트레이스 대신 사유만
-        return {"content": None, "error": f"{type(e).__name__}: {str(e)[:300]}"}
+        content, err = None, f"{type(e).__name__}: {str(e)[:300]}"
+    # contexts 를 같이 돌려준다 - 본문의 [근거 n] 을 화면에서 원문으로 펼치려면
+    # 프롬프트에 넣은 것과 **같은 순서의 같은 리스트**여야 한다.
+    return {"content": content, "error": err, "contexts": contexts, "plan": plan,
+            "prompt_chars": len(prompt)}
 
 
 # ---------- DOCX / PDF 내보내기 ----------
@@ -989,6 +1184,11 @@ def _docx_add_callout(doc, text: str) -> None:
     run.italic = True
 
 
+def export_text(report: dict) -> str:
+    """DOCX/PDF 용 본문. 화면은 배치 판정을 <details> 로 그리지만 문서는 소제목+불릿이다."""
+    return report["content"] + "\n\n" + placement_markdown(report["plan"])
+
+
 def build_docx_bytes(report_text: str, rows: list[dict]) -> bytes:
     from docx import Document
 
@@ -1008,6 +1208,9 @@ def build_docx_bytes(report_text: str, rows: list[dict]) -> bytes:
             elif kind == "para" and data:
                 _docx_add_runs(doc.add_paragraph(), data)
 
+    doc.add_heading("판정 기준 및 참고사항", level=2)
+    doc.add_paragraph(JUDGEMENT_BASIS)
+
     buf = io.BytesIO()
     doc.save(buf)
     return buf.getvalue()
@@ -1018,7 +1221,7 @@ def _pdf_bold_markup(text: str) -> str:
     return _BOLD_RE.sub(r"<b>\1</b>", text)
 
 
-_PDF_TABLE_WEIGHTS = {2: (0.35, 0.65), 5: (0.9, 1.3, 1.3, 1.6, 3.0)}
+_PDF_TABLE_WEIGHTS = {2: (0.35, 0.65), 3: (0.5, 1.3, 2.2), 5: (0.9, 1.3, 1.3, 1.6, 3.0)}
 
 
 def _pdf_col_widths(header: list[str], total: float) -> list[float]:
@@ -1094,6 +1297,9 @@ def build_pdf_bytes(report_text: str, rows: list[dict]) -> bytes:
                 story.append(Paragraph("• " + _pdf_bold_markup(data), bullet_style))
             elif kind == "para" and data:
                 story.append(Paragraph(_pdf_bold_markup(data), body_style))
+
+    story.append(Paragraph("판정 기준 및 참고사항", h2))
+    story.append(Paragraph(JUDGEMENT_BASIS, body_style))
 
     buf = io.BytesIO()
     SimpleDocTemplate(buf, pagesize=A4).build(story)
@@ -1184,26 +1390,7 @@ def main() -> None:
                 label_visibility="collapsed",
                 placeholder="물질명을 검색해 2종 이상 선택하세요 (예: 에탄올, 질산 …)",
             )
-            st.caption(
-                f"2~20종 선택 가능 · 현재 {len(picked)}종 · "
-                f"검색 대상 {len(all_cas)}종(KOSHA MSDS 등재)"
-            )
-            with st.expander(f"KOSHA MSDS 미등재로 제외된 {len(unlisted)}종"):
-                st.dataframe(
-                    pd.DataFrame(
-                        [
-                            {"물질": display_names.get(c, c), "CAS": c,
-                             "영문명": (reg.get(c) or {}).get("name_en") or "-"}
-                            for c in sorted(unlisted, key=lambda c: display_names.get(c, c))
-                        ]
-                    ),
-                    hide_index=True, use_container_width=True, height=220,
-                )
-                st.caption(
-                    "물질 선정 목록(substance_registry 237종)에는 그대로 남아 있으나 "
-                    "KOSHA MSDS Open API에 등재돼 있지 않아 상세정보를 제공할 수 없어 "
-                    "선택 대상에서 제외한다."
-                )
+            st.caption(f"2~20종 선택 가능 · 현재 {len(picked)}종 · 선택 가능 {len(all_cas)}종")
             analyze = st.button("분석 시작", type="primary", disabled=len(picked) < 2, use_container_width=True)
 
     if analyze:
@@ -1250,8 +1437,6 @@ def main() -> None:
                     {
                         "물질": display_names.get(c, c),
                         "CAS": c,
-                        "KOSHA 등재": "등재" if (kosha.get(c) or {}).get("chem_id") else
-                                     ("미등재" if c in kosha else "미확인"),
                         "KOSHA 물질명": (kosha.get(c) or {}).get("kosha_name") or "-",
                         "chemId": (kosha.get(c) or {}).get("chem_id") or "-",
                         "MSDS 최종 갱신": (kosha.get(c) or {}).get("last_date") or "-",
@@ -1308,17 +1493,7 @@ def main() -> None:
     with col_b:
         step_header(2, "FINAL REPORT", "최종 결과 보고서")
         with st.container(border=True):
-            top_l, top_r = st.columns([3, 2])
-            with top_l:
-                st.markdown(badge_html(verdict.category), unsafe_allow_html=True)
-            with top_r:
-                wa_cas = verdict.worst_pair[0].split(" ", 1)[0]
-                wb_cas = verdict.worst_pair[1].split(" ", 1)[0]
-                st.markdown(
-                    f'<div style="text-align:right;font-size:.82rem;color:#6B7280;">최악 판정 쌍<br>'
-                    f'<span class="mv-mono">{display_names.get(wa_cas, wa_cas)} × {display_names.get(wb_cas, wb_cas)}</span></div>',
-                    unsafe_allow_html=True,
-                )
+            st.markdown(badge_html(verdict.category), unsafe_allow_html=True)
             cache_key = tuple(cas_list)
             report_cache = st.session_state.setdefault("final_report_cache", {})
             cached_report = report_cache.get(cache_key)
@@ -1336,6 +1511,31 @@ def main() -> None:
                 else:
                     st.markdown('<div class="mv-section-label" style="margin-top:1rem;">SMART-MSDS 최종 분석 결과</div>', unsafe_allow_html=True)
                     st.markdown(_badgify_markdown(cached_report["content"]), unsafe_allow_html=True)
+                    st.markdown('<div class="mv-section-label">물질 배치 판정 완료</div>'
+                                + placement_html(cached_report["plan"]),
+                                unsafe_allow_html=True)
+                    st.markdown(
+                        '<div class="mv-section-label">판정 기준 및 참고사항</div>'
+                        f'<div class="mv-disclaimer">{JUDGEMENT_BASIS}</div>',
+                        unsafe_allow_html=True,
+                    )
+                    # 본문은 근거 번호만 인용한다. 원문·출처는 여기서 펼친다 -
+                    # 번호는 프롬프트에 넣은 contexts 순서 그대로다. 물질별로 접어 둔다
+                    # (20종이면 40청크라 한 덩어리로 펼치면 읽을 수가 없다).
+                    ctxs = cached_report["contexts"]
+                    by_cas: dict[str, list] = {}
+                    for n, c in enumerate(ctxs, 1):
+                        by_cas.setdefault(c["cas_number"], []).append((n, c))
+                    st.markdown('<div class="mv-section-label">근거 원문 · MSDS '
+                                f'{len(ctxs)}건</div>', unsafe_allow_html=True)
+                    for cas, items in by_cas.items():
+                        nums = ", ".join(str(n) for n, _ in items)
+                        label = display_names.get(cas, items[0][1]["chemical_name"])
+                        with st.expander(f"{label} · [근거 {nums}]"):
+                            for n, c in items:
+                                sec = SECTION_LABEL.get(c["section"], "§" + str(c["section"]))
+                                st.caption(f"[근거 {n}] {sec} · {c['chunk_id']}")
+                                st.text(c["text"])
 
                     dl1, dl2, dl3 = st.columns(3)
                     with dl1:
@@ -1349,7 +1549,7 @@ def main() -> None:
                     with dl2:
                         st.download_button(
                             "DOCX 다운로드",
-                            build_docx_bytes(cached_report["content"], rows),
+                            build_docx_bytes(export_text(cached_report), rows),
                             file_name="msds_final_report.docx",
                             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                             use_container_width=True,
@@ -1357,13 +1557,14 @@ def main() -> None:
                     with dl3:
                         st.download_button(
                             "PDF 다운로드",
-                            build_pdf_bytes(cached_report["content"], rows),
+                            build_pdf_bytes(export_text(cached_report), rows),
                             file_name="msds_final_report.pdf",
                             mime="application/pdf",
                             use_container_width=True,
                         )
             else:
-                st.caption("'최종 보고서 생성'을 누르면 KPI·주요 위험 조합 표 중심의 5개 섹션 보고서가 생성됩니다.")
+                st.caption("'최종 보고서 생성'을 누르면 물질별 유의사항 · 분리 필요 관계 · "
+                           "물질 배치 판정으로 이뤄진 보고서가 생성됩니다.")
 
             if len(verdict.inputs) > 2:
                 with st.expander("전체 반응 매트릭스 보기"):
@@ -1388,12 +1589,7 @@ def main() -> None:
             st.markdown('<hr class="mv-divider"/>', unsafe_allow_html=True)
             st.markdown('<div class="mv-section-label" style="margin-top:0;">선택한 물질쌍</div>', unsafe_allow_html=True)
             sel_idx = pairs.index(selected)
-            st.markdown(f'<span class="mv-mono">{fmt(selected)}</span>', unsafe_allow_html=True)
-            render_pair_detail(verdict.pair_verdicts[sel_idx])
-
-    with col_a:
-        with st.container(border=True):
-            render_pair_detail_kr(
+            render_pair_detail(
                 verdict.pair_verdicts[sel_idx],
                 display_names.get(selected[0], selected[0]),
                 display_names.get(selected[1], selected[1]),
@@ -1410,12 +1606,17 @@ if __name__ == "__main__":
         cas_a, cas_b = "7646-85-7", "7697-37-2"  # frozen 평가셋 t0 케이스
         got = explain(cas_a, cas_b, n[cas_a], n[cas_b])
         assert got["cameo"].category == "Incompatible", got["cameo"].category
-        assert len(got["contexts"]) == TOPK, len(got["contexts"])
-        top = {c["chunk_id"] for c in got["contexts"][:5]}
-        assert f"sec::{cas_a}::2" in top or f"sec::{cas_a}::10" in top, sorted(top)
+        # 근거는 검색이 아니라 CAS 직접조회다(pair_context). 개수 대신 구성을 본다 -
+        # 제3물질이 섞이지 않을 것, 양쪽 §2(=gold_evidence)가 반드시 들어있을 것.
+        ids = [c["chunk_id"] for c in got["contexts"]]
+        assert ids, "근거가 비어있음"
+        assert all(c["cas_number"] in (cas_a, cas_b) for c in got["contexts"]),             f"제3물질 청크 혼입: {ids}"
+        assert {f"sec::{cas_a}::2", f"sec::{cas_b}::2"} <= set(ids), f"§2 누락: {ids}"
+        assert ids == sorted(ids, key=lambda x: ({cas_a: 0, cas_b: 1}[x.split("::")[1]],
+                                                 int(x.split("::")[2].split("::")[0]), x)),             f"인용 번호가 붙는 순서가 고정되지 않음: {ids}"
         assert "[CAMEO 반응성 그룹 조회" in got["prompt"], "프롬프트에 CAMEO 컨텍스트 누락"
-        assert n[cas_a] in got["query"], "RAG 질의문이 frozen 이름을 쓰지 않음"
-        print("OK:", got["cameo"].category, len(got["contexts"]), "chunks")
+        assert n[cas_a] in got["query"], "질의문이 frozen 이름을 쓰지 않음"
+        print("OK:", got["cameo"].category, len(ids), "chunks (제3물질 0, 양쪽 §2 포함)")
 
         # 표시명 일관성: registry에 있는 물질은 모든 화면에서 canonical name 하나만 쓴다.
         # (main()의 display_names와 동일한 식 - 여기서 깨지면 화면에서도 깨진다)
@@ -1500,5 +1701,58 @@ if __name__ == "__main__":
         assert not msds_detail("67-56-1").empty, "메탄올 MSDS 상세 없음"
         print("OK: 신규 매핑 판정 - 메탄올 x 질산", methanol.category,
               "| 상세", len(msds_detail("67-56-1")), "행")
+
+        # --- 최종 보고서 경로 ---
+        # 코드가 결정론적으로 확정하는 셋만 검사한다: 관리 그룹 구성 / 근거 번호 순서 /
+        # 판정 기준 고정 문구의 위치. 문장은 LLM 이 쓰므로 여기서 검사하지 않는다.
+        combo_cas = sorted(mapped_served)[:6]
+        ctxs = msds_context(combo_cas)
+        cids = [c["chunk_id"] for c in ctxs]
+        assert all(c["cas_number"] in combo_cas for c in ctxs), f"제3물질 혼입: {cids}"
+        # §2 는 물질에 따라 sec::{cas}::2::p1 처럼 쪼개져 있다 - chunk_id 문자열이 아니라
+        # (cas, section) 으로 확인한다.
+        have = {(c["cas_number"], c["section"]) for c in ctxs}
+        assert {(c, 2) for c in combo_cas} <= have, f"§2 누락: {sorted(have)}"
+        assert cids == [c["chunk_id"] for c in msds_context(combo_cas)], "근거 순서가 비결정적"
+        assert msds_context([cas_a, cas_b]) == pair_context(cas_a, cas_b), "pair_context 래퍼 불일치"
+
+        cv = eng.judge_combination_by_cas(combo_cas)
+        groups = compatible_groups(cv)
+        pair_cat = {}
+        for (pa, pb), pv in zip(itertools.combinations(cv.inputs, 2), cv.pair_verdicts):
+            pair_cat[(pa, pb)] = pair_cat[(pb, pa)] = pv.category
+        assert sorted(c for g in groups for c in g) == sorted(cv.inputs), f"물질 누락/중복: {groups}"
+        for g in groups:
+            for pa, pb in itertools.combinations(g, 2):
+                assert pair_cat[(pa, pb)] == "Compatible", f"같은 그룹인데 {pair_cat[(pa, pb)]}"
+        if any(c == "Compatible" for c in pair_cat.values()):
+            assert any(len(g) > 1 for g in groups), "Compatible 쌍이 있는데 그룹이 전부 단독이다"
+        print("OK: 관리 그룹", [[display.get(c, c) for c in g] for g in groups])
+
+        rp = build_final_report_prompt(cv, verdict_rows(cv, display), display, ctxs)
+        assert JUDGEMENT_BASIS not in rp, "고정 문구가 프롬프트에 남아있다"
+        assert JUDGEMENT_BASIS not in FINAL_REPORT_INSTRUCTION, "고정 문구가 지시문에 남아있다"
+        assert "[근거 1]" in rp and "물질별 근거 번호" in rp, "근거 데이터가 프롬프트에 없다"
+
+        # 배치 판정은 전부 코드 산출이다 - 물질이 빠지거나 겹치면 안 된다.
+        plan = placement_plan(cv, ctxs, display)
+        placed = [m for _, members in plan["together"] + plan["alone"]
+                  for m in members.split(" + ")]
+        assert sorted(placed) == sorted(display.get(c, c) for c in cv.inputs),             f"배치에서 물질이 누락/중복: {placed}"
+        md = placement_markdown(plan)
+        for h in ("배치 원칙", "배치 결과", "판정의 한계"):
+            assert h in md, h
+        assert placement_html(plan).count("<details") == 3
+
+        # export 는 LLM 없이 돈다 - 관리 그룹 3열 표가 새로 생겼으므로 그 경로를 태운다.
+        sample = "\n".join([
+            "## 1. 관리 그룹", "",
+            "| 그룹 | 물질 | 공통 취급 유의사항 |", "|---|---|---|",
+            "| 그룹 1 | 아세톤 | 확인되지 않음 |", "",
+        ])
+        assert len(build_docx_bytes(sample, [])) > 5000, "DOCX 생성 실패"
+        assert len(build_pdf_bytes(sample, [])) > 1000, "PDF 생성 실패"
+        print("OK: 보고서 프롬프트", len(rp), "자 /", len(combo_cas), "종 /",
+              len(ctxs), "청크 / export 정상")
     else:
         main()

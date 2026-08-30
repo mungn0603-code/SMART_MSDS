@@ -41,7 +41,10 @@ import llm as L  # noqa: E402
 import generate_baseline as GB  # noqa: E402
 import eval_generation as EV  # noqa: E402
 import cameo_group_lookup as CL  # noqa: E402
-from run_cameo_context_pilot import build_prompt, parse_stated_verdict, PROMPT_VERSION  # noqa: E402
+from run_cameo_context_pilot import (  # noqa: E402
+    build_prompt, build_schema_prompt, parse_stated_verdict, render_answer,
+    PROMPT_VERSION, RESPONSE_FORMAT, SCHEMA_PROMPT_VERSION,
+)
 from eval_generation import substance_confused  # noqa: E402
 
 FROZEN_PATH = ROOT / "results" / "frozen_retrieval_top10.jsonl"
@@ -54,6 +57,16 @@ EVAL_OUT = ROOT / "results" / "eval_cameo_full.jsonl"
 # 원인이었다. pair 모드는 gold_evidence 를 2,240건 전건 포함하며(실측) 컨텍스트가
 # 평균 4.29개로 줄어 프롬프트 토큰도 57% 감소한다.
 CONTEXT_MODE = "frozen"
+
+# 출력 계약. "text" = 자유 텍스트(v7 재현 경로). "schema" = structured output.
+# schema 모드는 reasoning 을 쓰지 않는다 — 20건 실측에서 품질은 동등하거나 낫고
+# (judge 일치 20/20, Caution 과잉서술 0/7) 출력 토큰은 1/5.7, 비용은 1/2.8이었다.
+# 이 과제는 추론이 아니라 추출·강도보존 번역이라 추론 예산이 부연으로 새어나갔다.
+OUTPUT_FORMAT = "text"
+
+# 처리할 query_id 화이트리스트(None = 전체). 계층 표집한 서브샘플로 두 프롬프트를
+# 같은 문항에서 짝지어 비교하려면 필요하다 — --n 은 리스트 앞부분만 잘라 계층이 깨진다.
+ONLY_IDS: set[str] | None = None
 CITATION_RE = __import__("re").compile(r"\[사용한\s*근거\s*:")
 
 
@@ -119,19 +132,30 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str,
     error 로 승격해 already_done 이 재시도 대상으로 잡게 한다.
     """
     t0 = time.perf_counter()
-    answer = usage = finish = None
+    answer = usage = finish = structured = None
     error = None
     for attempt in range(2):
         try:
+            schema = OUTPUT_FORMAT == "schema"
             data = L.chat(
                 [{"role": "user", "content": prompt}],
                 max_tokens=GB.MAX_TOKENS,
-                reasoning_effort=GB.REASONING_EFFORT,
+                reasoning_effort=None if schema else GB.REASONING_EFFORT,
+                response_format=RESPONSE_FORMAT if schema else None,
             )
             choice = data["choices"][0]
-            answer = choice["message"]["content"]
+            raw = choice["message"]["content"]
             usage = data.get("usage", {})
             finish = choice.get("finish_reason")
+            if schema:
+                # 스키마 모드에서도 answer 는 조립된 텍스트로 남긴다 —
+                # judge/rule_based 가 그대로 채점해야 v7 과 지표가 비교 가능하다.
+                structured = json.loads(raw)
+                # 판정은 CAMEO 값을 그대로 주입한다(모델에게 묻지 않는다).
+                answer = render_answer(structured, r["name_a"], r["name_b"], cameo_category)
+                error = None
+                break
+            answer = raw
             if not (answer or "").strip():
                 error = f"EmptyAnswer: finish_reason={finish}"
             elif not CITATION_RE.search(answer):
@@ -141,6 +165,7 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str,
                 break
         except Exception as e:  # noqa: BLE001 - 배치 중 개별 실패로 전체를 잃지 않음
             answer = None
+            structured = None
             usage = {}
             finish = None
             error = f"{type(e).__name__}: {str(e)[:300]}"
@@ -161,9 +186,10 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str,
         "retrieval_status": r["retrieval_status"],
         "context_ids": context_ids,
         "generated_answer": answer,
+        "structured": structured,
         "model": L.MODEL,
         "finish_reason": finish,
-        "prompt_version": PROMPT_VERSION,
+        "prompt_version": SCHEMA_PROMPT_VERSION if OUTPUT_FORMAT == "schema" else PROMPT_VERSION,
         "latency_sec": latency,
         "prompt_tokens": usage.get("prompt_tokens"),
         "completion_tokens": usage.get("completion_tokens"),
@@ -175,7 +201,8 @@ def _call_generate(r: dict, cameo_category: str, cameo_ctx: str, prompt: str,
 def run_generation(limit: int | None, workers: int) -> None:
     rows = load_jsonl(FROZEN_PATH)
     done = already_done(GEN_OUT, "error")
-    todo = [r for r in rows if r["query_id"] not in done]
+    todo = [r for r in rows if r["query_id"] not in done
+            and (ONLY_IDS is None or r["query_id"] in ONLY_IDS)]
     if limit is not None:
         todo = todo[:limit]
     print(f"전체 {len(rows)}건, 완료 {len(done)}건, 이번 생성 {len(todo)}건 (workers={workers})")
@@ -198,7 +225,8 @@ def run_generation(limit: int | None, workers: int) -> None:
             chunk_ids = [c["chunk_id"] for c in r["retrieved"]]
         texts = GB.load_texts(cur, chunk_ids)
         contexts = [{"chunk_id": cid, "text": texts.get(cid, "")} for cid in chunk_ids]
-        prompt = build_prompt(r["query"], cameo_ctx, contexts)
+        mk = build_schema_prompt if OUTPUT_FORMAT == "schema" else build_prompt
+        prompt = mk(r["query"], cameo_ctx, contexts)
         prepared.append((r, cameo.category, cameo_ctx, prompt, chunk_ids))
     con.close()
 
@@ -267,7 +295,8 @@ def _call_eval(r: dict, contexts_by_id: dict[str, str]) -> dict:
 def run_eval(limit: int | None, workers: int) -> None:
     rows = [r for r in dedupe_records(load_jsonl(GEN_OUT), "error") if r.get("error") is None]
     done = already_done(EVAL_OUT, "judge_error")
-    todo = [r for r in rows if r["query_id"] not in done]
+    todo = [r for r in rows if r["query_id"] not in done
+            and (ONLY_IDS is None or r["query_id"] in ONLY_IDS)]
     if limit is not None:
         todo = todo[:limit]
     print(f"채점 대상 {len(rows)}건, 완료 {len(done)}건, 이번 채점 {len(todo)}건 (workers={workers})")
@@ -311,22 +340,30 @@ def main() -> None:
     ap.add_argument("--context", choices=["frozen", "pair"], default="frozen",
                     help="frozen=검색 top-10 그대로(baseline 재현). "
                          "pair=쌍의 두 CAS 청크 전부(검색 우회)")
+    ap.add_argument("--format", choices=["text", "schema"], default="text",
+                    help="text=자유 텍스트(v7 재현). schema=structured output "
+                         "(판정/인용/결론을 스키마로 고정, reasoning 미사용)")
+    ap.add_argument("--ids", help="처리할 query_id 목록 파일(줄당 1개). 미지정시 전체")
     ap.add_argument("--tag", default="",
                     help="출력 파일 접미사. 출력은 append+재개라 조건이 다른 실행이 "
                          "같은 파일에 섞이면 되돌릴 수 없다. 예: pair, pair_v7")
     args = ap.parse_args()
 
-    if args.context != "frozen" and not args.tag:
-        ap.error("--context 를 바꿀 때는 --tag 로 출력을 분리해야 합니다 "
-                 "(baseline 파일에 덮어쓰기 방지). 예: --context pair --tag pair")
+    if (args.context != "frozen" or args.format != "text") and not args.tag:
+        ap.error("--context/--format 을 바꿀 때는 --tag 로 출력을 분리해야 합니다 "
+                 "(기존 결과에 덮어쓰기 방지). 예: --context pair --format schema --tag pair_v8")
 
     # ponytail: 모듈 전역 재바인딩. 경로를 여러 함수에 인자로 흘리는 것보다 짧다.
-    global CONTEXT_MODE, GEN_OUT, EVAL_OUT
+    global CONTEXT_MODE, OUTPUT_FORMAT, GEN_OUT, EVAL_OUT, ONLY_IDS
     CONTEXT_MODE = args.context
+    OUTPUT_FORMAT = args.format
+    if args.ids:
+        ONLY_IDS = {l.strip() for l in Path(args.ids).read_text(encoding="utf-8").splitlines() if l.strip()}
+        print(f"대상 제한: {args.ids} ({len(ONLY_IDS)}건)")
     if args.tag:
         GEN_OUT = GEN_OUT.with_name(f"{GEN_OUT.stem}_{args.tag}{GEN_OUT.suffix}")
         EVAL_OUT = EVAL_OUT.with_name(f"{EVAL_OUT.stem}_{args.tag}{EVAL_OUT.suffix}")
-    print(f"컨텍스트 모드: {CONTEXT_MODE}")
+    print(f"컨텍스트 모드: {CONTEXT_MODE} · 출력 계약: {OUTPUT_FORMAT}")
     print(f"  생성 출력: {GEN_OUT.name}")
     print(f"  채점 출력: {EVAL_OUT.name}")
 

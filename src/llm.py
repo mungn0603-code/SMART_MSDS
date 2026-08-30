@@ -88,6 +88,7 @@ def chat(
     model: str = MODEL,
     max_tokens: int = MAX_TOKENS,
     reasoning_effort: str | None = REASONING_EFFORT,
+    response_format: dict | None = None,
     timeout: int = 180,
 ) -> dict:
     """단발 호출. 스트리밍은 쓰지 않는다(평가 배치 용도라 불필요).
@@ -109,6 +110,8 @@ def chat(
     }
     if reasoning_effort is not None:
         payload["reasoning_effort"] = reasoning_effort
+    if response_format is not None:
+        payload["response_format"] = response_format
     req = urllib.request.Request(
         INVOKE_URL,
         data=json.dumps(payload).encode("utf-8"),

@@ -157,6 +157,104 @@ def load_jsonl(path: Path) -> list[dict]:
         return [json.loads(line) for line in f if line.strip()]
 
 
+ABSTAIN_SENTENCE = EV.ABSTAIN_PHRASE + "."
+
+
+# ── structured output 계약 (2026-08-29) ──────────────────────────────────────
+# 자유 텍스트에서 판정줄·인용태그·결론문장을 정규식으로 긁던 것을 스키마로 고정한다.
+# 실측 근거: 결론 문장 준수율이 51~61%에 그쳤고(자유 텍스트), 누락 시 Caution 정답률이
+# 94.2% -> 75.4%로 떨어졌다. 결론 문장은 모델이 쓰지 않고 코드가 verdict 로 조립한다.
+#
+# Upstage 제약: strict=true / additionalProperties=false / 모든 필드 required /
+# 중첩 3단 / $ref 불가. (console.upstage.ai/docs/capabilities/structured-outputs)
+SCHEMA_PROMPT_VERSION = "cameo_service_v8b_schema"
+
+PAIR_SCHEMA = {
+    "type": "object",
+    "properties": {
+        # verdict 는 필드가 아니다. CAMEO 판정은 코드가 주입한다 —
+        # 모델에게 복사를 시키면 복사를 틀릴 기회를 준다(v8 에서 1.04% 뒤집힘,
+        # 그중 18/20 이 위험을 낮추는 방향. results/_v8_verdict_regression/ 참고).
+        "hazard_basis": {"type": "string"},
+        "substance_a_note": {"type": "string"},
+        "substance_b_note": {"type": "string"},
+        "precaution": {"type": "string"},
+        "evidence_gap": {"type": "string"},
+        "cited": {"type": "array", "items": {"type": "integer"}},
+    },
+    "required": ["hazard_basis", "substance_a_note", "substance_b_note",
+                 "precaution", "evidence_gap", "cited"],
+    "additionalProperties": False,
+}
+RESPONSE_FORMAT = {"type": "json_schema",
+                   "json_schema": {"name": "pair_assessment", "strict": True,
+                                   "schema": PAIR_SCHEMA}}
+
+# v9(2026-08-29) 폐기 — results/_v9_regression/FINDING.md.
+# 프롬프트를 독립시키고 강도 보존을 양방향으로 바꿨으나 사전 등록한 채택 기준을 통과하지
+# 못했다(600건 짝지은 비교: 전체 일치 87.2->86.5%, Caution 82.2->80.0%). 폐기된 v9 전문은
+# results/_v9_regression/schema_prompt_v9.txt 에 있다.
+# 출력 형식 지시는 스키마가 대신하므로 프롬프트에서 잘라낸다.
+SCHEMA_PROMPT = SYSTEM_PROMPT[:SYSTEM_PROMPT.index("[출력 형식]")] + """[출력] 아래 JSON 스키마로만 답한다.
+판정과 결론 문장은 쓰지 않는다 — 둘 다 시스템이 CAMEO 판정으로 직접 채운다.
+설명 안에서 판정을 다시 말하거나 바꾸지 않는다.
+- hazard_basis: CAMEO reason/hazard 원문 근거로 1~3문장. may/can 은 "~일 수 있다"로
+  옮기고 확정적 사실로 강화하지 않는다. 판정어(Compatible/Caution/Incompatible)를
+  이 문장에 쓰지 않는다.
+- substance_a_note / substance_b_note: 각 물질의 MSDS 2/10절 근거. 두 물질을 섞지 않는다.
+- precaution: 주의가 필요한 조건을 한 구절로만 쓴다(30자 내외, 문장이 아니라 구).
+  "~할 때" 또는 "~시" 형태로 끝낸다. 예: "산과 접촉하거나 가열될 때".
+  제공된 근거에서 확인되는 경우에만 쓰고, 근거에 없으면 빈 문자열로 둔다.
+  조건을 지어내지 않는다. 취급 지침을 나열하지 않는다.
+- evidence_gap: 근거에 없는 내용. 없으면 빈 문자열.
+- cited: 실제로 인용한 [MSDS 근거] 번호 배열. 없으면 빈 배열.
+"""
+
+
+_CONCLUSION = {
+    "Compatible": "제공된 자료 범위에서 함께 취급·보관 가능한 조합입니다.",
+    "Incompatible": "함께 취급·보관해서는 안 되는 조합입니다.",
+    "Abstain": ABSTAIN_SENTENCE,
+}
+
+
+def build_schema_prompt(question: str, cameo_ctx: str, contexts: list[dict]) -> str:
+    """build_prompt 와 근거 블록은 동일하고 지시부만 스키마용으로 바꾼다."""
+    ev = "\n\n".join(f"[근거 {i + 1}] (chunk_id={c['chunk_id']})\n{c['text']}"
+                      for i, c in enumerate(contexts))
+    return f"{SCHEMA_PROMPT}\n\n{cameo_ctx}\n\n[MSDS 근거]\n{ev}\n\n[질문]\n{question}\n\n[답변]"
+
+
+def render_conclusion(verdict: str, precaution: str) -> str:
+    """결론 문장은 모델이 아니라 여기서 만든다 — 누락·오용이 구조적으로 불가능해진다."""
+    if verdict == "Caution":
+        p = (precaution or "").strip().rstrip(".")
+        return (f"분리보관이 필수인 조합은 아니나, {p} 주의가 필요합니다." if p
+                else "분리보관이 필수인 조합은 아니나 취급 시 주의가 필요합니다.")
+    return _CONCLUSION.get(verdict, _CONCLUSION["Abstain"])
+
+
+def render_answer(obj: dict, name_a: str, name_b: str, verdict: str) -> str:
+    """스키마 산출물을 기존 자유 텍스트와 같은 모양으로 조립한다.
+
+    judge·rule_based 는 이 텍스트를 그대로 채점하므로 지표 정의가 유지되고
+    v7 자유 텍스트 결과와 직접 비교할 수 있다.
+    """
+    cited = ", ".join(str(i) for i in obj.get("cited") or [])
+    parts = [
+        f"판정: {verdict}",
+        f"위험 이유: {obj['hazard_basis']}",
+        f"물질별 근거:\n- {name_a}: {obj['substance_a_note']}\n- {name_b}: {obj['substance_b_note']}",
+    ]
+    if (obj.get("precaution") or "").strip():
+        parts.append(f"취급 주의: {obj['precaution']}")
+    if (obj.get("evidence_gap") or "").strip():
+        parts.append(f"근거 한계: {obj['evidence_gap']}")
+    parts.append(f"결론: {render_conclusion(verdict, obj.get('precaution', ''))}")
+    parts.append(f"[사용한 근거: {cited or '없음'}]")
+    return "\n\n".join(parts)
+
+
 def build_prompt(question: str, cameo_ctx: str, contexts: list[dict]) -> str:
     ev = "\n\n".join(f"[근거 {i + 1}] (chunk_id={c['chunk_id']})\n{c['text']}" for i, c in enumerate(contexts))
     return f"{SYSTEM_PROMPT}\n\n{cameo_ctx}\n\n[MSDS 근거]\n{ev}\n\n[질문]\n{question}\n\n[답변]"

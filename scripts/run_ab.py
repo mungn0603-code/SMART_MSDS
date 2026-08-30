@@ -143,7 +143,49 @@ def _per_query_ms(fn, n: int = 50) -> float:
     return round(float(np.median(samples)), 3)
 
 
-def _search(model_key: str, gran: str, gold: list[dict], task: str, k: int, sections=None, corpus_tag=None):
+def _decomposed_ranks(model_key, task, kept, index, bm25, penalty, k):
+    """쌍 질의를 물질별 단일 질의로 쪼개 각 top-(k//2)씩 교차 병합한다(2026-08-29).
+
+    왜: 베이스라인 실패의 지배 유형이 "쌍 중 한쪽 물질의 §2만 찾음"(2,240질의 중 22.4%)
+    이었다. 쌍 질의는 벡터 1개로 두 물질을 동시에 겨냥해 한쪽이 밀린다. 물질명 단독으로
+    물으면 171종 중 162종이 자기 §2를 1위로 가져온다(실측). 검색 예산(k)은 그대로다.
+
+    질의는 **물질명만** 쓴다 - "…의 유해성·위험성 분류" 같은 설명 어구를 붙이면 오히려
+    떨어졌다(Recall@10 0.9688 -> 0.9464, 실측).
+    """
+    subs = {}
+    for g in kept:
+        subs[g["cas_a"]] = g["name_a"]
+        subs[g["cas_b"]] = g["name_b"]
+    cas_order = sorted(subs)
+    sub_q = [subs[c] for c in cas_order]
+    qv = R.embed_queries(model_key, sub_q, f"{task}_sub")
+    per = {}
+    for mode, ranks in (
+        ("dense", R.dense_rank(index, qv, k)),
+        ("bm25", R.bm25_rank(bm25, sub_q, k)),
+    ):
+        per[mode] = {c: list(ranks[i]) for i, c in enumerate(cas_order)}
+    fused = R.rrf_fuse([R.dense_rank(index, qv, k), R.bm25_rank(bm25, sub_q, k)], k, penalty=penalty)
+    per["hybrid"] = {c: list(fused[i]) for i, c in enumerate(cas_order)}
+
+    half = k // 2
+    out = {}
+    for mode, table in per.items():
+        rows = []
+        for g in kept:
+            a, b = table[g["cas_a"]], table[g["cas_b"]]
+            merged = []
+            for i in range(half):
+                for lst in (a, b):
+                    if i < len(lst) and lst[i] >= 0 and lst[i] not in merged:
+                        merged.append(lst[i])
+            rows.append((merged + [-1] * k)[:k])
+        out[mode] = np.array(rows)
+    return out["dense"], out["bm25"], out["hybrid"]
+
+
+def _search(model_key: str, gran: str, gold: list[dict], task: str, k: int, sections=None, corpus_tag=None, decompose: bool = False):
     corpus, kept, gold_sets, dropped, keep = prepare(gran, gold, task, sections, corpus_tag)
     queries = [g["query"] for g in kept]
     dvecs = R.embed_corpus(model_key, gran, R.load_corpus(gran, corpus_tag=corpus_tag), corpus_tag=corpus_tag or "")
@@ -156,25 +198,36 @@ def _search(model_key: str, gran: str, gold: list[dict], task: str, k: int, sect
         tag = f"{tag}_{corpus_tag}"
     bm25 = R.build_bm25(tag, corpus)
 
-    d_ranks = R.dense_rank(index, qvecs, k)
-    b_ranks = R.bm25_rank(bm25, queries, k)
     penalty = R.boilerplate_penalty_vector(corpus)  # STEP 2/3 확정 baseline: §10 boilerplate penalty
-    h_ranks = R.rrf_fuse([d_ranks, b_ranks], k, penalty=penalty)
+    if decompose:
+        d_ranks, b_ranks, h_ranks = _decomposed_ranks(model_key, task, kept, index, bm25, penalty, k)
+    else:
+        d_ranks = R.dense_rank(index, qvecs, k)
+        b_ranks = R.bm25_rank(bm25, queries, k)
+        h_ranks = R.rrf_fuse([d_ranks, b_ranks], k, penalty=penalty)
 
     lat = {
         "dense": _per_query_ms(lambda i: index.search(qvecs[i : i + 1], k)),
         "bm25": _per_query_ms(lambda i: bm25.get_scores(R.tokenize_ko(queries[i]))),
     }
     lat["hybrid"] = round(lat["dense"] + lat["bm25"], 3)
+    if decompose:  # 쌍당 물질별 질의 2회
+        lat = {k2: round(v * 2, 3) for k2, v in lat.items()}
     return corpus, kept, gold_sets, dropped, queries, (d_ranks, b_ranks, h_ranks), lat
 
 
-def evaluate(model_key: str, gran: str, gold: list[dict], task: str, sections=None, corpus_tag=None) -> list[dict]:
+def evaluate(model_key: str, gran: str, gold: list[dict], task: str, sections=None, corpus_tag=None,
+             decompose: bool = False) -> list[dict]:
     corpus, kept, gold_sets, dropped, queries, (d, b, h), lat = _search(
-        model_key, gran, gold, task, TOPK, sections, corpus_tag
+        model_key, gran, gold, task, TOPK, sections, corpus_tag, decompose
     )
     avg_gold = sum(len(s) for s in gold_sets) / len(gold_sets)
-    q_ms = query_encode_ms(model_key, queries)
+    # 분해 모드가 실제로 인코딩하는 건 쌍 질의가 아니라 물질명 2개다. 그걸로 재고 x2 한다.
+    if decompose:
+        names = sorted({g["name_a"] for g in kept} | {g["name_b"] for g in kept})
+        q_ms = round(query_encode_ms(model_key, names) * 2, 3)
+    else:
+        q_ms = query_encode_ms(model_key, queries)
     rows = []
     for mode, ranks in (("dense", d), ("bm25", b), ("hybrid", h)):
         search_ms = lat[mode]
@@ -186,6 +239,7 @@ def evaluate(model_key: str, gran: str, gold: list[dict], task: str, sections=No
                 "sections": ",".join(map(str, sorted(sections))) if sections else "all",
                 "retriever": mode,
                 "reranker": "-",
+                "query": "decomposed" if decompose else "pair",
                 "n_queries": len(kept),
                 "n_chunks": len(corpus),
                 "avg_gold_per_query": round(avg_gold, 1),
@@ -263,6 +317,9 @@ def main() -> None:
     ap.add_argument("--sections", help="검색공간을 이 섹션들로 축소(쉼표 구분). 예: 2,10")
     ap.add_argument("--winner", help="reranker 단계에서 쓸 임베딩 모델 키")
     ap.add_argument("--winner-granularity", help="reranker 단계에서 쓸 청킹 단위")
+    ap.add_argument("--decompose", action="store_true",
+                     help="쌍 질의를 물질별 단일 질의 2개로 분해해 교차 병합(2026-08-29 확정 경로). "
+                          "미지정시 종전 단일 쌍질의 그대로 - 재현 경로 보존")
     ap.add_argument("--corpus-tag", default=None,
                      help="PHASE 5: rag_corpus_membership의 corpus_tag(예: 426, 259proposed). "
                           "미지정시 기존 동작(rag_chunks 전체, 하위호환)")
@@ -271,13 +328,13 @@ def main() -> None:
     gold = load_gold(args.task)
     sections = {int(x) for x in args.sections.split(",")} if args.sections else None
     grans = ["section", "item"] if args.granularity == "both" else [args.granularity]
-    name_suffix = f"_{args.corpus_tag}" if args.corpus_tag else ""
+    name_suffix = (f"_{args.corpus_tag}" if args.corpus_tag else "") + ("_decomposed" if args.decompose else "")
 
     if args.stage == "embedding":
         rows = []
         for key in (args.models.split(",") if args.models else list(R.EMBEDDING_MODELS)):
             for gran in grans:
-                rows += evaluate(key, gran, gold, args.task, sections, args.corpus_tag)
+                rows += evaluate(key, gran, gold, args.task, sections, args.corpus_tag, args.decompose)
                 save(rows, f"02_embedding_{args.task}" + (f"_sec{args.sections.replace(',', '')}" if args.sections else "") + name_suffix)  # 조합마다 중간 저장
     else:
         if not args.winner or not args.winner_granularity:

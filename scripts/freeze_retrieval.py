@@ -53,21 +53,67 @@ def rrf_fuse_scored(rank_lists, k, rrf_k=R.RRF_K, penalty=None):
     return out
 
 
+def _decomposed_scored(corpus, kept, penalty, corpus_tag):
+    """물질별 단일 질의로 검색해 각 top-(TOPK//2)씩 교차 병합. run_ab._decomposed_ranks와
+    같은 전략이되 frozen 산출물에 남길 점수를 함께 반환한다."""
+    dvecs = R.embed_corpus(MODEL, GRAN, R.load_corpus(GRAN, corpus_tag=corpus_tag),
+                           corpus_tag=corpus_tag or "")
+    pos = {cid: i for i, cid in enumerate(R.load_corpus(GRAN, corpus_tag=corpus_tag).chunk_ids)}
+    dvecs = dvecs[[pos[c] for c in corpus.chunk_ids]]
+    index = R.build_faiss(dvecs)
+    tag = f"{GRAN}_s{''.join(map(str, sorted(SECTIONS)))}" + (f"_{corpus_tag}" if corpus_tag else "")
+    bm25 = R.build_bm25(tag, corpus)
+
+    subs = {}
+    for g in kept:
+        subs[g["cas_a"]] = g["name_a"]
+        subs[g["cas_b"]] = g["name_b"]
+    cas_order = sorted(subs)
+    sub_q = [subs[c] for c in cas_order]
+    qv = R.embed_queries(MODEL, sub_q, "pair_sub")
+    per_sub = rrf_fuse_scored(
+        [R.dense_rank(index, qv, CAND_K), R.bm25_rank(bm25, sub_q, CAND_K)], CAND_K, penalty=penalty
+    )
+    table = {c: per_sub[i] for i, c in enumerate(cas_order)}
+
+    half = TOPK // 2
+    out = []
+    for g in kept:
+        a, b = table[g["cas_a"]], table[g["cas_b"]]
+        merged, seen = [], set()
+        for i in range(half):
+            for lst in (a, b):
+                if i < len(lst) and lst[i][0] not in seen:
+                    seen.add(lst[i][0])
+                    merged.append(lst[i])
+        out.append(merged[:TOPK])
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--corpus-tag", default=CORPUS_TAG_DEFAULT,
                     help="rag_corpus_membership 태그(기본: 173 = 재현용 고정 코퍼스). "
                          "서비스 기준은 service")
     ap.add_argument("--out", type=Path, default=OUT_PATH_DEFAULT)
+    ap.add_argument("--decompose", action="store_true",
+                    help="쌍 질의를 물질별 단일 질의 2개로 분해해 교차 병합(run_ab.py --decompose와 동일 경로). "
+                         "미지정시 종전 단일 쌍질의 그대로 - 재현 경로 보존")
     args = ap.parse_args()
     OUT_PATH = args.out
+    if args.decompose and OUT_PATH == OUT_PATH_DEFAULT:
+        # 기존 frozen(쌍질의)을 덮어쓰면 그걸 입력으로 쓰는 Generation 실행분과 섞인다.
+        OUT_PATH = OUT_PATH.with_name(f"{OUT_PATH.stem}_decomposed{OUT_PATH.suffix}")
 
     gold = A.load_gold("pair")
     corpus, kept, gold_sets, dropped, queries, (d_ranks, b_ranks, _h), lat = A._search(
         MODEL, GRAN, gold, "pair", CAND_K, SECTIONS, args.corpus_tag
     )
     penalty = R.boilerplate_penalty_vector(corpus)
-    fused = rrf_fuse_scored([d_ranks, b_ranks], TOPK, penalty=penalty)
+    if args.decompose:
+        fused = _decomposed_scored(corpus, kept, penalty, args.corpus_tag)
+    else:
+        fused = rrf_fuse_scored([d_ranks, b_ranks], TOPK, penalty=penalty)
 
     OUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     n_hit = 0

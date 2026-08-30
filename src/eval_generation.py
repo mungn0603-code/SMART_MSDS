@@ -161,6 +161,143 @@ def substance_confused(gen_rec: dict, eval_rec: dict) -> bool | None:
     return any(not (cas_in_text(cas_a, cid) or cas_in_text(cas_b, cid)) for cid in cited)
 
 
+# ── 본문 기준 지표 (2026-08-29) ──────────────────────────────────────────────
+# 근거를 CAS 직접조회로 바꾸면 substance_confused(인용된 chunk_id의 소속만 검사)는
+# 구조적으로 0이 된다 - 컨텍스트에 그 쌍 청크만 있으니 남의 물질을 인용할 방법이 없다.
+# 성과지표로 쓸 수 없고 retrieval 오염 지표로만 남긴다. 대신 아래 둘을 함께 기록한다.
+#   answer_offpair_substance : 답변 "본문"에 근거 밖 물질명이 나왔는가 (LLM 호출 없음)
+#   cited_both_substances    : 답변이 A와 B "양쪽"의 근거를 인용했는가 (LLM 호출 없음)
+
+_NAME_NORM = re.compile(r"[\s\-·,()\[\]]")
+NAME_MIN_LEN = 3  # 1~2자 이름(은/인/물/황/철)은 조사·일반명사와 구분 불가 -> 탐지 제외
+
+
+def _norm_name(s: str) -> str:
+    return _NAME_NORM.sub("", s).lower()
+
+
+PAIR_NAME_MIN_LEN = 2  # 쌍 이름 '소비'용 하한. 탐지용(NAME_MIN_LEN)보다 낮다 - 아래 참고
+
+
+def substance_name_table(con, corpus_tag: str = "service"):
+    """(탐지용 표기->CAS, CAS->표기집합). 정식 표기(청크 헤더/KOSHA/registry 한글·영문)만.
+
+    **별칭은 넣지 않는다** - registry의 alias에 'SDS'가 있어 'MSDS'에 걸린다(실측:
+    2,240건 중 1,453건 오탐).
+
+    반환값이 둘인 이유: 탐지에는 1~2자 이름을 못 쓰지만(조사·일반명사와 구분 불가),
+    **그 쌍의 이름은 2자여도 '소비'해야 한다.** '질산'(2자)이 소비 대상에서 빠지면
+    "질산은 강산화제이므로…"의 '질산+조사'가 '질산은'(silver nitrate)으로 잡힌다
+    (표본 검수에서 이 오탐 7건 확인). 1자 이름(은/인/물)은 소비에서도 뺀다 - 조사를
+    통째로 먹어 진짜 물질명을 가린다.
+    """
+    rows = con.execute(
+        "select r.cas_number,"
+        " (select rc.chemical_name from rag_chunks rc where rc.cas_number=r.cas_number limit 1),"
+        " c.chem_name_kor, r.name_ko, r.name_en"
+        " from substance_registry r"
+        " left join msds_chem_id_cache c on c.cas_number = r.cas_number"
+        " join rag_corpus_membership m on m.cas_number = r.cas_number and m.corpus_tag = ?",
+        (corpus_tag,),
+    ).fetchall()
+    table: dict[str, str] = {}
+    by_cas: dict[str, set[str]] = {}
+    for cas, chunk_name, kosha, ko, en in rows:
+        for x in (chunk_name, kosha, ko, en):
+            if not x:
+                continue
+            n = _norm_name(x)
+            if len(n) >= NAME_MIN_LEN:
+                table[n] = cas
+            if len(n) >= PAIR_NAME_MIN_LEN:
+                by_cas.setdefault(cas, set()).add(n)
+    return table, by_cas
+
+
+def find_substances(text: str, table: dict[str, str], first: set[str] = frozenset()) -> set[str]:
+    """텍스트에 등장한 물질의 CAS 집합. 매칭한 구간은 소비해 중복 검출을 막는다.
+
+    `first`(보통 그 쌍의 이름)를 **먼저** 소비하고, 나머지를 긴 이름 우선으로 훑는다.
+    순서가 중요하다 — 한국어 조사가 붙으면 다른 물질명이 되어버리는 경우가 있다:
+      "질산은 강산화제이므로…"  ->  '질산'(쌍) + 조사 '은'  이지만
+                                 '질산은'(silver nitrate)으로도 읽힌다
+    쌍 이름을 먼저 소비하면 '질산'이 구간을 차지해 '질산은'이 겹쳐서 배제된다
+    (표본 검수 43건 중 이 오탐이 7건이었다). 같은 원리로 '아질산 나트륨'이
+    '나트륨'으로 쪼개지는 것도 막는다.
+
+    대가: 쌍에 '질산'이 있을 때 답변이 진짜로 '질산은'을 말해도 못 잡는다.
+    이 지표는 애초에 하한값이라 이 방향의 누락을 감수한다.
+    """
+    t = _norm_name(text)
+    used = bytearray(len(t))
+    hit = set()
+    # first 는 table 에 없을 수 있다(2자 쌍 이름). 소비만 하고 보고하지 않는다.
+    ordered = sorted(first, key=len, reverse=True) + \
+        sorted(set(table) - set(first), key=len, reverse=True)
+    for name in ordered:
+        start = 0
+        while (i := t.find(name, start)) != -1:
+            if not any(used[i:i + len(name)]):
+                used[i:i + len(name)] = b"\x01" * len(name)
+                if name in table:
+                    hit.add(table[name])
+            start = i + 1
+    return hit
+
+
+def answer_offpair_substance(gen_rec: dict, evidence_texts, table: dict[str, str],
+                             names_by_cas: dict[str, set[str]] | None = None):
+    """답변 본문에 '근거에도 없는' 쌍 밖 물질명이 등장했는가. (bool|None, 그 CAS 집합)
+
+    근거에 있으면 정당한 인용이므로 뺀다 — evidence_texts에는 MSDS 청크 본문뿐 아니라
+    **cameo_context도 반드시 포함**한다. CAMEO 원문이 'Carbon Dioxide'처럼 영문이라
+    빼먹으면 모델의 정상적인 번역 인용을 오탐한다(실측: 오탐 58건).
+    쌍 이름의 구성 성분어도 뺀다('아질산 나트륨' -> '나트륨'은 그 쌍을 가리키는 말이다).
+
+    **성과지표가 아니라 진단값이다.** 실측 잔여의 다수가 "불활성 가스 분위기(예: 질소,
+    아르곤)" 같은 일반 취급수칙이라 '혼동'으로 단정할 수 없다. 수치를 인용할 때는
+    표본 검토를 함께 붙인다. 탐지 못 하는 이름(1~2자)이 있으므로 하한값이다.
+    """
+    answer = gen_rec.get("generated_answer") or ""
+    if not answer:
+        return None, set()
+    pair = {gen_rec["cas_a"], gen_rec["cas_b"]}
+    if names_by_cas is None:      # 하위호환: 표기집합을 안 주면 탐지용 표에서 유도
+        pair_names = {n for n, c in table.items() if c in pair}
+    else:
+        pair_names = {n for c in pair for n in names_by_cas.get(c, ())}
+    component = {c for n, c in table.items()
+                 if any(n != pn and n in pn for pn in pair_names)}
+    in_evidence = set()
+    for t in evidence_texts:
+        in_evidence |= find_substances(t, table, pair_names)
+    leaked = find_substances(answer, table, pair_names) - in_evidence - pair - component
+    return bool(leaked), leaked
+
+
+def citation_coverage(gen_rec: dict, eval_rec: dict) -> dict | None:
+    """인용한 근거의 A/B × 섹션 커버리지. 인용이 아예 없으면 None.
+
+    §2와 §10을 나눠 본다. **gold_evidence는 정의상 §2**라, "양쪽 근거를 인용했다"는
+    §2 기준으로 따져야 의미가 있다 — §10만 두 개 인용해도 판정 근거는 못 댄 것이다.
+    CAS 직접조회는 양쪽 §2를 100% '제공'하지만 모델이 실제로 인용했는지는 별개다.
+
+    한계: 인용 태그(`[사용한 근거: n, ...]`) 기준이라 **본문에서 실제로 활용했는지는
+    보증하지 않는다.** 태그만 달고 본문은 한쪽만 서술하는 경우를 걸러내지 못한다.
+    """
+    cited = eval_rec.get("cited_chunk_ids") or []
+    if not cited:
+        return None
+    a, b = gen_rec["cas_a"], gen_rec["cas_b"]
+    out = {}
+    for label, sec in (("sec2", "2"), ("sec10", "10")):
+        side = {c.split("::")[1] for c in cited
+                if c.count("::") >= 2 and c.split("::")[2].split("::")[0] == sec}
+        out[label] = {(True, True): "both", (True, False): "a_only",
+                      (False, True): "b_only", (False, False): "none"}[(a in side, b in side)]
+    return out
+
+
 def already_done(path: Path) -> set[str]:
     if not path.exists():
         return set()

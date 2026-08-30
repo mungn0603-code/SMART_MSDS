@@ -26,6 +26,7 @@
 - `results/` — 실행 결과 jsonl/csv. 덮어쓰지 말고 새 파일로 남긴다.
 - `docs/` — 표준 문서 9종(README/PIPELINE/DATA/**REGISTRY**/RETRIEVAL/GENERATION/FILE_GUIDE/HANDOFF/PROJECT_LOG). 사실 확인은 여기부터. "어떤 물질을 다루는가"는 REGISTRY.md가 단일 출처.
 - `app/streamlit_app.py` — 조회·판정 UI. `--check`로 LLM 없이 자가검증 가능.
+  **근거 수집 경로가 둘로 나뉜다**: 서비스 기본은 `pair_context()`(CAS 직접조회 §2+§10, 검색 안 함), `retrieve()`는 검색 계층 진입점으로 보존(현재 서비스 경로 아님). 현재 서비스는 CAS가 이미 확정된 closed-world 질의이므로 결정론적 MSDS 조회를 사용하며, retrieval pipeline은 자유 질의 및 supplementary evidence 확장을 위해 유지한다.
 - `archive/` — 폐기된 접근(PubChem 기각, rag_agent 등). 참고용이며 되살리지 않는다.
 
 ## 스택
@@ -34,11 +35,17 @@ SQLite · 임베딩 `dragonkue/BGE-m3-ko` · FAISS(dense) + BM25(kiwipiepy) 하�
 
 ## 확정 지표
 
-**Retrieval — service 기준 (쌍 질의 2,240건, 2026-08-29)**
+**Retrieval — service + 질의 분해 (쌍 질의 2,240건, 2026-08-29)**
 
-Recall@10 0.8987 · Hit@10 0.9790 · MRR 0.8803 · nDCG@10 0.8065
+Recall@10 0.9888 · Hit@10 1.0000 · MRR 0.9581 · nDCG@10 0.9547
 
 조건: `corpus_tag='service'` 173종 / 371청크(§2·§10) / 450쌍 × 템플릿 5 = 2,250질의 중 gold_evidence 없는 10건 제외. 채점은 evidence 기준(gold_evidence = §2 100%)이고, gold_section 기준 수치와 섞어 쓰지 않는다. 숫자를 인용할 때는 이 조건을 반드시 함께 적는다.
+
+**질의 분해**: 쌍 질의 1개 대신 물질명 단독 질의 2개를 던져 각 top-5씩 교차 병합한다(검색 예산 동일). 쌍 질의는 벡터 하나가 두 물질에 걸쳐 한쪽이 밀렸고, 그게 실패의 지배 유형이었다(2,240질의 중 22.4%가 "한쪽 §2만 검출"). 재현은 `run_ab.py ... --corpus-tag service --decompose`. 분해 전 쌍질의 baseline은 Recall@10 0.8987 / Hit@10 0.9790 / MRR 0.8803 / nDCG@10 0.8065이며 **같은 평가셋·같은 채점 기준이라 직접 비교 가능하다**(전 지표 개선, 악화 0).
+
+**앱의 쌍 설명 경로는 검색을 타지 않는다.** `explain()`은 `pair_context()`로 두 CAS의 §2·§10을 SQL 직접 조회한다 — 정답확보 1.0000 / 제3물질 0% / 프롬프트 3,170자 / 질의 임베딩 0ms. 분해 top-3(0.9821 / 44.5% / 5,326자 / 461ms)을 모든 축에서 이긴다. 이유: gold_evidence는 정의상 두 물질의 §2이고 앱은 CAS를 이미 안다. 위 검색 지표는 검색 계층 자체의 실측이며 **앱 경로를 설명하지 않는다** — 인용할 때 반드시 함께 적는다. 검색이 다시 필요한 조건은 자유 텍스트 질의 / 물질당 청크 증가 / 쌍 밖 근거 활용이고, 지금은 셋 다 아니다.
+
+주의: Generation 확정 지표는 **분해 이전** frozen(`frozen_retrieval_top10.jsonl`, 쌍질의)으로 낸 값이다. 분해분은 `frozen_retrieval_top10_decomposed.jsonl`로 따로 있고 아직 Generation에 반영되지 않았다.
 
 **Generation — service 기준 (쌍 질의 2,240건, 2026-08-29)**
 
@@ -57,12 +64,12 @@ N종 조합 판정은 `compatibility_engine.py`의 `judge_combination_by_cas`로
 ## 미완성 (README에 명시된 것)
 
 - **본문 서술이 판정보다 강한 문제(최대 결함)**: matrix=Caution 745건 중 301건이 본문상 Incompatible로 읽힌다. 판정줄은 전부 Caution으로 정확하다. 판정줄–본문 일치 82.9%
-- 물질 혼동 14.7%(307/2,093): 검색 top-10에 섞인 제3물질 청크를 이 쌍의 근거로 인용. 인용 태그 미출력 6.2%는 측정 불가로 남는다
+- 물질 혼동 14.7%(307/2,093): 검색 top-10에 섞인 제3물질 청크를 이 쌍의 근거로 인용. 인용 태그 미출력 6.2%는 측정 불가로 남는다. **근거를 CAS 직접조회로 바꾸면 제3물질이 0%가 되므로 이 경로 자체가 사라진다** — Generation 재실행으로 확인 필요(`--context pair`)
 - faithful 잔여 실패 5.4%(120건, service 기준): 그룹 분류를 확인된 반응처럼 단정하는 패턴
 - Reranker 미실행 (boilerplate penalty로 목표를 충족해 보류)
 - 원본 173종 이전 풀 전체의 안전성 재검증 미완
 - CAMEO 매핑 173/237(73.0%) — **판정 가능 쌍 76.3%로 확정**(2026-08-23). 남은 25종은 CAMEO에 데이터시트 자체가 없다(PubChem hid=86 + CAMEO `/browse` 두 경로 확인). 목표는 100%가 아니다
-- RAG 검색이 앱 UI에 미연결 — `explain()`/`retrieve()`의 호출 지점이 아직 `--check`뿐
+- 앱 쌍 설명 경로는 검색을 **의도적으로** 쓰지 않는다(2026-08-29, `pair_context()`). 미연결이 아니라 CAS 직접조회가 모든 축에서 우세해서다. `retrieve()`는 남아 있고 호출 지점은 `--check`뿐 — 자유 텍스트 질의가 생기면 그때 연결한다
 
 ## 주의
 
